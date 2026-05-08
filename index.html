@@ -43,7 +43,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .sb2{background:var(--surface2);border-radius:var(--rs);padding:.875rem .5rem;text-align:center}
 .sn{font-size:22px;font-weight:700;color:var(--accent)}
 .sl{font-size:11px;color:var(--text3);margin-top:2px}
-.toast-el{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast-el{position:fixed;bottom:8rem;left:50%;transform:translateX(-50%) translateY(200px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast-el.show{transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:14px}
 .sl2{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:.4rem}
@@ -422,7 +422,7 @@ async function loadSessMemberList(sessId) {
     const already = alreadyIds.has(m.id);
     const g = grade(m);
     return `<div class="ci-mi ${already?'already':''}" onclick="toggleSessMember(this,'${sessId}','${m.id}')">
-      <input type="checkbox" id="scb-${sessId}-${m.id}" ${already?'checked disabled':''} onchange="updateSessCount('${sessId}')"/>
+      <input type="checkbox" id="scb-${sessId}-${m.id}" ${already?'checked disabled':''} onclick="event.stopPropagation();updateSessCount('${sessId}')"/>
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
@@ -436,6 +436,7 @@ async function loadSessMemberList(sessId) {
 window.toggleSessMember = function(el, sessId, mid) {
   if (el.classList.contains('already')) return;
   const cb = document.getElementById(`scb-${sessId}-${mid}`);
+  if (!cb) return;
   cb.checked = !cb.checked;
   updateSessCount(sessId);
 };
