@@ -75,10 +75,10 @@
 </head>
 <body>
 <nav class="nav">
-  <button class="nb active" onclick="showPage('admin',this)">🔥 운영진</button>
-  <button class="nb" onclick="showPage('checkin',this)">📱 출석</button>
-  <button class="nb" onclick="showPage('members',this)">👥 멤버</button>
+  <button class="nb active" onclick="showPage('members',this)">👥 멤버</button>
   <button class="nb" onclick="showPage('history',this)">📋 기록</button>
+  <button class="nb" onclick="showPage('checkin',this)">📱 출석</button>
+  <button class="nb" onclick="showPage('admin',this)">🔥 운영진</button>
 </nav>
 <div id="toast-el" class="toast-el"></div>
 
@@ -101,7 +101,7 @@
 </div>
 
 <!-- ADMIN -->
-<div id="page-admin" class="page active">
+<div id="page-admin" class="page">
   <!-- 비밀번호 잠금 -->
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -186,7 +186,7 @@
 </div>
 
 <!-- MEMBERS -->
-<div id="page-members" class="page">
+<div id="page-members" class="page active">
   <div class="sr">
     <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
     <div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">활동 멤버+</div></div>
@@ -570,6 +570,7 @@ window.toast = function(msg) {
 initDefaultMembers();
 buildCiSelect();
 updateCiStatus();
+renderMPage();
 </script>
 </body>
 </html>
