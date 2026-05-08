@@ -113,7 +113,14 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div class="mt2">모임 멤버 수정</div>
-    <div id="se-sess-info" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:1rem"></div>
+    <div id="se-sess-info" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:.5rem"></div>
+    <div class="sl2">카테고리</div>
+    <select id="se-cat" style="margin-bottom:.75rem">
+      <option value="🏃 러닝">🏃 러닝</option>
+      <option value="🏔️ 등산">🏔️ 등산</option>
+      <option value="🍽️ 식사">🍽️ 식사</option>
+      <option value="📌 기타">📌 기타</option>
+    </select>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
       <span style="font-size:13px;color:var(--text3)" id="se-count">0명 선택</span>
       <button id="se-select-all-btn" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
@@ -217,6 +224,13 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 모임 등록</div>
+    <div class="sl2">카테고리</div>
+    <select id="pub-sess-cat">
+      <option value="🏃 러닝">🏃 러닝</option>
+      <option value="🏔️ 등산">🏔️ 등산</option>
+      <option value="🍽️ 식사">🍽️ 식사</option>
+      <option value="📌 기타">📌 기타</option>
+    </select>
     <div class="sl2">모임 이름</div>
     <input type="text" id="pub-sess-name" placeholder="예: 5월 정기 러닝"/>
     <div class="sl2">날짜</div>
@@ -228,13 +242,18 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 
 <!-- 출석 -->
 <div id="page-checkin" class="page">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
     <div class="filter-tabs" style="margin-bottom:0">
       <button class="ftab" data-filter="all">전체</button>
       <button class="ftab" data-filter="year">올해</button>
       <button class="ftab active" data-filter="month">이번달</button>
+      <button class="ftab" data-filter="custom">직접선택</button>
     </div>
     <button id="sort-toggle" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500">가입일순</button>
+  </div>
+  <div id="custom-filter" style="display:none;gap:8px;margin-bottom:.75rem">
+    <select id="filter-year" style="margin:0;flex:1"></select>
+    <select id="filter-month" style="margin:0;flex:1"></select>
   </div>
   <div class="sb2" style="margin-bottom:.875rem;padding:.75rem;text-align:center">
     <span style="font-size:13px;color:var(--text3)">총 모임 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span>
@@ -252,6 +271,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <button class="btn bp" style="max-width:280px;margin:0 auto" id="admin-login-btn">입장</button>
   </div>
   <div id="admin-content" style="display:none">
+    <div class="card">
+      <div class="ct">출석 초기화</div>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:.875rem">모든 멤버의 출석 횟수를 0으로 초기화해요. 모임 기록은 유지돼요.</p>
+      <button class="btn" id="reset-counts-btn" style="background:#fee2e2;color:#991b1b;border:none">전체 출석 횟수 초기화</button>
+    </div>
     <div class="card">
       <div class="ct">모임 관리</div>
       <div id="admin-sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
@@ -418,7 +442,7 @@ async function renderSessionsTab() {
     return `<div class="sess-card" id="sc-${s.id}">
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}">
         <div>
-          <div style="font-weight:500;font-size:15px">${s.name}</div>
+          <div style="font-weight:500;font-size:15px">${s.cat ? s.cat+' · ' : ''}${s.name}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px">${s.date} · ${att.length}명 출석</div>
         </div>
         <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
@@ -564,9 +588,10 @@ async function refreshSessCard(sessId) {
 document.getElementById('create-sess-btn').addEventListener('click', async function() {
   const name = document.getElementById('pub-sess-name').value.trim();
   const date = document.getElementById('pub-sess-date').value;
+  const cat = document.getElementById('pub-sess-cat').value;
   if (!name) { toast('모임 이름을 입력해주세요'); return; }
   if (!date) { toast('날짜를 선택해주세요'); return; }
-  await db.collection('sessions').add({ name, date, attendees: [], createdAt: Date.now() });
+  await db.collection('sessions').add({ name, date, cat, attendees: [], createdAt: Date.now() });
   clearCache();
   document.getElementById('pub-sess-name').value = '';
   toast('모임이 등록됐어요! 🎉');
@@ -581,8 +606,14 @@ async function renderAttBoard() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const today = new Date().toISOString().split('T')[0];
   let fs = sessions.filter(s => s.date <= today);
-  if (ciFilter === 'year')  fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
-  if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
+  if (ciFilter === 'year')   fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
+  if (ciFilter === 'month')  fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
+  if (ciFilter === 'custom') {
+    const y = document.getElementById('filter-year').value;
+    const m = document.getElementById('filter-month').value;
+    if (y && m) fs = fs.filter(s => s.date.startsWith(y + '-' + m));
+    else if (y) fs = fs.filter(s => s.date.startsWith(y));
+  }
   const total = fs.length;
   const countMap = {};
   for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0) + 1;
@@ -608,11 +639,37 @@ async function renderAttBoard() {
   }).join('');
 }
 
+function initCustomFilter(sessions) {
+  // 세션에서 연도 목록 추출
+  const years = [...new Set(sessions.map(s => s.date.slice(0,4)))].sort().reverse();
+  const yearSel = document.getElementById('filter-year');
+  yearSel.innerHTML = years.map(y => `<option value="${y}">${y}년</option>`).join('');
+  const monthSel = document.getElementById('filter-month');
+  monthSel.innerHTML = Array.from({length:12}, (_,i) => {
+    const m = String(i+1).padStart(2,'0');
+    return `<option value="${m}">${i+1}월</option>`;
+  }).join('');
+  // 현재 월로 기본값
+  const now = new Date();
+  yearSel.value = String(now.getFullYear());
+  monthSel.value = String(now.getMonth()+1).padStart(2,'0');
+  yearSel.addEventListener('change', renderAttBoard);
+  monthSel.addEventListener('change', renderAttBoard);
+}
+
 document.querySelectorAll('.ftab').forEach(btn => {
-  btn.addEventListener('click', function() {
+  btn.addEventListener('click', async function() {
     ciFilter = this.dataset.filter;
     document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
     this.classList.add('active');
+    const customEl = document.getElementById('custom-filter');
+    if (ciFilter === 'custom') {
+      customEl.style.display = 'flex';
+      const sessions = await getAllSessions();
+      initCustomFilter(sessions);
+    } else {
+      customEl.style.display = 'none';
+    }
     renderAttBoard();
   });
 });
@@ -652,7 +709,7 @@ async function renderAdminSessList() {
   const today = new Date().toISOString().split('T')[0];
   el.innerHTML = sessions.map(s => `
     <div class="mi">
-      <div style="flex:1;min-width:0"><div class="mn">${s.name}</div><div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div></div>
+      <div style="flex:1;min-width:0"><div class="mn">${s.cat ? s.cat+' · ' : ''}${s.name}</div><div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div></div>
       <button class="ebtn admin-sess-edit" data-id="${s.id}" style="margin-right:4px">수정</button>
       <button class="dbtn admin-sess-del" data-id="${s.id}">삭제</button>
     </div>`).join('');
@@ -676,14 +733,21 @@ async function openSessEdit(sessId) {
   const [members, sessSnap] = await Promise.all([getMembers(), db.collection('sessions').doc(sessId).get()]);
   const sess = sessSnap.data();
   document.getElementById('se-sess-info').textContent = `${sess.name} · ${sess.date}`;
+  document.getElementById('se-cat').value = sess.cat || '📌 기타';
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
   const sorted = sortMembers(members);
   document.getElementById('se-member-list').innerHTML = sorted.map(m => {
     const g = grade(m);
-    return `<div class="ci-mi" style="cursor:pointer" onclick="var cb=document.getElementById('se-${m.id}');cb.checked=!cb.checked;seUpdateCount()">
-      <input type="checkbox" id="se-${m.id}" ${alreadyIds.has(m.id)?'checked':''} 
-        style="width:22px;height:22px;accent-color:var(--accent);flex-shrink:0;cursor:pointer"
-        onclick="event.stopPropagation();seUpdateCount()"/>
+    const checked = alreadyIds.has(m.id);
+    return `<div class="ci-mi" style="cursor:pointer" onclick="
+      var cb=document.getElementById('se-cb-${m.id}');
+      cb.checked=!cb.checked;
+      this.style.background=cb.checked?'var(--accent-l)':'';
+      seUpdateCount()">
+      <div style="width:24px;height:24px;border-radius:6px;border:2px solid ${checked?'var(--accent)':'var(--border)'};background:${checked?'var(--accent)':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s" id="se-box-${m.id}">
+        <span style="color:#fff;font-size:14px;font-weight:700">${checked?'✓':''}</span>
+      </div>
+      <input type="checkbox" id="se-cb-${m.id}" ${checked?'checked':''} style="display:none"/>
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.count}회 참석</div></div>
     </div>`;
@@ -693,12 +757,21 @@ async function openSessEdit(sessId) {
 }
 
 function seUpdateCount() {
-  const cnt = document.querySelectorAll('#se-member-list input:checked').length;
+  let cnt = 0;
+  document.querySelectorAll('#se-member-list input[type=checkbox]').forEach(cb => {
+    const box = document.getElementById('se-box-' + cb.id.replace('se-cb-',''));
+    if (box) {
+      box.style.background = cb.checked ? 'var(--accent)' : '#fff';
+      box.style.borderColor = cb.checked ? 'var(--accent)' : 'var(--border)';
+      box.innerHTML = cb.checked ? '<span style="color:#fff;font-size:14px;font-weight:700">✓</span>' : '';
+    }
+    if (cb.checked) cnt++;
+  });
   document.getElementById('se-count').textContent = cnt + '명 선택';
 }
 
 document.getElementById('se-select-all-btn').addEventListener('click', function() {
-  document.querySelectorAll('#se-member-list input').forEach(cb => { cb.checked = true; });
+  document.querySelectorAll('#se-member-list input[type=checkbox]').forEach(cb => { cb.checked = true; });
   seUpdateCount();
 });
 
@@ -708,14 +781,14 @@ document.getElementById('se-save-btn').addEventListener('click', async function(
   const sessSnap = await sessRef.get();
   const sess = sessSnap.data();
   const prevIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const nowIds = new Set([...document.querySelectorAll('#se-member-list input:checked')].map(cb => cb.id.replace('se-','')));
+  const nowIds = new Set([...document.querySelectorAll('#se-member-list input[type=checkbox]:checked')].map(cb => cb.id.replace('se-cb-','')));
   const added = [...nowIds].filter(id => !prevIds.has(id));
   const removed = [...prevIds].filter(id => !nowIds.has(id));
   const now = new Date();
   const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
   let newAtt = (sess.attendees||[]).filter(a => !removed.includes(a.memberId));
   for (const mid of added) newAtt.push({ memberId: mid, time });
-  await sessRef.update({ attendees: newAtt });
+  await sessRef.update({ attendees: newAtt, cat: document.getElementById('se-cat').value });
   for (const mid of added) {
     const mSnap = await db.collection('members').doc(mid).get();
     if (mSnap.exists) await db.collection('members').doc(mid).update({ count: (mSnap.data().count||0) + 1 });
