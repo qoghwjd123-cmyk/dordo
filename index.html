@@ -24,6 +24,7 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .page.active{display:block}
 .card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem}
 .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
+input[type=date]{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem;appearance:none;-webkit-appearance:none}
 input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem}
 input:focus,select:focus{border-color:var(--accent);background:#fff}
 .btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:.4rem}
@@ -49,7 +50,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .divider{border:none;border-top:1px solid var(--border);margin:.875rem 0}
 .mb-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
 .mb-bg.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px}
+.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
 .mt2{font-size:16px;font-weight:700;margin-bottom:1rem}
 .dbtn{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-family:inherit;cursor:pointer}
 .ebtn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit}
@@ -130,26 +131,24 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </nav>
 <div id="toast-el" class="toast-el"></div>
 
-<!-- 플로팅 출석체크 버튼 (모임탭 전용) -->
-<button class="fab" id="fab-checkin" onclick="openFabModal()" title="출석 체크인">✅</button>
+<!-- 플로팅 로그인 버튼 (모임탭 전용) -->
+<button class="fab" id="fab-checkin" onclick="openFabModal()" title="운영진 로그인">🔐</button>
 
-<!-- 플로팅 출석체크 모달 -->
+<!-- 플로팅 로그인 모달 -->
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
-    <div class="mt2">출석 체크인</div>
     <div id="fab-lock-wrap">
-      <div class="sl2">운영진 비밀번호</div>
+      <div class="mt2">🔐 운영진 로그인</div>
+      <div class="sl2">비밀번호</div>
       <input type="password" id="fab-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')fabLogin()"/>
-      <button class="btn bp" onclick="fabLogin()">확인</button>
+      <button class="btn bp" onclick="fabLogin()">로그인</button>
+      <button class="btn bs" onclick="closeFabModal()" style="margin-top:0">취소</button>
     </div>
-    <div id="fab-checkin-wrap" style="display:none">
-      <div class="sl2">모임 선택</div>
-      <select id="fab-sess-sel" onchange="loadFabMembers()" style="margin-bottom:.75rem"><option value="">-- 모임 선택 --</option></select>
-      <div id="fab-member-list"></div>
-      <div style="display:flex;gap:8px;margin-top:.75rem">
-        <button class="btn bp" style="flex:1;margin:0" onclick="doFabCheckin()">출석 체크인 ✓</button>
-        <button class="btn bs" style="flex:1;margin:0" onclick="closeFabModal()">닫기</button>
-      </div>
+    <div id="fab-done-wrap" style="display:none;text-align:center;padding:1rem 0">
+      <div style="font-size:40px;margin-bottom:.75rem">✅</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:.25rem">로그인 완료!</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:1.25rem">이제 모임 카드에서 출석 체크인이 가능해요</div>
+      <button class="btn bp" onclick="closeFabModal()">확인</button>
     </div>
   </div>
 </div>
@@ -453,7 +452,7 @@ function updateSessCount(sessId) {
 }
 
 window.doCheckinFromSess = async function(sessId) {
-  if (!isAdmin) { toast('🔒 운영진 탭에서 먼저 로그인해주세요'); return; }
+  if (!isAdmin) { toast('🔐 하단 자물쇠 버튼으로 운영진 로그인 후 이용해주세요'); return; }
   const checked = [...document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`)].map(cb => cb.id.replace(`scb-${sessId}-`,''));
   if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
   await processCheckin(sessId, checked);
@@ -513,17 +512,17 @@ window.createSessionFromTab = async function() {
   if (isAdmin) renderAdminSessList();
 };
 
-// ── 플로팅 출석 버튼 ─────────────────────────────
+// ── 플로팅 로그인 버튼 ──────────────────────────
 window.openFabModal = function() {
   document.getElementById('fab-modal').classList.add('open');
   if (isAdmin) {
     document.getElementById('fab-lock-wrap').style.display = 'none';
-    document.getElementById('fab-checkin-wrap').style.display = 'block';
-    loadFabSessions();
+    document.getElementById('fab-done-wrap').style.display = 'block';
   } else {
     document.getElementById('fab-lock-wrap').style.display = 'block';
-    document.getElementById('fab-checkin-wrap').style.display = 'none';
+    document.getElementById('fab-done-wrap').style.display = 'none';
     document.getElementById('fab-pw').value = '';
+    setTimeout(() => document.getElementById('fab-pw').focus(), 100);
   }
 };
 
@@ -535,57 +534,14 @@ window.fabLogin = function() {
   if (document.getElementById('fab-pw').value === ADMIN_PW) {
     isAdmin = true;
     document.getElementById('fab-lock-wrap').style.display = 'none';
-    document.getElementById('fab-checkin-wrap').style.display = 'block';
-    loadFabSessions();
+    document.getElementById('fab-done-wrap').style.display = 'block';
+    // FAB 아이콘 잠금해제로 변경
+    document.getElementById('fab-checkin').textContent = '🔓';
+    renderSessionsTab();
   } else {
     toast('비밀번호가 틀렸어요');
     document.getElementById('fab-pw').value = '';
   }
-};
-
-async function loadFabSessions() {
-  const sessions = await getAllSessions();
-  const today = new Date().toISOString().split('T')[0];
-  const upcoming = sessions.filter(s => s.date >= today).sort((a,b) => a.date.localeCompare(b.date));
-  const sel = document.getElementById('fab-sess-sel');
-  sel.innerHTML = '<option value="">-- 모임 선택 --</option>' +
-    upcoming.map(s => `<option value="${s.id}">${s.date} · ${s.name}</option>`).join('');
-  document.getElementById('fab-member-list').innerHTML = '';
-}
-
-window.loadFabMembers = async function() {
-  const sessId = document.getElementById('fab-sess-sel').value;
-  if (!sessId) { document.getElementById('fab-member-list').innerHTML = ''; return; }
-  const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', sessId))]);
-  const sess = sessSnap.data();
-  const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => a.name.localeCompare(b.name,'ko'));
-  document.getElementById('fab-member-list').innerHTML = nonMates.map(m => {
-    const already = alreadyIds.has(m.id);
-    const g = grade(m);
-    return `<div class="ci-mi ${already?'already':''}" onclick="toggleFabMember(this,'${m.id}')">
-      <input type="checkbox" id="fb-${m.id}" ${already?'checked disabled':''}/>
-      <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${already?'✓ 출석완료':m.count+'회'}</div></div>
-    </div>`;
-  }).join('');
-};
-
-window.toggleFabMember = function(el, id) {
-  if (el.classList.contains('already')) return;
-  const cb = document.getElementById('fb-' + id);
-  cb.checked = !cb.checked;
-};
-
-window.doFabCheckin = async function() {
-  const sessId = document.getElementById('fab-sess-sel').value;
-  if (!sessId) { toast('모임을 선택해주세요'); return; }
-  const checked = [...document.querySelectorAll('#fab-member-list .ci-mi:not(.already) input:checked')].map(cb => cb.id.replace('fb-',''));
-  if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
-  await processCheckin(sessId, checked);
-  toast(`${checked.length}명 출석 처리됐어요 🎉`);
-  closeFabModal();
-  renderSessionsTab();
 };
 
 // ── 출석부 ───────────────────────────────────────
