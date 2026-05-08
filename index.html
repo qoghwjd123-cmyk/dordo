@@ -240,9 +240,9 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <div id="page-checkin" class="page">
   <!-- 필터 -->
   <div class="filter-tabs">
-    <button class="ftab active" onclick="setCiFilter('all',this)">전체</button>
+    <button class="ftab" onclick="setCiFilter('all',this)">전체</button>
     <button class="ftab" onclick="setCiFilter('year',this)">올해</button>
-    <button class="ftab" onclick="setCiFilter('month',this)">이번달</button>
+    <button class="ftab active" onclick="setCiFilter('month',this)">이번달</button>
   </div>
   <div id="ci-stats" class="sr" style="margin-bottom:.875rem">
     <div class="sb2"><div class="sn" id="ci-total-sess">-</div><div class="sl">총 모임</div></div>
@@ -417,23 +417,99 @@ async function renderSessionsTab() {
       const m = members.find(m => m.id === a.memberId);
       return m ? `<span class="att-chip">${grade(m).e} ${m.name}</span>` : '';
     }).join('');
-    return `<div class="sess-card">
-      <div class="sess-card-hd" onclick="toggleSessCard(this)">
+    return `<div class="sess-card" id="sc-${s.id}">
+      <div class="sess-card-hd" onclick="toggleSessCard(this,'${s.id}','${isPast}')">
         <div>
           <div style="font-weight:500;font-size:15px">${s.name}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px">${s.date} · ${att.length}명 출석</div>
         </div>
         <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
       </div>
-      <div class="sess-card-bd">
-        ${att.length ? `<div style="padding-bottom:.5rem">${chips}</div>` : '<div style="font-size:13px;color:var(--text3);padding-bottom:.5rem">출석 멤버 없음</div>'}
+      <div class="sess-card-bd" id="sb-${s.id}">
+        ${att.length ? `<div style="padding-bottom:.75rem">${chips}</div>` : ''}
+        ${!isPast ? `
+        <div style="margin-top:.25rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+            <span style="font-size:13px;color:var(--text3)" id="sc-count-${s.id}">0명 선택</span>
+            <button onclick="selectAllSess('${s.id}')" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
+          </div>
+          <div id="sc-mlist-${s.id}"></div>
+          <button class="btn bp" style="margin-top:.75rem" onclick="doCheckinFromSess('${s.id}')">출석 체크인 ✓</button>
+        </div>` : `<div style="font-size:13px;color:var(--text3);padding-bottom:.5rem">${att.length ? '' : '출석 멤버 없음'}</div>`}
       </div>
     </div>`;
   }).join('');
 }
 
-window.toggleSessCard = function(hd) {
-  hd.nextElementSibling.classList.toggle('open');
+window.toggleSessCard = async function(hd, sessId, isPast) {
+  const body = document.getElementById('sb-' + sessId);
+  const isOpening = !body.classList.contains('open');
+  body.classList.toggle('open');
+  if (isOpening && isPast === 'false') {
+    await loadSessMemberList(sessId);
+  }
+};
+
+async function loadSessMemberList(sessId) {
+  const mlistEl = document.getElementById('sc-mlist-' + sessId);
+  if (!mlistEl) return;
+  const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', sessId))]);
+  const sess = sessSnap.data();
+  const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  mlistEl.innerHTML = nonMates.map(m => {
+    const already = alreadyIds.has(m.id);
+    const g = grade(m);
+    return `<div class="ci-mi ${already?'already':''}" onclick="toggleSessMember(this,'${sessId}','${m.id}')">
+      <input type="checkbox" id="scb-${sessId}-${m.id}" ${already?'checked disabled':''} onchange="updateSessCount('${sessId}')"/>
+      <div class="av">${g.e}</div>
+      <div style="flex:1;min-width:0">
+        <div class="mn">${m.name}</div>
+        <div class="mm">${already?'✓ 출석완료':m.count+'회 참석'}</div>
+      </div>
+    </div>`;
+  }).join('');
+  updateSessCount(sessId);
+}
+
+window.toggleSessMember = function(el, sessId, mid) {
+  if (el.classList.contains('already')) return;
+  const cb = el.querySelector('input[type=checkbox]');
+  cb.checked = !cb.checked;
+  updateSessCount(sessId);
+};
+
+window.selectAllSess = function(sessId) {
+  document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]`).forEach(cb => { cb.checked = true; });
+  updateSessCount(sessId);
+};
+
+function updateSessCount(sessId) {
+  const checked = document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`).length;
+  const el = document.getElementById('sc-count-' + sessId);
+  if (el) el.textContent = checked + '명 선택';
+}
+
+window.doCheckinFromSess = async function(sessId) {
+  const checked = [...document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`)].map(cb => cb.id.replace(`scb-${sessId}-`,''));
+  if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
+  const sessRef = doc(db, 'sessions', sessId);
+  const sessSnap = await getDoc(sessRef);
+  const sess = sessSnap.data();
+  const existingIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const newAtt = [...(sess.attendees||[])];
+  for (const mid of checked) {
+    if (existingIds.has(mid)) continue;
+    newAtt.push({ memberId: mid, time });
+    const mRef = doc(db, 'members', mid);
+    const mSnap = await getDoc(mRef);
+    if (mSnap.exists()) await updateDoc(mRef, { count: (mSnap.data().count||0) + 1 });
+  }
+  await updateDoc(sessRef, { attendees: newAtt });
+  toast(`${checked.length}명 출석 처리됐어요 🎉`);
+  renderSessionsTab();
 };
 
 window.createSessionFromTab = async function() {
@@ -449,7 +525,7 @@ window.createSessionFromTab = async function() {
 };
 
 // ── 출석 탭 ─────────────────────────────────────
-let ciFilter = 'all';
+let ciFilter = 'month';
 let selectedSessId = null;
 let checkedMembers = new Set();
 
