@@ -125,11 +125,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <div class="logo-text">DO<span>R</span>DO</div>
 </header>
 <nav class="nav">
-  <button class="nb active" onclick="showPage('rules',this)">📌 두알두</button>
-  <button class="nb" onclick="showPage('members',this)">👥 멤버</button>
-  <button class="nb" onclick="showPage('sessions',this)">📅 모임</button>
-  <button class="nb" onclick="showPage('checkin',this)">✅ 출석</button>
-  <button class="nb" onclick="showPage('admin',this)">🔥 운영진</button>
+  <button class="nb active" data-page="rules">📌 두알두</button>
+  <button class="nb" data-page="members">👥 멤버</button>
+  <button class="nb" data-page="sessions">📅 모임</button>
+  <button class="nb" data-page="checkin">✅ 출석</button>
+  <button class="nb" data-page="admin">🔥 운영진</button>
 </nav>
 <div id="toast-el" class="toast-el"></div>
 
@@ -163,7 +163,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 버튼 (모임탭 전용) -->
-<button class="fab" id="fab-checkin" onclick="openFabModal()" title="운영진 로그인">🔐</button>
+<button class="fab" id="fab-checkin" title="운영진 로그인">🔐</button>
 
 <!-- 플로팅 로그인 모달 -->
 <div class="mb-bg" id="fab-modal">
@@ -259,11 +259,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <div id="page-checkin" class="page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
     <div class="filter-tabs" style="margin-bottom:0">
-      <button class="ftab" onclick="setCiFilter('all',this)">전체</button>
-      <button class="ftab" onclick="setCiFilter('year',this)">올해</button>
-      <button class="ftab active" onclick="setCiFilter('month',this)">이번달</button>
+      <button class="ftab">전체</button>
+      <button class="ftab">올해</button>
+      <button class="ftab active">이번달</button>
     </div>
-    <button id="sort-toggle" onclick="toggleAttSort()" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500">가입일순</button>
+    <button id="sort-toggle" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500">가입일순</button>
   </div>
   <div class="sb2" style="margin-bottom:.875rem;padding:.75rem">
     <span style="font-size:13px;color:var(--text3)">총 모임 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span>
@@ -917,9 +917,24 @@ window.toast = function(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 };
 
+// ── 네비게이션 이벤트 리스너 ─────────────────────
+document.querySelectorAll('.nb[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => showPage(btn.dataset.page, btn));
+});
+
+// ── 필터탭 이벤트 리스너 ──────────────────────────
+document.querySelectorAll('.ftab').forEach(btn => {
+  const filters = ['all','year','month'];
+  const labels = ['전체','올해','이번달'];
+  const idx = labels.indexOf(btn.textContent.trim());
+  if (idx >= 0) btn.addEventListener('click', () => setCiFilter(filters[idx], btn));
+});
+
 initDefaultMembers();
 renderMPage();
 document.getElementById('fab-checkin').classList.remove('show');
+document.getElementById('fab-checkin').addEventListener('click', openFabModal);
+document.getElementById('sort-toggle').addEventListener('click', toggleAttSort);
 </script>
 </body>
 </html>
