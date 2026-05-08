@@ -398,7 +398,7 @@ async function renderSessionsTab() {
         <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
       </div>
       <div class="sess-card-bd" id="sb-${s.id}">
-        ${att.length ? `<div style="padding-bottom:.75rem;line-height:2">${chips}</div>` : ''}
+        ${att.length ? `<div class="chips-area" style="padding-bottom:.75rem;line-height:2">${chips}</div>` : '<div class="chips-area"></div>'}
         ${!isPast ? `
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
@@ -428,7 +428,7 @@ async function loadSessMemberList(sessId) {
   const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', sessId))]);
   const sess = sessSnap.data();
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  const nonMates = members.sort((a,b) => a.name.localeCompare(b.name,'ko'));
   mlistEl.innerHTML = nonMates.map(m => {
     const already = alreadyIds.has(m.id);
     const g = grade(m);
@@ -469,7 +469,21 @@ window.doCheckinFromSess = async function(sessId) {
   if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
   await processCheckin(sessId, checked);
   toast(`${checked.length}명 출석 처리됐어요 🎉`);
-  renderSessionsTab();
+  // 카드만 업데이트
+  const members = await getMembers();
+  const sessSnap = await getDoc(doc(db, 'sessions', sessId));
+  const sess = sessSnap.data();
+  const att = sess.attendees || [];
+  const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
+  if (hd) hd.textContent = `${sess.date} · ${att.length}명 출석`;
+  const chips = att.map(a => {
+    const m = members.find(m => m.id === a.memberId);
+    if (!m) return '';
+    return `<span class="att-chip can-undo" onclick="undoAttendance('${sessId}','${a.memberId}')" title="클릭하면 출석 취소">${grade(m).e} ${m.name} ✕</span>`;
+  }).join('');
+  const chipsDiv = document.querySelector(`#sb-${sessId} .chips-area`);
+  if (chipsDiv) chipsDiv.innerHTML = chips;
+  await loadSessMemberList(sessId);
 };
 
 // ── 출석 해제 ────────────────────────────────────
@@ -482,7 +496,6 @@ window.undoAttendance = async function(sessId, memberId) {
   const sess = sessSnap.data();
   const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
   await updateDoc(sessRef, { attendees: newAtt });
-  // 출석 횟수 -1
   const mRef = doc(db, 'members', memberId);
   const mSnap = await getDoc(mRef);
   if (mSnap.exists()) {
@@ -490,7 +503,30 @@ window.undoAttendance = async function(sessId, memberId) {
     if (cnt > 0) await updateDoc(mRef, { count: cnt - 1 });
   }
   toast('출석이 취소됐어요');
-  renderSessionsTab();
+  // 전체 재렌더 대신 해당 카드 헤더 + 칩만 업데이트
+  const members = await getMembers();
+  const updatedSessSnap = await getDoc(sessRef);
+  const updatedSess = updatedSessSnap.data();
+  const att = updatedSess.attendees || [];
+  // 헤더 출석 수 업데이트
+  const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
+  if (hd) hd.textContent = `${updatedSess.date} · ${att.length}명 출석`;
+  // 칩 영역 업데이트
+  const bd = document.getElementById(`sb-${sessId}`);
+  if (bd) {
+    const chipsDiv = bd.querySelector('.chips-area');
+    if (chipsDiv) {
+      chipsDiv.innerHTML = att.map(a => {
+        const m = members.find(m => m.id === a.memberId);
+        if (!m) return '';
+        return `<span class="att-chip can-undo" onclick="undoAttendance('${sessId}','${a.memberId}')" title="클릭하면 출석 취소">
+          ${grade(m).e} ${m.name} ✕
+        </span>`;
+      }).join('');
+    }
+    // 멤버 리스트도 새로고침
+    await loadSessMemberList(sessId);
+  }
 };
 
 // ── 공통 출석 처리 ───────────────────────────────
@@ -588,7 +624,10 @@ async function renderAttBoard() {
   if (ciFilter === 'year')  fs = fs.filter(s => s.date.startsWith(thisYear));
   if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(thisMonth));
   const total = fs.length;
-  const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => {
+  const nonMates = members.sort((a,b) => {
+    // 운영진 먼저, 그 다음 가입일순
+    if (a.role === 'mate' && b.role !== 'mate') return -1;
+    if (a.role !== 'mate' && b.role === 'mate') return 1;
     const ja = a.joined || JOIN_DATES[a.name] || '999999';
     const jb = b.joined || JOIN_DATES[b.name] || '999999';
     return ja.localeCompare(jb);
