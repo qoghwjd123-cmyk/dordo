@@ -17,11 +17,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;justify-content:center}
 .logo-text{font-family:'Arial Black','Arial',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;color:#F5A623}
 .logo-text span{color:#E8162B}
-.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-left:10px;letter-spacing:.1em}
 .nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 .5rem;position:sticky;top:0;z-index:100}
 .nb{flex:1;padding:.85rem .3rem;background:none;border:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
 .nb.active{color:var(--accent);border-bottom-color:var(--accent)}
-.page{display:none;padding:1.25rem 1rem 4rem;max-width:480px;margin:0 auto}
+.page{display:none;padding:1.25rem 1rem 5rem;max-width:480px;margin:0 auto}
 .page.active{display:block}
 .card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem}
 .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
@@ -43,7 +42,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .sb2{background:var(--surface2);border-radius:var(--rs);padding:.875rem .5rem;text-align:center}
 .sn{font-size:22px;font-weight:700;color:var(--accent)}
 .sl{font-size:11px;color:var(--text3);margin-top:2px}
-.toast-el{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast-el{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast-el.show{transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:14px}
 .sl2{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:.4rem}
@@ -57,12 +56,8 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .loading{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
 .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.5rem}
 @keyframes spin{to{transform:rotate(360deg)}}
-#admin-lock{text-align:center;padding:3rem 1.5rem}
-#admin-lock .lock-icon{font-size:48px;margin-bottom:1rem}
-#admin-lock .lock-title{font-size:18px;font-weight:700;margin-bottom:.5rem}
-#admin-lock .lock-sub{font-size:14px;color:var(--text3);margin-bottom:1.5rem}
 
-/* 두알두 회칙 */
+/* 회칙 */
 .rule-item{display:flex;gap:10px;padding:.75rem 0;border-bottom:1px solid var(--border)}
 .rule-item:last-child{border-bottom:none}
 .rule-icon{font-size:16px;flex-shrink:0;margin-top:1px}
@@ -79,28 +74,47 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .grade-name{font-size:11px;font-weight:700;color:var(--text)}
 .grade-req{font-size:10px;color:var(--text3);margin-top:2px}
 
+/* 출석체크 멤버 리스트 */
 .ci-mi{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border);cursor:pointer}
 .ci-mi:last-child{border-bottom:none}
 .ci-mi input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;cursor:pointer;margin:0}
-.ci-mi.already{opacity:.4;pointer-events:none}
+.ci-mi.already{background:var(--accent-l);border-radius:8px;padding-left:8px;pointer-events:none}
+
+/* 출석해제 버튼 */
+.undo-btn{background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;padding:2px 6px;border-radius:4px;font-family:inherit;pointer-events:all}
+.undo-btn:hover{background:var(--surface2);color:#991b1b}
 
 /* 출석현황 바 */
-.att-bar-wrap{margin:3px 0 0}
 .att-bar-bg{background:var(--surface2);border-radius:4px;height:4px;width:100%;overflow:hidden}
-.att-bar-fill{background:var(--accent);height:4px;border-radius:4px;transition:width .3s}
-.att-pct{font-size:11px;color:var(--text3);margin-left:4px}
+.att-bar-fill{background:var(--accent);height:4px;border-radius:4px}
 
-/* 모임탭 */
+/* 모임 카드 */
 .sess-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);margin-bottom:.75rem;overflow:hidden}
 .sess-card-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer}
 .sess-card-bd{padding:0 1.25rem 1rem;display:none}
 .sess-card-bd.open{display:block}
 .att-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--surface2);border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:var(--text2)}
+.att-chip.can-undo{cursor:pointer}
+.att-chip.can-undo:hover{background:#fee2e2;color:#991b1b}
 
-/* 필터 탭 */
+/* 필터탭 */
 .filter-tabs{display:flex;gap:6px;margin-bottom:1rem}
 .ftab{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
 .ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* 플로팅 버튼 */
+.fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:90;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none}
+.fab.show{display:flex;align-items:center;justify-content:center}
+
+/* 어드민 잠금 */
+#admin-lock{text-align:center;padding:3rem 1.5rem}
+#admin-lock .lock-icon{font-size:48px;margin-bottom:1rem}
+#admin-lock .lock-title{font-size:18px;font-weight:700;margin-bottom:.5rem}
+#admin-lock .lock-sub{font-size:14px;color:var(--text3);margin-bottom:1.5rem}
+
+/* 로그인 상태 배지 */
+.admin-badge{display:none;background:var(--accent-l);color:var(--accent);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:1rem;text-align:center}
+.admin-badge.show{display:block}
 </style>
 </head>
 <body>
@@ -116,7 +130,31 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </nav>
 <div id="toast-el" class="toast-el"></div>
 
-<!-- Edit Modal -->
+<!-- 플로팅 출석체크 버튼 (모임탭 전용) -->
+<button class="fab" id="fab-checkin" onclick="openFabModal()" title="출석 체크인">✅</button>
+
+<!-- 플로팅 출석체크 모달 -->
+<div class="mb-bg" id="fab-modal">
+  <div class="modal">
+    <div class="mt2">출석 체크인</div>
+    <div id="fab-lock-wrap">
+      <div class="sl2">운영진 비밀번호</div>
+      <input type="password" id="fab-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')fabLogin()"/>
+      <button class="btn bp" onclick="fabLogin()">확인</button>
+    </div>
+    <div id="fab-checkin-wrap" style="display:none">
+      <div class="sl2">모임 선택</div>
+      <select id="fab-sess-sel" onchange="loadFabMembers()" style="margin-bottom:.75rem"><option value="">-- 모임 선택 --</option></select>
+      <div id="fab-member-list"></div>
+      <div style="display:flex;gap:8px;margin-top:.75rem">
+        <button class="btn bp" style="flex:1;margin:0" onclick="doFabCheckin()">출석 체크인 ✓</button>
+        <button class="btn bs" style="flex:1;margin:0" onclick="closeFabModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 멤버 수정 모달 -->
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div class="mt2">멤버 수정</div>
@@ -131,71 +169,26 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <input type="text" id="edit-joined" placeholder="예: 230410"/>
     <div style="display:flex;gap:.5rem;margin-top:.5rem">
       <button class="btn bp" style="flex:1;margin:0;padding:.75rem" onclick="saveEdit()">저장</button>
-      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" onclick="closeModal()">취소</button>
+      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" onclick="closeModal('edit-modal')">취소</button>
     </div>
   </div>
 </div>
 
-<!-- RULES (두알두) -->
+<!-- 두알두 -->
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">별명은 <span class="rule-tag">[이름 / 동네]</span> 형식으로 설정해주세요</div>
-      </div>
-    </div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">신규 멤버 필수 인증 <span class="rule-badge warn">가입 후 2주 이내</span></div>
-        <div class="rule-sub">오프라인 모임 1회 참석 또는 목표인증 1회 중 택1 · 미이행 시 경고 처리</div>
-      </div>
-    </div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">오프라인 모임 중 사진·영상 촬영이 있을 수 있어요</div>
-        <div class="rule-sub">불편하시면 운영자에게 말씀해 주세요. 깜짝 영상으로 제작될 수 있어요 📸</div>
-      </div>
-    </div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">별명은 <span class="rule-tag">[이름 / 동네]</span> 형식으로 설정해주세요</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">신규 멤버 필수 인증 <span class="rule-badge warn">가입 후 2주 이내</span></div><div class="rule-sub">오프라인 모임 1회 참석 또는 목표인증 1회 중 택1 · 미이행 시 경고 처리</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">오프라인 모임 중 사진·영상 촬영이 있을 수 있어요</div><div class="rule-sub">불편하시면 운영자에게 말씀해 주세요. 깜짝 영상으로 제작될 수 있어요 📸</div></div></div>
   </div>
-
   <div class="card">
     <div class="ct">모임</div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">매주 목요일 정기 운동 모임 <span class="rule-badge info">20:30 ~ 21:00</span></div>
-        <div class="rule-sub">목요일 정기 시간대에는 벙개 일정 등록 불가</div>
-      </div>
-    </div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">참석이 어려울 땐 — 두알두 참석</div>
-        <div class="rule-sub">홈트, 야외걷기 등 어떤 운동이든 OK · 댓글에 <b>'두알두 참석'</b> 작성 후 자정 전 인증샷 업로드</div>
-      </div>
-    </div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">일정 확인 및 투표</div>
-        <div class="rule-sub">카카오톡 오른쪽 상단 '더보기' → 달력 버튼 · [참석 / 불참] 투표 필수</div>
-      </div>
-    </div>
-    <div class="rule-item">
-      <div class="rule-icon">📌</div>
-      <div class="rule-body">
-        <div class="rule-main">누구든 언제든 모임 등록 가능해요</div>
-        <div class="rule-sub">일정 목록 → 연필 아이콘 → 등록 · 참석여부 응답요청 체크 필수</div>
-        <div class="rule-sub" style="margin-top:4px">제목 형식: <span class="rule-tag">[기간, 목표]</span> <span class="rule-tag">[장소, 거리, 속도]</span></div>
-        <div class="rule-sub" style="color:var(--text3)">ex) 미사호수공원, 3k, 6분pace · 주말 동안, 책 두 권 읽기</div>
-      </div>
-    </div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">매주 목요일 정기 운동 모임 <span class="rule-badge info">20:30 ~ 21:00</span></div><div class="rule-sub">목요일 정기 시간대에는 벙개 일정 등록 불가</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">참석이 어려울 땐 — 두알두 참석</div><div class="rule-sub">홈트, 야외걷기 등 어떤 운동이든 OK · 댓글에 <b>'두알두 참석'</b> 작성 후 자정 전 인증샷 업로드</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">일정 확인 및 투표</div><div class="rule-sub">카카오톡 오른쪽 상단 '더보기' → 달력 버튼 · [참석 / 불참] 투표 필수</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">누구든 언제든 모임 등록 가능해요</div><div class="rule-sub">일정 목록 → 연필 아이콘 → 등록 · 참석여부 응답요청 체크 필수</div><div class="rule-sub" style="margin-top:4px">제목 형식: <span class="rule-tag">[기간, 목표]</span> <span class="rule-tag">[장소, 거리, 속도]</span></div><div class="rule-sub" style="color:var(--text3)">ex) 미사호수공원, 3k, 6분pace · 주말 동안, 책 두 권 읽기</div></div></div>
   </div>
-
   <div class="card">
     <div class="ct">멤버 등급</div>
     <div style="font-size:12px;color:var(--text3);margin-bottom:.875rem">참석 횟수는 운영진이 주최한 모임만 카운트돼요</div>
@@ -209,22 +202,18 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 </div>
 
-<!-- MEMBERS -->
+<!-- 멤버 -->
 <div id="page-members" class="page">
   <div class="sr">
     <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
     <div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">5회 이상</div></div>
     <div class="sb2"><div class="sn" id="m-sess">-</div><div class="sl">총 모임</div></div>
   </div>
-  <div class="card">
-    <div class="ct">멤버 목록</div>
-    <div id="mlist"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
-  </div>
+  <div class="card"><div class="ct">멤버 목록</div><div id="mlist"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
 </div>
 
-<!-- SESSIONS -->
+<!-- 모임 -->
 <div id="page-sessions" class="page">
-  <!-- 모임 생성 카드 -->
   <div class="card">
     <div class="ct">새 모임 등록</div>
     <div class="sl2">모임 이름</div>
@@ -236,25 +225,22 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <div id="sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
 </div>
 
-<!-- CHECK-IN (출석부) -->
+<!-- 출석 -->
 <div id="page-checkin" class="page">
   <div class="filter-tabs">
     <button class="ftab" onclick="setCiFilter('all',this)">전체</button>
     <button class="ftab" onclick="setCiFilter('year',this)">올해</button>
     <button class="ftab active" onclick="setCiFilter('month',this)">이번달</button>
   </div>
-  <div id="ci-stats" class="sr" style="margin-bottom:.875rem">
+  <div class="sr">
     <div class="sb2"><div class="sn" id="ci-total-sess">-</div><div class="sl">총 모임</div></div>
     <div class="sb2"><div class="sn" id="ci-avg-att">-</div><div class="sl">평균 출석</div></div>
     <div class="sb2"><div class="sn" id="ci-top-att">-</div><div class="sl">최다 출석</div></div>
   </div>
-  <div class="card">
-    <div class="ct">출석부</div>
-    <div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
-  </div>
+  <div class="card"><div class="ct">출석부</div><div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
 </div>
 
-<!-- ADMIN -->
+<!-- 운영진 -->
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -264,6 +250,13 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <button class="btn bp" style="max-width:280px;margin:0 auto" onclick="checkPw()">입장</button>
   </div>
   <div id="admin-content" style="display:none">
+    <div class="admin-badge show" id="admin-badge">🔥 운영진 모드</div>
+    <!-- 모임 관리 -->
+    <div class="card">
+      <div class="ct">모임 관리</div>
+      <div id="admin-sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
+    </div>
+    <!-- 멤버 추가 -->
     <div class="card">
       <div class="ct">멤버 추가</div>
       <div style="display:flex;gap:8px;margin-bottom:.65rem">
@@ -273,6 +266,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <input type="text" id="nm-joined" placeholder="가입일 YYMMDD (선택)"/>
       <button class="btn bp" onclick="addMember()">멤버 추가</button>
     </div>
+    <!-- 멤버 관리 -->
     <div class="card">
       <div class="ct">멤버 관리</div>
       <div id="admin-mlist"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
@@ -283,7 +277,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+  getFirestore, doc, getDoc, updateDoc, deleteDoc,
   collection, getDocs, addDoc, query, orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -297,9 +291,9 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const ADMIN_PW = "dordo2023";
 let isAdmin = false;
+let ciFilter = 'month';
 
 const JOIN_DATES = {
   '김병희/덕풍':'230410','성준/미사':'230715','장지연/미사':'230916',
@@ -328,18 +322,6 @@ const grade = m => {
   return {e:'🥚', n:'미참석'};
 };
 
-// ── 페이지 전환 ─────────────────────────────────
-window.showPage = function(n, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + n).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (n === 'members') renderMPage();
-  if (n === 'sessions') renderSessionsTab();
-  if (n === 'checkin') renderCheckinTab();
-};
-
-// ── Firestore helpers ───────────────────────────
 async function getMembers() {
   const snap = await getDocs(collection(db, 'members'));
   return snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -349,41 +331,35 @@ async function getAllSessions() {
   return snap.docs.map(d => ({id: d.id, ...d.data()}));
 }
 
-// ── 멤버 페이지 ──────────────────────────────────
-async function renderMPage() {
-  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const mateOrder = ['호정/리더','주동준/운동메이트','황윤정/소통메이트'];
-  const mates = members.filter(m => m.role === 'mate').sort((a,b) =>
-    mateOrder.indexOf(a.name) - mateOrder.indexOf(b.name)
-  );
-  // 일반 멤버: 가입일 오름차순 (오래된 순), 없으면 맨 뒤
-  const mems = members.filter(m => m.role !== 'mate').sort((a,b) => {
-    const ja = a.joined || JOIN_DATES[a.name] || '999999';
-    const jb = b.joined || JOIN_DATES[b.name] || '999999';
-    return ja.localeCompare(jb);
-  });
+// ── 페이지 전환 ─────────────────────────────────
+window.showPage = function(n, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + n).classList.add('active');
+  if (btn) btn.classList.add('active');
+  // FAB: 모임탭에서만 표시
+  document.getElementById('fab-checkin').classList.toggle('show', n === 'sessions');
+  if (n === 'members') renderMPage();
+  if (n === 'sessions') renderSessionsTab();
+  if (n === 'checkin') renderCheckinTab();
+  if (n === 'admin' && isAdmin) renderAdminContent();
+};
 
-  document.getElementById('mlist').innerHTML = [...mates, ...mems].map(m => {
-    const g = grade(m);
-    const isMate = m.role === 'mate';
-    const joined = m.joined || JOIN_DATES[m.name] || '';
-    const rightLabel = isMate
-      ? (m.name.includes('리더') ? '리더' : m.name.includes('운동') ? '운동메이트' : '소통메이트')
-      : fmtJoined(joined);
-    const gpClass = isMate ? 'mate' : (m.count >= 1 ? 'green' : '');
-    return `<div class="mi">
-      <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0">
-        <div class="mn">${m.name}</div>
-        <div class="mm">${isMate ? '운영진' : m.count + '회 참석'}</div>
-      </div>
-      <span class="gp ${gpClass}">${rightLabel || g.n}</span>
-    </div>`;
-  }).join('') || '<div class="empty">멤버가 없어요</div>';
+// ── 어드민 로그인 ────────────────────────────────
+window.checkPw = function() {
+  if (document.getElementById('admin-pw').value === ADMIN_PW) {
+    isAdmin = true;
+    document.getElementById('admin-lock').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    renderAdminContent();
+  } else {
+    toast('비밀번호가 틀렸어요');
+    document.getElementById('admin-pw').value = '';
+  }
+};
 
-  document.getElementById('m-total').textContent = members.length;
-  document.getElementById('m-act').textContent = members.filter(m => m.count >= 5).length;
-  document.getElementById('m-sess').textContent = sessions.length;
+async function renderAdminContent() {
+  await Promise.all([renderAdminSessList(), renderAMList()]);
 }
 
 // ── 모임 탭 ─────────────────────────────────────
@@ -398,10 +374,13 @@ async function renderSessionsTab() {
     const att = s.attendees || [];
     const chips = att.map(a => {
       const m = members.find(m => m.id === a.memberId);
-      return m ? `<span class="att-chip">${grade(m).e} ${m.name}</span>` : '';
+      if (!m) return '';
+      return `<span class="att-chip ${isAdmin?'can-undo':''}" onclick="${isAdmin?`undoAttendance('${s.id}','${a.memberId}')`:''}" title="${isAdmin?'클릭하면 출석 취소':''}">
+        ${grade(m).e} ${m.name}${isAdmin?' ✕':''}
+      </span>`;
     }).join('');
     return `<div class="sess-card" id="sc-${s.id}">
-      <div class="sess-card-hd" onclick="toggleSessCard(this,'${s.id}','${isPast}')">
+      <div class="sess-card-hd" onclick="toggleSessCard('${s.id}','${isPast}')">
         <div>
           <div style="font-weight:500;font-size:15px">${s.name}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px">${s.date} · ${att.length}명 출석</div>
@@ -409,23 +388,22 @@ async function renderSessionsTab() {
         <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
       </div>
       <div class="sess-card-bd" id="sb-${s.id}">
-        ${att.length ? `<div style="padding-bottom:.75rem">${chips}</div>` : ''}
+        ${att.length ? `<div style="padding-bottom:.75rem;line-height:2">${chips}</div>` : ''}
         ${!isPast ? `
-        <div style="margin-top:.25rem">
+        <div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
             <span style="font-size:13px;color:var(--text3)" id="sc-count-${s.id}">0명 선택</span>
             <button onclick="selectAllSess('${s.id}')" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
           </div>
           <div id="sc-mlist-${s.id}"></div>
           <button class="btn bp" style="margin-top:.75rem" onclick="doCheckinFromSess('${s.id}')">출석 체크인 ✓</button>
-          <div id="sc-lock-${s.id}" style="display:none;text-align:center;font-size:13px;color:#e65100;background:#fff3e0;border-radius:var(--rs);padding:.75rem;margin-top:.5rem">🔒 운영진 탭에서 로그인 후 이용 가능해요</div>
-        </div>` : `<div style="font-size:13px;color:var(--text3);padding-bottom:.5rem">${att.length ? '' : '출석 멤버 없음'}</div>`}
+        </div>` : `${!att.length ? '<div style="font-size:13px;color:var(--text3)">출석 멤버 없음</div>' : ''}`}
       </div>
     </div>`;
   }).join('');
 }
 
-window.toggleSessCard = async function(hd, sessId, isPast) {
+window.toggleSessCard = async function(sessId, isPast) {
   const body = document.getElementById('sb-' + sessId);
   const isOpening = !body.classList.contains('open');
   body.classList.toggle('open');
@@ -458,7 +436,7 @@ async function loadSessMemberList(sessId) {
 
 window.toggleSessMember = function(el, sessId, mid) {
   if (el.classList.contains('already')) return;
-  const cb = el.querySelector('input[type=checkbox]');
+  const cb = document.getElementById(`scb-${sessId}-${mid}`);
   cb.checked = !cb.checked;
   updateSessCount(sessId);
 };
@@ -469,20 +447,42 @@ window.selectAllSess = function(sessId) {
 };
 
 function updateSessCount(sessId) {
-  const checked = document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`).length;
+  const cnt = document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`).length;
   const el = document.getElementById('sc-count-' + sessId);
-  if (el) el.textContent = checked + '명 선택';
+  if (el) el.textContent = cnt + '명 선택';
 }
 
 window.doCheckinFromSess = async function(sessId) {
-  if (!isAdmin) {
-    const lockEl = document.getElementById('sc-lock-' + sessId);
-    if (lockEl) { lockEl.style.display = 'block'; setTimeout(() => lockEl.style.display='none', 3000); }
-    toast('운영진 탭에서 먼저 로그인해주세요 🔒');
-    return;
-  }
+  if (!isAdmin) { toast('🔒 운영진 탭에서 먼저 로그인해주세요'); return; }
   const checked = [...document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`)].map(cb => cb.id.replace(`scb-${sessId}-`,''));
   if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
+  await processCheckin(sessId, checked);
+  toast(`${checked.length}명 출석 처리됐어요 🎉`);
+  renderSessionsTab();
+};
+
+// ── 출석 해제 ────────────────────────────────────
+window.undoAttendance = async function(sessId, memberId) {
+  if (!isAdmin) { toast('🔒 운영진만 가능해요'); return; }
+  if (!confirm('출석을 취소할까요?')) return;
+  const sessRef = doc(db, 'sessions', sessId);
+  const sessSnap = await getDoc(sessRef);
+  const sess = sessSnap.data();
+  const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
+  await updateDoc(sessRef, { attendees: newAtt });
+  // 출석 횟수 -1
+  const mRef = doc(db, 'members', memberId);
+  const mSnap = await getDoc(mRef);
+  if (mSnap.exists()) {
+    const cnt = mSnap.data().count || 0;
+    if (cnt > 0) await updateDoc(mRef, { count: cnt - 1 });
+  }
+  toast('출석이 취소됐어요');
+  renderSessionsTab();
+};
+
+// ── 공통 출석 처리 ───────────────────────────────
+async function processCheckin(sessId, memberIds) {
   const sessRef = doc(db, 'sessions', sessId);
   const sessSnap = await getDoc(sessRef);
   const sess = sessSnap.data();
@@ -490,7 +490,7 @@ window.doCheckinFromSess = async function(sessId) {
   const now = new Date();
   const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
   const newAtt = [...(sess.attendees||[])];
-  for (const mid of checked) {
+  for (const mid of memberIds) {
     if (existingIds.has(mid)) continue;
     newAtt.push({ memberId: mid, time });
     const mRef = doc(db, 'members', mid);
@@ -498,10 +498,9 @@ window.doCheckinFromSess = async function(sessId) {
     if (mSnap.exists()) await updateDoc(mRef, { count: (mSnap.data().count||0) + 1 });
   }
   await updateDoc(sessRef, { attendees: newAtt });
-  toast(`${checked.length}명 출석 처리됐어요 🎉`);
-  renderSessionsTab();
-};
+}
 
+// ── 모임 등록 ────────────────────────────────────
 window.createSessionFromTab = async function() {
   const name = document.getElementById('pub-sess-name').value.trim();
   const date = document.getElementById('pub-sess-date').value;
@@ -511,14 +510,85 @@ window.createSessionFromTab = async function() {
   document.getElementById('pub-sess-name').value = '';
   toast('모임이 등록됐어요! 🎉');
   renderSessionsTab();
-  rebuildCiSessSelect();
+  if (isAdmin) renderAdminSessList();
 };
 
-// ── 출석 탭 ─────────────────────────────────────
-let ciFilter = 'month';
-let selectedSessId = null;
-let checkedMembers = new Set();
+// ── 플로팅 출석 버튼 ─────────────────────────────
+window.openFabModal = function() {
+  document.getElementById('fab-modal').classList.add('open');
+  if (isAdmin) {
+    document.getElementById('fab-lock-wrap').style.display = 'none';
+    document.getElementById('fab-checkin-wrap').style.display = 'block';
+    loadFabSessions();
+  } else {
+    document.getElementById('fab-lock-wrap').style.display = 'block';
+    document.getElementById('fab-checkin-wrap').style.display = 'none';
+    document.getElementById('fab-pw').value = '';
+  }
+};
 
+window.closeFabModal = function() {
+  document.getElementById('fab-modal').classList.remove('open');
+};
+
+window.fabLogin = function() {
+  if (document.getElementById('fab-pw').value === ADMIN_PW) {
+    isAdmin = true;
+    document.getElementById('fab-lock-wrap').style.display = 'none';
+    document.getElementById('fab-checkin-wrap').style.display = 'block';
+    loadFabSessions();
+  } else {
+    toast('비밀번호가 틀렸어요');
+    document.getElementById('fab-pw').value = '';
+  }
+};
+
+async function loadFabSessions() {
+  const sessions = await getAllSessions();
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = sessions.filter(s => s.date >= today).sort((a,b) => a.date.localeCompare(b.date));
+  const sel = document.getElementById('fab-sess-sel');
+  sel.innerHTML = '<option value="">-- 모임 선택 --</option>' +
+    upcoming.map(s => `<option value="${s.id}">${s.date} · ${s.name}</option>`).join('');
+  document.getElementById('fab-member-list').innerHTML = '';
+}
+
+window.loadFabMembers = async function() {
+  const sessId = document.getElementById('fab-sess-sel').value;
+  if (!sessId) { document.getElementById('fab-member-list').innerHTML = ''; return; }
+  const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', sessId))]);
+  const sess = sessSnap.data();
+  const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  document.getElementById('fab-member-list').innerHTML = nonMates.map(m => {
+    const already = alreadyIds.has(m.id);
+    const g = grade(m);
+    return `<div class="ci-mi ${already?'already':''}" onclick="toggleFabMember(this,'${m.id}')">
+      <input type="checkbox" id="fb-${m.id}" ${already?'checked disabled':''}/>
+      <div class="av">${g.e}</div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${already?'✓ 출석완료':m.count+'회'}</div></div>
+    </div>`;
+  }).join('');
+};
+
+window.toggleFabMember = function(el, id) {
+  if (el.classList.contains('already')) return;
+  const cb = document.getElementById('fb-' + id);
+  cb.checked = !cb.checked;
+};
+
+window.doFabCheckin = async function() {
+  const sessId = document.getElementById('fab-sess-sel').value;
+  if (!sessId) { toast('모임을 선택해주세요'); return; }
+  const checked = [...document.querySelectorAll('#fab-member-list .ci-mi:not(.already) input:checked')].map(cb => cb.id.replace('fb-',''));
+  if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
+  await processCheckin(sessId, checked);
+  toast(`${checked.length}명 출석 처리됐어요 🎉`);
+  closeFabModal();
+  renderSessionsTab();
+};
+
+// ── 출석부 ───────────────────────────────────────
 window.setCiFilter = function(f, btn) {
   ciFilter = f;
   document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
@@ -526,145 +596,42 @@ window.setCiFilter = function(f, btn) {
   renderAttBoard();
 };
 
-async function renderCheckinTab() {
-  await rebuildCiSessSelect();
-  await renderAttBoard();
-}
+async function renderCheckinTab() { await renderAttBoard(); }
 
-async function rebuildCiSessSelect() {
-  const sessions = await getAllSessions();
-  const today = new Date().toISOString().split('T')[0];
-  const upcoming = sessions.filter(s => s.date >= today).sort((a,b) => a.date.localeCompare(b.date));
-  const sel = document.getElementById('ci-sess-select');
-  sel.innerHTML = '<option value="">-- 모임을 선택하세요 --</option>' +
-    upcoming.map(s => `<option value="${s.id}">${s.date} · ${s.name}</option>`).join('');
-  document.getElementById('ci-member-card').style.display = 'none';
-}
-
-window.onSessSelect = async function() {
-  selectedSessId = document.getElementById('ci-sess-select').value;
-  checkedMembers = new Set();
-  if (!selectedSessId) { document.getElementById('ci-member-card').style.display = 'none'; return; }
-  document.getElementById('ci-member-card').style.display = 'block';
-
-  const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', selectedSessId))]);
-  const sess = sessSnap.data();
-  const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => a.name.localeCompare(b.name,'ko'));
-
-  document.getElementById('ci-member-list').innerHTML = nonMates.map(m => {
-    const already = alreadyIds.has(m.id);
-    const g = grade(m);
-    return `<div class="ci-mi ${already?'already':''}" onclick="toggleCiMember(this,'${m.id}')">
-      <input type="checkbox" id="cb-${m.id}" ${already?'checked disabled':''} onchange="updateCiCount()"/>
-      <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0">
-        <div class="mn">${m.name}</div>
-        <div class="mm">${already?'✓ 출석완료':m.count+'회 참석'}</div>
-      </div>
-    </div>`;
-  }).join('');
-  updateCiCount();
-};
-
-window.toggleCiMember = function(el, id) {
-  if (el.classList.contains('already')) return;
-  const cb = el.querySelector('input[type=checkbox]');
-  cb.checked = !cb.checked;
-  updateCiCount();
-};
-
-window.selectAllCi = function() {
-  document.querySelectorAll('.ci-mi:not(.already) input[type=checkbox]').forEach(cb => { cb.checked = true; });
-  updateCiCount();
-};
-
-function updateCiCount() {
-  checkedMembers = new Set();
-  document.querySelectorAll('.ci-mi:not(.already) input[type=checkbox]:checked').forEach(cb => {
-    checkedMembers.add(cb.id.replace('cb-',''));
-  });
-  document.getElementById('ci-check-count').textContent = checkedMembers.size + '명 선택';
-}
-
-window.doCheckin = async function() {
-  if (!isAdmin) { toast('운영진만 출석 체크인이 가능해요 🔒'); return; }
-  if (!selectedSessId) { toast('모임을 선택해주세요'); return; }
-  if (!checkedMembers.size) { toast('출석할 멤버를 선택해주세요'); return; }
-  const sessRef = doc(db, 'sessions', selectedSessId);
-  const sessSnap = await getDoc(sessRef);
-  const sess = sessSnap.data();
-  const existingIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const now = new Date();
-  const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  const newAtt = [...(sess.attendees||[])];
-  for (const mid of checkedMembers) {
-    if (existingIds.has(mid)) continue;
-    newAtt.push({ memberId: mid, time });
-    const mRef = doc(db, 'members', mid);
-    const mSnap = await getDoc(mRef);
-    if (mSnap.exists()) await updateDoc(mRef, { count: (mSnap.data().count||0) + 1 });
-  }
-  await updateDoc(sessRef, { attendees: newAtt });
-  toast(`${checkedMembers.size}명 출석 처리됐어요 🎉`);
-  document.getElementById('ci-sess-select').value = '';
-  document.getElementById('ci-member-card').style.display = 'none';
-  selectedSessId = null;
-  checkedMembers = new Set();
-  renderAttBoard();
-};
-
-// ── 출석부 ───────────────────────────────────────
 async function renderAttBoard() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const today = new Date().toISOString().split('T')[0];
   const thisYear = today.slice(0,4);
   const thisMonth = today.slice(0,7);
-
-  let filteredSess = sessions.filter(s => s.date <= today); // 지난 모임만
-  if (ciFilter === 'year')  filteredSess = filteredSess.filter(s => s.date.startsWith(thisYear));
-  if (ciFilter === 'month') filteredSess = filteredSess.filter(s => s.date.startsWith(thisMonth));
-
-  const totalSess = filteredSess.length;
+  let fs = sessions.filter(s => s.date <= today);
+  if (ciFilter === 'year')  fs = fs.filter(s => s.date.startsWith(thisYear));
+  if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(thisMonth));
+  const total = fs.length;
   const nonMates = members.filter(m => m.role !== 'mate').sort((a,b) => {
     const ja = a.joined || JOIN_DATES[a.name] || '999999';
     const jb = b.joined || JOIN_DATES[b.name] || '999999';
     return ja.localeCompare(jb);
   });
-
-  // 멤버별 출석 카운트 (필터 기간 내)
   const countMap = {};
-  for (const s of filteredSess) {
-    for (const a of (s.attendees||[])) {
-      countMap[a.memberId] = (countMap[a.memberId]||0) + 1;
-    }
-  }
-
+  for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0) + 1;
   const counts = nonMates.map(m => countMap[m.id]||0);
-  const avgAtt = totalSess > 0 && counts.length
-    ? Math.round(counts.reduce((a,b)=>a+b,0) / nonMates.length * 10) / 10 : 0;
-  const maxAtt = counts.length ? Math.max(...counts) : 0;
-
-  document.getElementById('ci-total-sess').textContent = totalSess;
-  document.getElementById('ci-avg-att').textContent = avgAtt;
-  document.getElementById('ci-top-att').textContent = maxAtt;
-
-  if (!totalSess) {
-    document.getElementById('ci-att-list').innerHTML = '<div class="empty">해당 기간 모임이 없어요</div>';
-    return;
-  }
-
+  const avg = total > 0 && counts.length ? Math.round(counts.reduce((a,b)=>a+b,0)/nonMates.length*10)/10 : 0;
+  const max = counts.length ? Math.max(...counts) : 0;
+  document.getElementById('ci-total-sess').textContent = total;
+  document.getElementById('ci-avg-att').textContent = avg;
+  document.getElementById('ci-top-att').textContent = max;
+  if (!total) { document.getElementById('ci-att-list').innerHTML = '<div class="empty">해당 기간 모임이 없어요</div>'; return; }
   document.getElementById('ci-att-list').innerHTML = nonMates.map(m => {
-    const cnt = countMap[m.id] || 0;
-    const pct = totalSess > 0 ? Math.round(cnt / totalSess * 100) : 0;
+    const cnt = countMap[m.id]||0;
+    const pct = total > 0 ? Math.round(cnt/total*100) : 0;
     const g = grade(m);
     return `<div class="mi">
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
-        <div class="att-bar-wrap" style="display:flex;align-items:center;gap:6px;margin-top:4px">
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
           <div class="att-bar-bg" style="flex:1"><div class="att-bar-fill" style="width:${pct}%"></div></div>
-          <span class="att-pct">${cnt}/${totalSess}</span>
+          <span style="font-size:11px;color:var(--text3)">${cnt}/${total}</span>
         </div>
       </div>
       <span class="gp ${cnt>0?'green':''}" style="margin-left:4px">${pct}%</span>
@@ -672,19 +639,59 @@ async function renderAttBoard() {
   }).join('');
 }
 
-// ── 어드민 ───────────────────────────────────────
-window.checkPw = function() {
-  if (document.getElementById('admin-pw').value === ADMIN_PW) {
-    isAdmin = true;
-    document.getElementById('admin-lock').style.display = 'none';
-    document.getElementById('admin-content').style.display = 'block';
-    renderAMList();
-  } else {
-    toast('비밀번호가 틀렸어요');
-    document.getElementById('admin-pw').value = '';
-  }
+// ── 멤버 페이지 ──────────────────────────────────
+async function renderMPage() {
+  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
+  const mateOrder = ['호정/리더','주동준/운동메이트','황윤정/소통메이트'];
+  const mates = members.filter(m => m.role === 'mate').sort((a,b) => mateOrder.indexOf(a.name) - mateOrder.indexOf(b.name));
+  const mems = members.filter(m => m.role !== 'mate').sort((a,b) => {
+    const ja = a.joined || JOIN_DATES[a.name] || '999999';
+    const jb = b.joined || JOIN_DATES[b.name] || '999999';
+    return ja.localeCompare(jb);
+  });
+  document.getElementById('mlist').innerHTML = [...mates,...mems].map(m => {
+    const g = grade(m);
+    const isMate = m.role === 'mate';
+    const joined = m.joined || JOIN_DATES[m.name] || '';
+    const rightLabel = isMate
+      ? (m.name.includes('리더')?'리더':m.name.includes('운동')?'운동메이트':'소통메이트')
+      : fmtJoined(joined);
+    return `<div class="mi">
+      <div class="av">${g.e}</div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${isMate?'운영진':m.count+'회 참석'}</div></div>
+      <span class="gp ${isMate?'mate':m.count>=1?'green':''}">${rightLabel||g.n}</span>
+    </div>`;
+  }).join('') || '<div class="empty">멤버가 없어요</div>';
+  document.getElementById('m-total').textContent = members.length;
+  document.getElementById('m-act').textContent = members.filter(m=>m.count>=5).length;
+  document.getElementById('m-sess').textContent = sessions.length;
+}
+
+// ── 어드민 모임 관리 ─────────────────────────────
+async function renderAdminSessList() {
+  const sessions = await getAllSessions();
+  const el = document.getElementById('admin-sess-list');
+  if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 모임이 없어요</div>'; return; }
+  const today = new Date().toISOString().split('T')[0];
+  el.innerHTML = sessions.map(s => `
+    <div class="mi">
+      <div style="flex:1;min-width:0">
+        <div class="mn">${s.name}</div>
+        <div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div>
+      </div>
+      <button onclick="deleteSession('${s.id}')" class="dbtn">삭제</button>
+    </div>`).join('');
+}
+
+window.deleteSession = async function(id) {
+  if (!confirm('이 모임을 삭제할까요?')) return;
+  await deleteDoc(doc(db, 'sessions', id));
+  renderAdminSessList();
+  renderSessionsTab();
+  toast('삭제됐어요');
 };
 
+// ── 어드민 멤버 관리 ─────────────────────────────
 async function renderAMList() {
   const members = await getMembers();
   const mates = members.filter(m => m.role === 'mate');
@@ -738,14 +745,13 @@ window.saveEdit = async function() {
   await updateDoc(doc(db, 'members', id), {
     name: document.getElementById('edit-name').value.trim(),
     role: document.getElementById('edit-role').value,
-    count: parseInt(document.getElementById('edit-count').value) || 0,
+    count: parseInt(document.getElementById('edit-count').value)||0,
     joined: document.getElementById('edit-joined').value.trim(),
   });
-  closeModal(); renderAMList(); renderMPage(); toast('수정됐어요!');
+  closeModal('edit-modal'); renderAMList(); renderMPage(); toast('수정됐어요!');
 };
 
-window.closeModal = function() { document.getElementById('edit-modal').classList.remove('open'); };
-
+window.closeModal = function(id) { document.getElementById(id||'edit-modal').classList.remove('open'); };
 window.delMember = async function(id) {
   const d = await getDoc(doc(db, 'members', id));
   if (!confirm((d.data()?.name||'') + ' 삭제할까요?')) return;
@@ -795,7 +801,6 @@ window.toast = function(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 };
 
-// Init
 initDefaultMembers();
 renderMPage();
 </script>
