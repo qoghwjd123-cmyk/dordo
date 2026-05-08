@@ -106,8 +106,8 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 /* 플로팅 버튼 */
-.fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:90;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none}
-.fab.show{display:flex;align-items:center;justify-content:center}
+.fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:90;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center}
+.fab.show{display:flex}
 
 /* 어드민 잠금 */
 #admin-lock{text-align:center;padding:3rem 1.5rem}
@@ -919,6 +919,7 @@ window.toast = function(msg) {
 
 initDefaultMembers();
 renderMPage();
+document.getElementById('fab-checkin').classList.remove('show');
 </script>
 </body>
 </html>
