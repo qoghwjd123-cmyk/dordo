@@ -26,7 +26,7 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .page.active{display:block}
 .card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem}
 .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
-input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem}
+input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem;-webkit-appearance:none;appearance:none;box-sizing:border-box}
 input:focus,select:focus{border-color:var(--accent);background:#fff}
 .btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:.4rem}
 .btn:active{transform:scale(.98)}
@@ -884,7 +884,18 @@ async function initDefaultMembers() {
 
 // 초기화
 initDefaultMembers();
-renderMPage();
+// URL 해시로 탭 유지
+(function() {
+  var validPages = ['rules','members','sessions','checkin','admin'];
+  var initPage = location.hash.replace('#','');
+  var startPage = validPages.indexOf(initPage) >= 0 ? initPage : 'rules';
+  var startBtn = document.querySelector('.nb[data-page="'+startPage+'"]');
+  showPage(startPage, startBtn);
+})();
+// 탭 클릭시 해시 업데이트
+document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
+  btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
+});
 </script>
 </body>
 </html>
