@@ -238,7 +238,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 
 <!-- CHECK-IN (출석부) -->
 <div id="page-checkin" class="page">
-  <!-- 필터 -->
   <div class="filter-tabs">
     <button class="ftab" onclick="setCiFilter('all',this)">전체</button>
     <button class="ftab" onclick="setCiFilter('year',this)">올해</button>
@@ -252,23 +251,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <div class="card">
     <div class="ct">출석부</div>
     <div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
-  </div>
-
-  <!-- 출석 체크인 섹션 -->
-  <div class="card" style="margin-top:1rem">
-    <div class="ct">출석 체크인</div>
-    <div id="ci-sess-select-wrap">
-      <div class="sl2">모임 선택</div>
-      <select id="ci-sess-select" onchange="onSessSelect()"><option value="">-- 모임을 선택하세요 --</option></select>
-    </div>
-    <div id="ci-member-card" style="display:none;margin-top:.75rem">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
-        <span style="font-size:13px;color:var(--text3)" id="ci-check-count">0명 선택</span>
-        <button onclick="selectAllCi()" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
-      </div>
-      <div id="ci-member-list"></div>
-      <button class="btn bp" style="margin-top:1rem" onclick="doCheckin()">출석 체크인 ✓</button>
-    </div>
   </div>
 </div>
 
@@ -317,6 +299,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const ADMIN_PW = "dordo2023";
+let isAdmin = false;
 
 const JOIN_DATES = {
   '김병희/덕풍':'230410','성준/미사':'230715','장지연/미사':'230916',
@@ -435,6 +418,7 @@ async function renderSessionsTab() {
           </div>
           <div id="sc-mlist-${s.id}"></div>
           <button class="btn bp" style="margin-top:.75rem" onclick="doCheckinFromSess('${s.id}')">출석 체크인 ✓</button>
+          <div id="sc-lock-${s.id}" style="display:none;text-align:center;font-size:13px;color:#e65100;background:#fff3e0;border-radius:var(--rs);padding:.75rem;margin-top:.5rem">🔒 운영진 탭에서 로그인 후 이용 가능해요</div>
         </div>` : `<div style="font-size:13px;color:var(--text3);padding-bottom:.5rem">${att.length ? '' : '출석 멤버 없음'}</div>`}
       </div>
     </div>`;
@@ -491,6 +475,12 @@ function updateSessCount(sessId) {
 }
 
 window.doCheckinFromSess = async function(sessId) {
+  if (!isAdmin) {
+    const lockEl = document.getElementById('sc-lock-' + sessId);
+    if (lockEl) { lockEl.style.display = 'block'; setTimeout(() => lockEl.style.display='none', 3000); }
+    toast('운영진 탭에서 먼저 로그인해주세요 🔒');
+    return;
+  }
   const checked = [...document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input[type=checkbox]:checked`)].map(cb => cb.id.replace(`scb-${sessId}-`,''));
   if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
   const sessRef = doc(db, 'sessions', sessId);
@@ -598,6 +588,7 @@ function updateCiCount() {
 }
 
 window.doCheckin = async function() {
+  if (!isAdmin) { toast('운영진만 출석 체크인이 가능해요 🔒'); return; }
   if (!selectedSessId) { toast('모임을 선택해주세요'); return; }
   if (!checkedMembers.size) { toast('출석할 멤버를 선택해주세요'); return; }
   const sessRef = doc(db, 'sessions', selectedSessId);
@@ -684,6 +675,7 @@ async function renderAttBoard() {
 // ── 어드민 ───────────────────────────────────────
 window.checkPw = function() {
   if (document.getElementById('admin-pw').value === ADMIN_PW) {
+    isAdmin = true;
     document.getElementById('admin-lock').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
     renderAMList();
