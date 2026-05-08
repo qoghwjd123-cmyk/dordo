@@ -43,13 +43,15 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .sb2{background:var(--surface2);border-radius:var(--rs);padding:.875rem .5rem;text-align:center}
 .sn{font-size:22px;font-weight:700;color:var(--accent)}
 .sl{font-size:11px;color:var(--text3);margin-top:2px}
-.toast-el{position:fixed;bottom:8rem;left:50%;transform:translateX(-50%) translateY(200px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast-el{position:fixed;bottom:50%;left:50%;transform:translateX(-50%) translateY(300px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast-el.show{transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:14px}
 .sl2{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:.4rem}
 .divider{border:none;border-top:1px solid var(--border);margin:.875rem 0}
 .mb-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
 .mb-bg.open{display:flex}
+.confirm-wrap{display:none;position:fixed;inset:0;z-index:500;align-items:flex-end;justify-content:center}
+.confirm-wrap.open{display:flex}
 .modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
 .mt2{font-size:16px;font-weight:700;margin-bottom:1rem}
 .dbtn{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-family:inherit;cursor:pointer}
@@ -131,6 +133,24 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </nav>
 <div id="toast-el" class="toast-el"></div>
 
+<!-- 모임 수정 모달 -->
+<div class="mb-bg" id="sess-edit-modal">
+  <div class="modal">
+    <div class="mt2">모임 멤버 수정</div>
+    <input type="hidden" id="se-sess-id"/>
+    <div id="se-sess-info" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:1rem"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <span style="font-size:13px;color:var(--text3)" id="se-count">0명 선택</span>
+      <button onclick="seSelectAll()" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
+    </div>
+    <div id="se-member-list" style="max-height:45vh;overflow-y:auto;margin-bottom:.75rem"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bp" style="flex:1;margin:0;padding:.75rem" onclick="saveSessEdit()">저장</button>
+      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" onclick="closeModal('sess-edit-modal')">취소</button>
+    </div>
+  </div>
+</div>
+
 <!-- 커스텀 확인 모달 -->
 <div class="mb-bg" id="confirm-modal">
   <div class="modal" style="padding:1.5rem">
@@ -155,11 +175,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <button class="btn bp" onclick="fabLogin()">로그인</button>
       <button class="btn bs" onclick="closeFabModal()" style="margin-top:0">취소</button>
     </div>
-    <div id="fab-done-wrap" style="display:none;text-align:center;padding:1rem 0">
+    <div id="fab-done-wrap" style="display:none;text-align:center;padding:1rem 0 2rem">
       <div style="font-size:40px;margin-bottom:.75rem">✅</div>
       <div style="font-size:16px;font-weight:700;margin-bottom:.25rem">로그인 완료!</div>
       <div style="font-size:13px;color:var(--text3);margin-bottom:1.25rem">이제 모임 카드에서 출석 체크인이 가능해요</div>
-      <button class="btn bp" onclick="closeFabModal()">확인</button>
+      <button class="btn bp" onclick="closeFabModal()" style="margin-bottom:env(safe-area-inset-bottom,1rem)">확인</button>
     </div>
   </div>
 </div>
@@ -237,15 +257,16 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 
 <!-- 출석 -->
 <div id="page-checkin" class="page">
-  <div class="filter-tabs">
-    <button class="ftab" onclick="setCiFilter('all',this)">전체</button>
-    <button class="ftab" onclick="setCiFilter('year',this)">올해</button>
-    <button class="ftab active" onclick="setCiFilter('month',this)">이번달</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <div class="filter-tabs" style="margin-bottom:0">
+      <button class="ftab" onclick="setCiFilter('all',this)">전체</button>
+      <button class="ftab" onclick="setCiFilter('year',this)">올해</button>
+      <button class="ftab active" onclick="setCiFilter('month',this)">이번달</button>
+    </div>
+    <button id="sort-toggle" onclick="toggleAttSort()" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500">가입일순</button>
   </div>
-  <div class="sr">
-    <div class="sb2"><div class="sn" id="ci-total-sess">-</div><div class="sl">총 모임</div></div>
-    <div class="sb2"><div class="sn" id="ci-avg-att">-</div><div class="sl">평균 출석</div></div>
-    <div class="sb2"><div class="sn" id="ci-top-att">-</div><div class="sl">최다 출석</div></div>
+  <div class="sb2" style="margin-bottom:.875rem;padding:.75rem">
+    <span style="font-size:13px;color:var(--text3)">총 모임 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span>
   </div>
   <div class="card"><div class="ct">출석부</div><div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
 </div>
@@ -301,9 +322,28 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const ADMIN_PW = "dordo2023";
-let isAdmin = false;
+const MATE_ORDER = ['호정/리더','황윤정/소통메이트','주동준/운동메이트'];
+function sortMembers(members) {
+  return [...members].sort((a, b) => {
+    const ai = a.role === 'mate' ? MATE_ORDER.indexOf(a.name) : 999;
+    const bi = b.role === 'mate' ? MATE_ORDER.indexOf(b.name) : 999;
+    if (ai !== bi) return ai - bi;
+    const ja = a.joined || JOIN_DATES[a.name] || '999999';
+    const jb = b.joined || JOIN_DATES[b.name] || '999999';
+    return ja.localeCompare(jb);
+  });
+}
 let ciFilter = 'month';
+let attSortByCount = false;
+
+window.toggleAttSort = function() {
+  attSortByCount = !attSortByCount;
+  const btn = document.getElementById('sort-toggle');
+  btn.textContent = attSortByCount ? '출석순' : '가입일순';
+  btn.style.color = attSortByCount ? 'var(--accent)' : 'var(--text3)';
+  btn.style.borderColor = attSortByCount ? 'var(--accent)' : 'var(--border)';
+  renderAttBoard();
+};
 
 const JOIN_DATES = {
   '김병희/덕풍':'230410','성준/미사':'230715','장지연/미사':'230916',
@@ -428,7 +468,7 @@ async function loadSessMemberList(sessId) {
   const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', sessId))]);
   const sess = sessSnap.data();
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const nonMates = members.sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  const nonMates = sortMembers(members);
   mlistEl.innerHTML = nonMates.map(m => {
     const already = alreadyIds.has(m.id);
     const g = grade(m);
@@ -624,24 +664,13 @@ async function renderAttBoard() {
   if (ciFilter === 'year')  fs = fs.filter(s => s.date.startsWith(thisYear));
   if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(thisMonth));
   const total = fs.length;
-  const nonMates = members.sort((a,b) => {
-    // 운영진 먼저, 그 다음 가입일순
-    if (a.role === 'mate' && b.role !== 'mate') return -1;
-    if (a.role !== 'mate' && b.role === 'mate') return 1;
-    const ja = a.joined || JOIN_DATES[a.name] || '999999';
-    const jb = b.joined || JOIN_DATES[b.name] || '999999';
-    return ja.localeCompare(jb);
-  });
   const countMap = {};
   for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0) + 1;
-  const counts = nonMates.map(m => countMap[m.id]||0);
-  const avg = total > 0 && counts.length ? Math.round(counts.reduce((a,b)=>a+b,0)/nonMates.length*10)/10 : 0;
-  const max = counts.length ? Math.max(...counts) : 0;
+  let sorted = sortMembers(members);
+  if (attSortByCount) sorted = [...sorted].sort((a,b) => (countMap[b.id]||0) - (countMap[a.id]||0));
   document.getElementById('ci-total-sess').textContent = total;
-  document.getElementById('ci-avg-att').textContent = avg;
-  document.getElementById('ci-top-att').textContent = max;
   if (!total) { document.getElementById('ci-att-list').innerHTML = '<div class="empty">해당 기간 모임이 없어요</div>'; return; }
-  document.getElementById('ci-att-list').innerHTML = nonMates.map(m => {
+  document.getElementById('ci-att-list').innerHTML = sorted.map(m => {
     const cnt = countMap[m.id]||0;
     const pct = total > 0 ? Math.round(cnt/total*100) : 0;
     const g = grade(m);
@@ -662,14 +691,8 @@ async function renderAttBoard() {
 // ── 멤버 페이지 ──────────────────────────────────
 async function renderMPage() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const mateOrder = ['호정/리더','주동준/운동메이트','황윤정/소통메이트'];
-  const mates = members.filter(m => m.role === 'mate').sort((a,b) => mateOrder.indexOf(a.name) - mateOrder.indexOf(b.name));
-  const mems = members.filter(m => m.role !== 'mate').sort((a,b) => {
-    const ja = a.joined || JOIN_DATES[a.name] || '999999';
-    const jb = b.joined || JOIN_DATES[b.name] || '999999';
-    return ja.localeCompare(jb);
-  });
-  document.getElementById('mlist').innerHTML = [...mates,...mems].map(m => {
+  const sorted = sortMembers(members);
+  document.getElementById('mlist').innerHTML = sorted.map(m => {
     const g = grade(m);
     const isMate = m.role === 'mate';
     const joined = m.joined || JOIN_DATES[m.name] || '';
@@ -699,11 +722,85 @@ async function renderAdminSessList() {
         <div class="mn">${s.name}</div>
         <div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div>
       </div>
+      <button onclick="openSessEdit('${s.id}')" class="ebtn" style="margin-right:4px">수정</button>
       <button onclick="deleteSession('${s.id}')" class="dbtn">삭제</button>
     </div>`).join('');
 }
 
-window.deleteSession = async function(id) {
+// ── 모임 수정 (어드민) ──────────────────────────
+window.openSessEdit = async function(sessId) {
+  const [members, sessSnap] = await Promise.all([getMembers(), getDoc(doc(db, 'sessions', sessId))]);
+  const sess = sessSnap.data();
+  document.getElementById('se-sess-id').value = sessId;
+  document.getElementById('se-sess-info').textContent = `${sess.name} · ${sess.date}`;
+  const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const sorted = sortMembers(members);
+  document.getElementById('se-member-list').innerHTML = sorted.map(m => {
+    const g = grade(m);
+    const checked = alreadyIds.has(m.id);
+    return `<div class="ci-mi" onclick="toggleSeMember(this,'${m.id}')">
+      <input type="checkbox" id="se-${m.id}" ${checked?'checked':''} onclick="event.stopPropagation();seUpdateCount()"/>
+      <div class="av">${g.e}</div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.count}회 참석</div></div>
+    </div>`;
+  }).join('');
+  seUpdateCount();
+  document.getElementById('sess-edit-modal').classList.add('open');
+};
+
+window.toggleSeMember = function(el, id) {
+  const cb = document.getElementById('se-' + id);
+  cb.checked = !cb.checked;
+  seUpdateCount();
+};
+
+window.seSelectAll = function() {
+  document.querySelectorAll('#se-member-list input[type=checkbox]').forEach(cb => { cb.checked = true; });
+  seUpdateCount();
+};
+
+function seUpdateCount() {
+  const cnt = document.querySelectorAll('#se-member-list input[type=checkbox]:checked').length;
+  document.getElementById('se-count').textContent = cnt + '명 선택';
+}
+
+window.saveSessEdit = async function() {
+  const sessId = document.getElementById('se-sess-id').value;
+  const sessRef = doc(db, 'sessions', sessId);
+  const sessSnap = await getDoc(sessRef);
+  const sess = sessSnap.data();
+  const prevIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const nowChecked = new Set([...document.querySelectorAll('#se-member-list input[type=checkbox]:checked')].map(cb => cb.id.replace('se-','')));
+
+  // 새로 추가된 멤버
+  const added = [...nowChecked].filter(id => !prevIds.has(id));
+  // 제거된 멤버
+  const removed = [...prevIds].filter(id => !nowChecked.has(id));
+
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  let newAtt = [...(sess.attendees||[])].filter(a => !removed.includes(a.memberId));
+  for (const mid of added) newAtt.push({ memberId: mid, time });
+
+  await updateDoc(sessRef, { attendees: newAtt });
+
+  // 출석 횟수 동기화
+  for (const mid of added) {
+    const mRef = doc(db, 'members', mid);
+    const mSnap = await getDoc(mRef);
+    if (mSnap.exists()) await updateDoc(mRef, { count: (mSnap.data().count||0) + 1 });
+  }
+  for (const mid of removed) {
+    const mRef = doc(db, 'members', mid);
+    const mSnap = await getDoc(mRef);
+    if (mSnap.exists()) { const c = mSnap.data().count||0; if(c>0) await updateDoc(mRef, { count: c - 1 }); }
+  }
+
+  closeModal('sess-edit-modal');
+  renderAdminSessList();
+  renderSessionsTab();
+  toast('모임이 수정됐어요!');
+};
   const ok = await showConfirm('이 모임을 삭제할까요?');
   if (!ok) return;
   await deleteDoc(doc(db, 'sessions', id));
@@ -715,12 +812,9 @@ window.deleteSession = async function(id) {
 // ── 어드민 멤버 관리 ─────────────────────────────
 async function renderAMList() {
   const members = await getMembers();
-  const mates = members.filter(m => m.role === 'mate');
-  const mems = members.filter(m => m.role !== 'mate').sort((a,b) => {
-    const ja = a.joined || JOIN_DATES[a.name] || '999999';
-    const jb = b.joined || JOIN_DATES[b.name] || '999999';
-    return ja.localeCompare(jb);
-  });
+  const sorted = sortMembers(members);
+  const mates = sorted.filter(m => m.role === 'mate');
+  const mems = sorted.filter(m => m.role !== 'mate');
   let h = '';
   if (mates.length) {
     h += `<div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:6px">운영진</div>`;
