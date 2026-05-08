@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>모임 출석체크</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+  :root {
+    --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:rgba(0,0,0,.08);
+    --text:#1a1a18;--text2:#6b6b65;--text3:#a0a09a;
+    --accent:#2d6a4f;--accent-l:#e8f5ee;--accent2:#e76f51;--accent2-l:#fdf0ec;
+    --r:16px;--rs:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 .5rem;position:sticky;top:0;z-index:100}
+  .nb{flex:1;padding:.9rem .3rem;background:none;border:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+  .nb.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .page{display:none;padding:1.25rem 1rem 4rem;max-width:480px;margin:0 auto}
+  .page.active{display:block}
+  .card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem}
+  .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
+  input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem}
+  input:focus,select:focus{border-color:var(--accent);background:#fff}
+  .btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:.4rem}
+  .btn:active{transform:scale(.98)}
+  .bp{background:var(--accent);color:#fff}
+  .bs{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+  #qr-wrap{display:flex;justify-content:center;align-items:center;padding:1.25rem;background:#fff;border-radius:var(--rs);margin:.875rem 0;border:2px dashed var(--border);min-height:180px}
+  .sb{display:flex;align-items:center;gap:8px;background:var(--accent-l);border-radius:var(--rs);padding:.7rem 1rem;margin-bottom:.875rem;font-size:14px;font-weight:500;color:var(--accent)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite;flex-shrink:0}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .mi{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border)}
+  .mi:last-child{border-bottom:none}
+  .av{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .mn{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mm{font-size:12px;color:var(--text3);margin-top:1px}
+  .gp{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--accent-l);color:var(--accent);white-space:nowrap;flex-shrink:0}
+  .gp.mate{background:#fff3e0;color:#e65100}
+  .sr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.875rem}
+  .sb2{background:var(--surface2);border-radius:var(--rs);padding:.875rem .5rem;text-align:center}
+  .sn{font-size:22px;font-weight:700;color:var(--accent)}
+  .sl{font-size:11px;color:var(--text3);margin-top:2px}
+  .sc{text-align:center;padding:1.75rem 1.25rem}
+  .se{font-size:60px;margin-bottom:.875rem}
+  .st{font-size:21px;font-weight:700;margin-bottom:.4rem}
+  .ss{font-size:14px;color:var(--text2)}
+  .gu{margin-top:.875rem;background:var(--accent2-l);color:var(--accent2);border-radius:var(--rs);padding:.7rem;font-weight:700;font-size:14px}
+  .hi{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--border);font-size:14px}
+  .hi:last-child{border-bottom:none}
+  .hd{color:var(--text3);font-size:12px;margin-top:2px}
+  .toast-el{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap}
+  .toast-el.show{transform:translateX(-50%) translateY(0)}
+  .empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:14px}
+  .sl2{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:.4rem}
+  .divider{border:none;border-top:1px solid var(--border);margin:.875rem 0}
+  .mb-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
+  .mb-bg.open{display:flex}
+  .modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px}
+  .mt2{font-size:16px;font-weight:700;margin-bottom:1rem}
+  .dbtn{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-family:inherit;cursor:pointer}
+  .ebtn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit}
+  .loading{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
+  .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.5rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* 어드민 잠금 */
+  #admin-lock{text-align:center;padding:3rem 1.5rem}
+  #admin-lock .lock-icon{font-size:48px;margin-bottom:1rem}
+  #admin-lock .lock-title{font-size:18px;font-weight:700;margin-bottom:.5rem}
+  #admin-lock .lock-sub{font-size:14px;color:var(--text3);margin-bottom:1.5rem}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <button class="nb active" onclick="showPage('admin',this)">🔥 운영진</button>
+  <button class="nb" onclick="showPage('checkin',this)">📱 출석</button>
+  <button class="nb" onclick="showPage('members',this)">👥 멤버</button>
+  <button class="nb" onclick="showPage('history',this)">📋 기록</button>
+</nav>
+<div id="toast-el" class="toast-el"></div>
+
+<!-- Edit Modal -->
+<div class="mb-bg" id="edit-modal">
+  <div class="modal">
+    <div class="mt2">멤버 수정</div>
+    <input type="hidden" id="edit-id"/>
+    <div class="sl2">이름/동네</div>
+    <input type="text" id="edit-name" placeholder="이름/동네"/>
+    <div class="sl2">등급</div>
+    <select id="edit-role"><option value="member">일반 멤버</option><option value="mate">🔥 메이트 (운영진)</option></select>
+    <div class="sl2">출석 횟수</div>
+    <input type="number" id="edit-count" min="0" placeholder="0"/>
+    <div style="display:flex;gap:.5rem;margin-top:.5rem">
+      <button class="btn bp" style="flex:1;margin:0;padding:.75rem" onclick="saveEdit()">저장</button>
+      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" onclick="closeModal()">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page active">
+  <!-- 비밀번호 잠금 -->
+  <div id="admin-lock">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">운영진 전용</div>
+    <div class="lock-sub">비밀번호를 입력해주세요</div>
+    <input type="password" id="admin-pw" placeholder="비밀번호" style="max-width:280px;display:block;margin:0 auto .75rem" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <button class="btn bp" style="max-width:280px;margin:0 auto" onclick="checkPw()">입장</button>
+  </div>
+
+  <!-- 실제 어드민 콘텐츠 -->
+  <div id="admin-content" style="display:none">
+    <div id="no-sess" class="card">
+      <div class="ct">모임 QR 생성</div>
+      <div class="sl2">모임 이름</div>
+      <input type="text" id="session-name" placeholder="예: 5월 정기 러닝"/>
+      <div class="sl2">날짜</div>
+      <input type="date" id="session-date"/>
+      <button class="btn bp" onclick="createSession()">QR 코드 생성</button>
+    </div>
+    <div id="act-sess" style="display:none">
+      <div class="sb"><div class="dot"></div><span id="sess-label">모임 진행 중</span></div>
+      <div class="card">
+        <div class="ct">멤버에게 스캔시켜주세요</div>
+        <div id="qr-wrap"><div style="text-align:center;color:var(--text3);font-size:14px"><div style="font-size:36px;margin-bottom:.5rem">📲</div>생성 중...</div></div>
+        <p style="text-align:center;font-size:12px;color:var(--text3);margin-bottom:.75rem">링크 공유: <span id="link-copy" style="color:var(--accent);cursor:pointer;font-weight:500" onclick="copyLink()">복사하기</span></p>
+        <button class="btn bs" onclick="newSession()">새 모임 시작</button>
+      </div>
+      <div class="card">
+        <div class="ct">오늘 출석</div>
+        <div class="sr">
+          <div class="sb2"><div class="sn" id="s-total">0</div><div class="sl">전체</div></div>
+          <div class="sb2"><div class="sn" id="s-pres">0</div><div class="sl">출석</div></div>
+          <div class="sb2"><div class="sn" id="s-rate">0%</div><div class="sl">출석률</div></div>
+        </div>
+        <div id="today-list"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem">
+      <div class="ct">멤버 관리</div>
+      <div style="display:flex;gap:8px;margin-bottom:.65rem">
+        <input type="text" id="nm-name" placeholder="이름/동네" style="margin:0;flex:1"/>
+        <select id="nm-role" style="margin:0;width:auto;flex-shrink:0"><option value="member">멤버</option><option value="mate">🔥 메이트</option></select>
+      </div>
+      <button class="btn bs" onclick="addMember()">멤버 추가</button>
+      <hr class="divider"/>
+      <div id="admin-mlist"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECK-IN -->
+<div id="page-checkin" class="page">
+  <div id="ci-normal">
+    <div class="card">
+      <div class="ct">출석 체크인</div>
+      <div id="ci-status" style="background:var(--surface2);border-radius:var(--rs);padding:1rem;text-align:center;margin-bottom:.875rem;font-size:14px;color:var(--text3)">현재 진행 중인 모임이 없어요</div>
+      <div class="sl2">이름 선택</div>
+      <select id="ci-select"><option value="">-- 이름을 선택하세요 --</option></select>
+      <button class="btn bp" id="ci-btn" onclick="doCheckin()" disabled>출석 체크인 ✓</button>
+    </div>
+    <div class="card">
+      <div class="ct">등급 안내</div>
+      <div style="font-size:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between"><span>🔥 메이트</span><span style="color:var(--text3)">운영진</span></div>
+        <div style="display:flex;justify-content:space-between"><span>🐣 새내기</span><span style="color:var(--text3)">1회 이상</span></div>
+        <div style="display:flex;justify-content:space-between"><span>🐥 활동 멤버</span><span style="color:var(--text3)">5회 이상</span></div>
+        <div style="display:flex;justify-content:space-between"><span>🦢 베테랑</span><span style="color:var(--text3)">15회 이상</span></div>
+        <div style="display:flex;justify-content:space-between"><span>🪽 명예 퇴직</span><span style="color:var(--text3)">레전드</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="ci-success" style="display:none">
+    <div class="card sc">
+      <div class="se" id="s-emoji">🐣</div>
+      <div class="st" id="s-name">출석 완료!</div>
+      <div class="ss" id="s-count">총 1회 참석</div>
+      <div class="gu" id="s-grade" style="display:none"></div>
+    </div>
+    <button class="btn bs" onclick="resetCi()">다른 멤버 체크인</button>
+  </div>
+</div>
+
+<!-- MEMBERS -->
+<div id="page-members" class="page">
+  <div class="sr">
+    <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
+    <div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">활동 멤버+</div></div>
+    <div class="sb2"><div class="sn" id="m-sess">-</div><div class="sl">총 모임</div></div>
+  </div>
+  <div class="card"><div class="ct">멤버 목록 (출석순)</div><div id="mlist"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
+</div>
+
+<!-- HISTORY -->
+<div id="page-history" class="page">
+  <div class="card"><div class="ct">모임 기록</div><div id="hist"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
+  collection, getDocs, onSnapshot, addDoc, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDKLj4tBOmGPmX1keWwkn0m8LlqDixzMEw",
+  authDomain: "dordo-17766.firebaseapp.com",
+  projectId: "dordo-17766",
+  storageBucket: "dordo-17766.firebasestorage.app",
+  messagingSenderId: "616591115480",
+  appId: "1:616591115480:web:ade08d721401f9f6ec03ad"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ── 어드민 비밀번호 ─────────────────────────────
+const ADMIN_PW = "dordo2024"; // ← 원하시는 비밀번호로 바꾸세요
+
+window.checkPw = function() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw === ADMIN_PW) {
+    document.getElementById('admin-lock').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    renderSess();
+    renderAMList();
+    listenToday();
+  } else {
+    toast('비밀번호가 틀렸어요');
+    document.getElementById('admin-pw').value = '';
+  }
+};
+
+// ── 등급 계산 ───────────────────────────────────
+const grade = m => {
+  if (m.role === 'mate') return {e:'🔥', n:'메이트'};
+  if (m.count >= 15) return {e:'🦢', n:'베테랑'};
+  if (m.count >= 5)  return {e:'🐥', n:'활동 멤버'};
+  if (m.count >= 1)  return {e:'🐣', n:'새내기'};
+  return {e:'🥚', n:'미참석'};
+};
+
+// ── 페이지 전환 ─────────────────────────────────
+window.showPage = function(n, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + n).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (n === 'checkin') { updateCiStatus(); buildCiSelect(); }
+  if (n === 'members') renderMPage();
+  if (n === 'history') renderHist();
+};
+
+// ── Firestore helpers ───────────────────────────
+async function getMembers() {
+  const snap = await getDocs(collection(db, 'members'));
+  return snap.docs.map(d => ({id: d.id, ...d.data()}));
+}
+async function getActiveSession() {
+  const d = await getDoc(doc(db, 'meta', 'activeSession'));
+  return d.exists() ? d.data() : null;
+}
+async function getSessions() {
+  const snap = await getDocs(query(collection(db, 'sessions'), orderBy('date','desc')));
+  return snap.docs.map(d => ({id: d.id, ...d.data()}));
+}
+
+// ── 세션 ────────────────────────────────────────
+window.createSession = async function() {
+  const name = document.getElementById('session-name').value.trim();
+  const date = document.getElementById('session-date').value;
+  if (!name) { toast('모임 이름을 입력해주세요'); return; }
+  if (!date) { toast('날짜를 선택해주세요'); return; }
+
+  // 기존 세션 저장
+  const prev = await getActiveSession();
+  if (prev) {
+    await addDoc(collection(db, 'sessions'), prev);
+  }
+
+  const sessionId = Date.now().toString(36);
+  const sess = { id: sessionId, name, date, attendees: [] };
+  await setDoc(doc(db, 'meta', 'activeSession'), sess);
+  toast('모임 QR이 생성됐어요! 🎉');
+  renderSess();
+  listenToday();
+};
+
+window.newSession = async function() {
+  if (!confirm('현재 모임을 마치고 새 모임을 시작할까요?')) return;
+  const prev = await getActiveSession();
+  if (prev) {
+    await addDoc(collection(db, 'sessions'), prev);
+    await deleteDoc(doc(db, 'meta', 'activeSession'));
+  }
+  renderSess();
+};
+
+async function renderSess() {
+  document.getElementById('session-date').value = new Date().toISOString().split('T')[0];
+  const sess = await getActiveSession();
+  if (!sess) {
+    document.getElementById('no-sess').style.display = 'block';
+    document.getElementById('act-sess').style.display = 'none';
+    return;
+  }
+  document.getElementById('no-sess').style.display = 'none';
+  document.getElementById('act-sess').style.display = 'block';
+  document.getElementById('sess-label').textContent = sess.name + ' · ' + sess.date;
+
+  const qEl = document.getElementById('qr-wrap');
+  qEl.innerHTML = '';
+  const url = location.href.split('?')[0] + '?s=' + sess.id;
+  document.getElementById('link-copy').dataset.url = url;
+  try {
+    new QRCode(qEl, {text: url, width: 190, height: 190, colorDark: '#1a1a18', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M});
+  } catch(e) {
+    qEl.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center">링크 복사 버튼을 이용해주세요</div>';
+  }
+}
+
+// 실시간 출석 현황
+let unsubToday = null;
+function listenToday() {
+  if (unsubToday) unsubToday();
+  getActiveSession().then(sess => {
+    if (!sess) return;
+    unsubToday = onSnapshot(doc(db, 'meta', 'activeSession'), snap => {
+      if (!snap.exists()) return;
+      const s = snap.data();
+      renderTodayStats(s);
+    });
+  });
+}
+
+async function renderTodayStats(sess) {
+  const members = await getMembers();
+  const att = sess.attendees || [];
+  const nonMates = members.filter(m => m.role !== 'mate');
+  const total = nonMates.length;
+  const pres = att.length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-pres').textContent = pres;
+  document.getElementById('s-rate').textContent = total > 0 ? Math.round(pres/total*100)+'%' : '0%';
+
+  const tl = document.getElementById('today-list');
+  if (!att.length) { tl.innerHTML = '<div class="empty">아직 출석한 멤버가 없어요</div>'; return; }
+  tl.innerHTML = att.map(a => {
+    const m = members.find(m => m.id === a.memberId);
+    if (!m) return '';
+    const g = grade(m);
+    return `<div class="mi"><div class="av">${g.e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="mm">${a.time} 체크인</div></div><span style="color:var(--accent);font-size:18px">✓</span></div>`;
+  }).join('');
+}
+
+window.copyLink = function() {
+  navigator.clipboard.writeText(document.getElementById('link-copy').dataset.url || location.href)
+    .then(() => toast('링크 복사됐어요!'));
+};
+
+// ── 멤버 관리 ────────────────────────────────────
+window.addMember = async function() {
+  const name = document.getElementById('nm-name').value.trim();
+  const role = document.getElementById('nm-role').value;
+  if (!name) { toast('이름을 입력해주세요'); return; }
+  await addDoc(collection(db, 'members'), { name, role, count: 0 });
+  document.getElementById('nm-name').value = '';
+  renderAMList();
+  buildCiSelect();
+  toast(name + ' 추가됐어요!');
+};
+
+async function renderAMList() {
+  const members = await getMembers();
+  const mates = members.filter(m => m.role === 'mate');
+  const mems = members.filter(m => m.role !== 'mate').sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  let h = '';
+  if (mates.length) {
+    h += `<div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:6px">운영진</div>`;
+    h += mates.map(amRow).join('');
+    h += `<div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin:10px 0 6px">멤버 (${mems.length}명)</div>`;
+  }
+  h += mems.map(amRow).join('');
+  document.getElementById('admin-mlist').innerHTML = h || '<div class="empty">멤버가 없어요</div>';
+}
+
+const amRow = m => {
+  const g = grade(m);
+  return `<div class="mi"><div class="av">${g.e}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진':m.count+'회'}</div></div><button onclick="openEdit('${m.id}')" class="ebtn" style="margin-right:4px">수정</button><button onclick="delMember('${m.id}')" class="dbtn">삭제</button></div>`;
+};
+
+window.openEdit = async function(id) {
+  const d = await getDoc(doc(db, 'members', id));
+  if (!d.exists()) return;
+  const m = d.data();
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-name').value = m.name;
+  document.getElementById('edit-role').value = m.role;
+  document.getElementById('edit-count').value = m.count;
+  document.getElementById('edit-modal').classList.add('open');
+};
+
+window.saveEdit = async function() {
+  const id = document.getElementById('edit-id').value;
+  await updateDoc(doc(db, 'members', id), {
+    name: document.getElementById('edit-name').value.trim(),
+    role: document.getElementById('edit-role').value,
+    count: parseInt(document.getElementById('edit-count').value) || 0
+  });
+  closeModal();
+  renderAMList();
+  buildCiSelect();
+  toast('수정됐어요!');
+};
+
+window.closeModal = function() { document.getElementById('edit-modal').classList.remove('open'); };
+
+window.delMember = async function(id) {
+  const d = await getDoc(doc(db, 'members', id));
+  if (!confirm((d.data()?.name||'') + ' 삭제할까요?')) return;
+  await deleteDoc(doc(db, 'members', id));
+  renderAMList();
+  buildCiSelect();
+  toast('삭제됐어요');
+};
+
+// ── 출석 체크인 ──────────────────────────────────
+async function buildCiSelect() {
+  const members = await getMembers();
+  const sorted = [...members].sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  document.getElementById('ci-select').innerHTML =
+    '<option value="">-- 이름을 선택하세요 --</option>' +
+    sorted.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+}
+
+async function updateCiStatus() {
+  const sess = await getActiveSession();
+  const msg = document.getElementById('ci-status');
+  const btn = document.getElementById('ci-btn');
+  if (sess) {
+    msg.style.background = 'var(--accent-l)'; msg.style.color = 'var(--accent)';
+    msg.innerHTML = `<strong>${sess.name}</strong><br><span style="font-size:13px">${sess.date} · 진행 중 🟢</span>`;
+    btn.disabled = false;
+  } else {
+    msg.style.background = 'var(--surface2)'; msg.style.color = 'var(--text3)';
+    msg.innerHTML = '현재 진행 중인 모임이 없어요';
+    btn.disabled = true;
+  }
+}
+
+window.doCheckin = async function() {
+  const sess = await getActiveSession();
+  if (!sess) { toast('진행 중인 모임이 없어요'); return; }
+  const mid = document.getElementById('ci-select').value;
+  if (!mid) { toast('이름을 선택해주세요'); return; }
+
+  if ((sess.attendees||[]).find(a => a.memberId === mid)) { toast('이미 출석 체크됐어요 ✓'); return; }
+
+  const mRef = doc(db, 'members', mid);
+  const mSnap = await getDoc(mRef);
+  if (!mSnap.exists()) { toast('멤버를 찾을 수 없어요'); return; }
+  const m = { id: mid, ...mSnap.data() };
+
+  const pg = grade(m);
+  if (m.role !== 'mate') {
+    await updateDoc(mRef, { count: (m.count||0) + 1 });
+    m.count = (m.count||0) + 1;
+  }
+  const ng = grade(m);
+
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  const newAtt = [...(sess.attendees||[]), { memberId: mid, time }];
+  await updateDoc(doc(db, 'meta', 'activeSession'), { attendees: newAtt });
+
+  document.getElementById('ci-normal').style.display = 'none';
+  document.getElementById('ci-success').style.display = 'block';
+  document.getElementById('s-emoji').textContent = ng.e;
+  document.getElementById('s-name').textContent = m.name + '님, 출석 완료!';
+  document.getElementById('s-count').textContent = m.role === 'mate' ? '운영진 메이트' : '총 ' + m.count + '회 참석 · ' + ng.n;
+  const gu = document.getElementById('s-grade');
+  if (m.role !== 'mate' && pg.n !== ng.n && m.count > 1) {
+    gu.style.display = 'block';
+    gu.textContent = '🎉 ' + pg.n + ' → ' + ng.e + ' ' + ng.n + ' 등급 업!';
+  } else gu.style.display = 'none';
+};
+
+window.resetCi = function() {
+  document.getElementById('ci-select').value = '';
+  document.getElementById('ci-normal').style.display = 'block';
+  document.getElementById('ci-success').style.display = 'none';
+};
+
+// ── 멤버 페이지 ──────────────────────────────────
+async function renderMPage() {
+  const [members, sessions, activeSess] = await Promise.all([getMembers(), getSessions(), getActiveSession()]);
+  const mates = members.filter(m => m.role === 'mate');
+  const mems = [...members.filter(m => m.role !== 'mate')].sort((a,b) => b.count - a.count);
+  document.getElementById('mlist').innerHTML = [...mates,...mems].map(m => {
+    const g = grade(m);
+    return `<div class="mi"><div class="av">${g.e}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진':m.count+'회 참석'}</div></div><span class="gp ${m.role==='mate'?'mate':''}">${g.n}</span></div>`;
+  }).join('') || '<div class="empty">멤버가 없어요</div>';
+  document.getElementById('m-total').textContent = members.length;
+  document.getElementById('m-act').textContent = members.filter(m => m.count >= 5).length;
+  document.getElementById('m-sess').textContent = sessions.length + (activeSess ? 1 : 0);
+}
+
+// ── 기록 페이지 ──────────────────────────────────
+async function renderHist() {
+  const [sessions, activeSess] = await Promise.all([getSessions(), getActiveSession()]);
+  const all = activeSess ? [{ ...activeSess, active: true }, ...sessions] : sessions;
+  document.getElementById('hist').innerHTML = all.length
+    ? all.map(s => `<div class="hi"><div><div style="font-weight:500">${s.name}${s.active?' <span style="font-size:11px;color:var(--accent)">● 진행중</span>':''}</div><div class="hd">${s.date}</div></div><span class="gp">${(s.attendees||[]).length}명</span></div>`).join('')
+    : '<div class="empty">아직 모임 기록이 없어요</div>';
+}
+
+// ── 초기 데이터 세팅 (최초 1회) ─────────────────
+async function initDefaultMembers() {
+  const snap = await getDocs(collection(db, 'members'));
+  if (!snap.empty) return; // 이미 데이터 있으면 스킵
+
+  const defaults = [
+    {name:'호정/리더',role:'mate',count:0},
+    {name:'주동준/운동메이트',role:'mate',count:0},
+    {name:'황윤정/소통메이트',role:'mate',count:0},
+    {name:'가은/미사',role:'member',count:0},
+    {name:'김규성/광주',role:'member',count:0},
+    {name:'김민호/경기광주',role:'member',count:0},
+    {name:'김병희/덕풍',role:'member',count:0},
+    {name:'대훈/덕풍',role:'member',count:0},
+    {name:'도영/덕풍',role:'member',count:0},
+    {name:'민연희/미사',role:'member',count:0},
+    {name:'박성민/덕풍',role:'member',count:0},
+    {name:'박현정/망월',role:'member',count:0},
+    {name:'성준/미사',role:'member',count:0},
+    {name:'양윤석/덕풍',role:'member',count:0},
+    {name:'왕신민/미사',role:'member',count:0},
+    {name:'우빛나/미사',role:'member',count:0},
+    {name:'원재윤',role:'member',count:0},
+    {name:'은지/미사',role:'member',count:0},
+    {name:'이삭/양평',role:'member',count:0},
+    {name:'이정민/미사',role:'member',count:0},
+    {name:'장지연/미사',role:'member',count:0},
+    {name:'정다운/미사',role:'member',count:0},
+    {name:'정민/미사',role:'member',count:0},
+    {name:'주성/미사',role:'member',count:0},
+    {name:'최예인/미사',role:'member',count:0},
+    {name:'최형규/미사',role:'member',count:0},
+    {name:'큐성/덕풍',role:'member',count:0},
+  ];
+  for (const m of defaults) {
+    await addDoc(collection(db, 'members'), m);
+  }
+}
+
+// ── 토스트 ───────────────────────────────────────
+window.toast = function(msg) {
+  const t = document.getElementById('toast-el');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+};
+
+// Init
+initDefaultMembers();
+buildCiSelect();
+updateCiStatus();
+</script>
+</body>
+</html>
