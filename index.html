@@ -131,6 +131,17 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </nav>
 <div id="toast-el" class="toast-el"></div>
 
+<!-- 커스텀 확인 모달 -->
+<div class="mb-bg" id="confirm-modal">
+  <div class="modal" style="padding:1.5rem">
+    <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" onclick="confirmResolve(false)">취소</button>
+      <button class="btn bp" style="flex:1;margin:0;padding:.75rem" onclick="confirmResolve(true)">확인</button>
+    </div>
+  </div>
+</div>
+
 <!-- 플로팅 로그인 버튼 (모임탭 전용) -->
 <button class="fab" id="fab-checkin" onclick="openFabModal()" title="운영진 로그인">🔐</button>
 
@@ -421,10 +432,10 @@ async function loadSessMemberList(sessId) {
   mlistEl.innerHTML = nonMates.map(m => {
     const already = alreadyIds.has(m.id);
     const g = grade(m);
-    return `<div class="ci-mi ${already?'already':''}" onclick="toggleSessMember(this,'${sessId}','${m.id}')">
-      <input type="checkbox" id="scb-${sessId}-${m.id}" ${already?'checked disabled':''} onclick="event.stopPropagation();updateSessCount('${sessId}')"/>
+    return `<div class="ci-mi ${already?'already':''}">
+      <input type="checkbox" id="scb-${sessId}-${m.id}" ${already?'checked disabled':''} onchange="updateSessCount('${sessId}')"/>
       <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0">
+      <div style="flex:1;min-width:0;cursor:${already?'default':'pointer'}" onclick="if(!${already}){const cb=document.getElementById('scb-${sessId}-${m.id}');cb.checked=!cb.checked;updateSessCount('${sessId}')}">
         <div class="mn">${m.name}</div>
         <div class="mm">${already?'✓ 출석완료':m.count+'회 참석'}</div>
       </div>
@@ -464,7 +475,8 @@ window.doCheckinFromSess = async function(sessId) {
 // ── 출석 해제 ────────────────────────────────────
 window.undoAttendance = async function(sessId, memberId) {
   if (!isAdmin) { toast('🔒 운영진만 가능해요'); return; }
-  if (!confirm('출석을 취소할까요?')) return;
+  const ok = await showConfirm('출석을 취소할까요?');
+  if (!ok) return;
   const sessRef = doc(db, 'sessions', sessId);
   const sessSnap = await getDoc(sessRef);
   const sess = sessSnap.data();
@@ -513,7 +525,19 @@ window.createSessionFromTab = async function() {
   if (isAdmin) renderAdminSessList();
 };
 
-// ── 플로팅 로그인 버튼 ──────────────────────────
+// ── 커스텀 확인 다이얼로그 ───────────────────────
+let _confirmResolve = null;
+window.showConfirm = function(msg) {
+  return new Promise(resolve => {
+    _confirmResolve = resolve;
+    document.getElementById('confirm-msg').textContent = msg;
+    document.getElementById('confirm-modal').classList.add('open');
+  });
+};
+window.confirmResolve = function(result) {
+  document.getElementById('confirm-modal').classList.remove('open');
+  if (_confirmResolve) { _confirmResolve(result); _confirmResolve = null; }
+};
 window.openFabModal = function() {
   document.getElementById('fab-modal').classList.add('open');
   if (isAdmin) {
@@ -641,7 +665,8 @@ async function renderAdminSessList() {
 }
 
 window.deleteSession = async function(id) {
-  if (!confirm('이 모임을 삭제할까요?')) return;
+  const ok = await showConfirm('이 모임을 삭제할까요?');
+  if (!ok) return;
   await deleteDoc(doc(db, 'sessions', id));
   renderAdminSessList();
   renderSessionsTab();
@@ -711,7 +736,8 @@ window.saveEdit = async function() {
 window.closeModal = function(id) { document.getElementById(id||'edit-modal').classList.remove('open'); };
 window.delMember = async function(id) {
   const d = await getDoc(doc(db, 'members', id));
-  if (!confirm((d.data()?.name||'') + ' 삭제할까요?')) return;
+  const ok = await showConfirm((d.data()?.name||'') + ' 삭제할까요?');
+  if (!ok) return;
   await deleteDoc(doc(db, 'members', id));
   renderAMList(); renderMPage(); toast('삭제됐어요');
 };
