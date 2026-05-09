@@ -93,6 +93,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .cat-tab.active{background:#e76f51;color:#fff;border-color:#e76f51}
 .mtab{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
 .mtab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cat-badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:700;white-space:nowrap}
+.cat-badge.run{background:#e8f5ee;color:#1a6b3c}
+.cat-badge.hike{background:#e8f0fb;color:#1a4a9e}
+.cat-badge.eat{background:#fdf0ec;color:#b84c1a}
+.cat-badge.etc{background:#f0efe9;color:#6b6b65}
 .fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:90;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center}
 .fab.show{display:flex}
 #admin-lock{text-align:center;padding:3rem 1.5rem}
@@ -366,6 +371,17 @@ function fmtJoined(raw) {
   return s;
 }
 
+function catBadge(cat) {
+  const map = {
+    '🏃 러닝': ['run','러닝'],
+    '🏔️ 등산': ['hike','등산'],
+    '🍽️ 식사': ['eat','식사'],
+    '기타': ['etc','기타'],
+  };
+  const [cls, label] = map[cat] || ['etc', cat];
+  return '<span class="cat-badge '+cls+'">'+label+'</span>';
+}
+
 function grade(m) {
   if (m.name && m.name.startsWith('헤라')) return {e:'🐺', n:'허스키'};
   if (m.role === 'mate') return {e:'🔥', n:'메이트'};
@@ -472,7 +488,7 @@ async function renderSessionsTab() {
     return `<div class="sess-card" id="sc-${s.id}">
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}">
         <div>
-          <div style="font-weight:500;font-size:15px">${s.cat ? s.cat+' · ' : ''}${s.name}</div>
+          <div style="font-weight:500;font-size:15px">${s.cat ? catBadge(s.cat)+' ' : ''}${s.name}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px">${s.date} · ${att.length}명 출석</div>
         </div>
         <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
@@ -733,7 +749,7 @@ async function openMemberDetail(memberId) {
     ? attended.map(s => `
       <div class="hi">
         <div>
-          <div style="font-weight:500;font-size:14px">${s.cat?s.cat+' · ':''}${s.name}</div>
+          <div style="font-weight:500;font-size:14px">${s.cat?catBadge(s.cat)+' ':''}${s.name}</div>
           <div style="font-size:12px;color:var(--text3)">${s.date}</div>
         </div>
       </div>`).join('')
@@ -778,7 +794,7 @@ async function renderAdminSessList() {
   const today = new Date().toISOString().split('T')[0];
   el.innerHTML = sessions.map(s => `
     <div class="mi">
-      <div style="flex:1;min-width:0"><div class="mn">${s.cat ? s.cat+' · ' : ''}${s.name}</div><div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div></div>
+      <div style="flex:1;min-width:0"><div class="mn">${s.cat ? catBadge(s.cat)+' ' : ''}${s.name}</div><div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div></div>
       <button class="ebtn admin-sess-edit" data-id="${s.id}" style="margin-right:4px">수정</button>
       <button class="dbtn admin-sess-del" data-id="${s.id}">삭제</button>
     </div>`).join('');
