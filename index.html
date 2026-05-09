@@ -1195,36 +1195,46 @@ document.getElementById('timer-reset-btn').addEventListener('click', function() 
 async function loadGameMembers() {
   const members = await getMembers();
   const nonMates = sortMembers(members);
-  const teamHtml = nonMates.map(m => {
+  const makeRow = (m, cls) => {
     const g = grade(m);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0">
-      <input type="checkbox" class="team-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0"/>
-      <span style="font-size:14px;cursor:pointer" onclick="var cb=this.previousElementSibling;cb.checked=!cb.checked">${g.e} ${m.name}</span>
-    </div>`;
-  }).join('');
-  const drawHtml = nonMates.map(m => {
-    const g = grade(m);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0">
-      <input type="checkbox" class="draw-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0"/>
-      <span style="font-size:14px;cursor:pointer" onclick="var cb=this.previousElementSibling;cb.checked=!cb.checked">${g.e} ${m.name}</span>
-    </div>`;
-  }).join('');
-  document.getElementById('team-member-list').innerHTML = teamHtml;
-  document.getElementById('draw-member-list').innerHTML = drawHtml;
+    const id = `${cls}-${m.id}`;
+    return `<label for="${id}" style="display:flex;align-items:center;gap:10px;padding:.5rem 0;cursor:pointer;border-bottom:1px solid var(--border)">
+      <div id="box-${id}" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
+        <span style="color:#fff;font-size:13px;font-weight:700;display:none">✓</span>
+      </div>
+      <input type="checkbox" id="${id}" class="${cls}" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="display:none"
+        onchange="var box=document.getElementById('box-${id}');var chk=document.getElementById('${id}');box.style.background=chk.checked?'var(--accent)':'#fff';box.style.borderColor=chk.checked?'var(--accent)':'var(--border)';box.querySelector('span').style.display=chk.checked?'block':'none'"/>
+      <span style="font-size:14px">${g.e} ${m.name}</span>
+    </label>`;
+  };
+  document.getElementById('team-member-list').innerHTML = nonMates.map(m => makeRow(m,'team-cb')).join('');
+  document.getElementById('draw-member-list').innerHTML = nonMates.map(m => makeRow(m,'draw-cb')).join('');
+  // 초기 체크 상태 반영
+  document.querySelectorAll('.team-cb, .draw-cb').forEach(cb => {
+    const box = document.getElementById('box-' + cb.id);
+    if (box && cb.checked) {
+      box.style.background = 'var(--accent)';
+      box.style.borderColor = 'var(--accent)';
+      box.querySelector('span').style.display = 'block';
+    }
+  });
 }
 
-document.getElementById('team-select-all-btn').addEventListener('click', () => {
-  document.querySelectorAll('.team-cb').forEach(cb => cb.checked = true);
-});
-document.getElementById('team-deselect-btn').addEventListener('click', () => {
-  document.querySelectorAll('.team-cb').forEach(cb => cb.checked = false);
-});
-document.getElementById('draw-select-all-btn').addEventListener('click', () => {
-  document.querySelectorAll('.draw-cb').forEach(cb => cb.checked = true);
-});
-document.getElementById('draw-deselect-btn').addEventListener('click', () => {
-  document.querySelectorAll('.draw-cb').forEach(cb => cb.checked = false);
-});
+function setCheckboxes(cls, checked) {
+  document.querySelectorAll('.' + cls).forEach(cb => {
+    cb.checked = checked;
+    const box = document.getElementById('box-' + cb.id);
+    if (box) {
+      box.style.background = checked ? 'var(--accent)' : '#fff';
+      box.style.borderColor = checked ? 'var(--accent)' : 'var(--border)';
+      box.querySelector('span').style.display = checked ? 'block' : 'none';
+    }
+  });
+}
+document.getElementById('team-select-all-btn').addEventListener('click', () => setCheckboxes('team-cb', true));
+document.getElementById('team-deselect-btn').addEventListener('click', () => setCheckboxes('team-cb', false));
+document.getElementById('draw-select-all-btn').addEventListener('click', () => setCheckboxes('draw-cb', true));
+document.getElementById('draw-deselect-btn').addEventListener('click', () => setCheckboxes('draw-cb', false));
 
 // 팀 배정
 document.getElementById('team-shuffle-btn').addEventListener('click', function() {
@@ -1283,14 +1293,15 @@ async function renderChampion() {
     .filter(m => m.monthCount > 0)
     .sort((a,b) => b.monthCount - a.monthCount);
   const el = document.getElementById('champion-result');
-
-
-  // 공유 텍스트 생성
-  const rankText = ranked.slice(0,5).map((m,i) => {
-    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-    return `${medals[i]} ${m.name} - ${m.monthCount}회`;
-  }).join('\n');
-
+  if (!ranked.length) { el.innerHTML = '<div class="empty">이번달 출석 기록이 없어요</div>'; return; }
+  const top = ranked[0];
+  const g = grade(top);
+  el.innerHTML = `
+    <div style="font-size:48px;margin-bottom:.5rem">${g.e}</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:.25rem">${top.name}</div>
+    <div style="font-size:14px;color:var(--text3)">${monthLabel} ${top.monthCount}회 출석 🏆</div>
+    ${ranked.length > 1 ? `<div style="margin-top:1rem;font-size:13px;color:var(--text3)">${ranked.slice(1,4).map((m,i) => `${['🥈','🥉','4️⃣'][i]} ${m.name} (${m.monthCount}회)`).join(' · ')}</div>` : ''}
+  `;
 }
 
 // 게임 탭 진입 시 로드
