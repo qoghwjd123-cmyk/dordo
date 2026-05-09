@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>DORDO</title>
-<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
@@ -396,9 +395,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div id="champion-result" style="text-align:center;padding:1rem 0">
       <div class="loading"><div class="spinner"></div><br>불러오는 중...</div>
     </div>
-    <button class="btn" id="kakao-share-btn" style="background:#FEE500;color:#191919;font-weight:700;display:none;margin-top:.5rem">
-      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:18px;vertical-align:middle;margin-right:6px"/>카카오톡으로 공유
-    </button>
   </div>
 
 </div>
@@ -1201,16 +1197,16 @@ async function loadGameMembers() {
   const nonMates = sortMembers(members);
   const teamHtml = nonMates.map(m => {
     const g = grade(m);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;cursor:pointer" onclick="this.querySelector('input').checked=!this.querySelector('input').checked">
-      <input type="checkbox" class="team-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
-      <span style="font-size:14px">${g.e} ${m.name}</span>
+    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0">
+      <input type="checkbox" class="team-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0"/>
+      <span style="font-size:14px;cursor:pointer" onclick="var cb=this.previousElementSibling;cb.checked=!cb.checked">${g.e} ${m.name}</span>
     </div>`;
   }).join('');
   const drawHtml = nonMates.map(m => {
     const g = grade(m);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;cursor:pointer" onclick="this.querySelector('input').checked=!this.querySelector('input').checked">
-      <input type="checkbox" class="draw-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
-      <span style="font-size:14px">${g.e} ${m.name}</span>
+    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0">
+      <input type="checkbox" class="draw-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0"/>
+      <span style="font-size:14px;cursor:pointer" onclick="var cb=this.previousElementSibling;cb.checked=!cb.checked">${g.e} ${m.name}</span>
     </div>`;
   }).join('');
   document.getElementById('team-member-list').innerHTML = teamHtml;
@@ -1272,8 +1268,6 @@ document.getElementById('draw-btn').addEventListener('click', function() {
 });
 
 // 카카오 초기화
-Kakao.init('a961440bf90100c6847da5ee2fde06e1');
-
 // 출석왕
 async function renderChampion() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
@@ -1289,17 +1283,7 @@ async function renderChampion() {
     .filter(m => m.monthCount > 0)
     .sort((a,b) => b.monthCount - a.monthCount);
   const el = document.getElementById('champion-result');
-  const shareBtn = document.getElementById('kakao-share-btn');
-  if (!ranked.length) { el.innerHTML = '<div class="empty">이번달 출석 기록이 없어요</div>'; shareBtn.style.display='none'; return; }
-  const top = ranked[0];
-  const g = grade(top);
-  el.innerHTML = `
-    <div style="font-size:48px;margin-bottom:.5rem">${g.e}</div>
-    <div style="font-size:20px;font-weight:700;margin-bottom:.25rem">${top.name}</div>
-    <div style="font-size:14px;color:var(--text3)">${monthLabel} ${top.monthCount}회 출석 🏆</div>
-    ${ranked.length > 1 ? `<div style="margin-top:1rem;font-size:13px;color:var(--text3)">${ranked.slice(1,4).map((m,i) => `${['🥈','🥉','4️⃣'][i]} ${m.name} (${m.monthCount}회)`).join(' · ')}</div>` : ''}
-  `;
-  shareBtn.style.display = 'block';
+
 
   // 공유 텍스트 생성
   const rankText = ranked.slice(0,5).map((m,i) => {
@@ -1307,28 +1291,6 @@ async function renderChampion() {
     return `${medals[i]} ${m.name} - ${m.monthCount}회`;
   }).join('\n');
 
-  shareBtn.onclick = function() {
-    if (!Kakao.isInitialized()) Kakao.init('a961440bf90100c6847da5ee2fde06e1');
-    Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: `🏆 두알두 ${monthLabel} 출석왕`,
-        description: rankText,
-        imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
-        link: {
-          mobileWebUrl: 'https://qoghwjd123-cmyk.github.io',
-          webUrl: 'https://qoghwjd123-cmyk.github.io',
-        },
-      },
-      buttons: [{
-        title: '출석 확인하기',
-        link: {
-          mobileWebUrl: 'https://qoghwjd123-cmyk.github.io',
-          webUrl: 'https://qoghwjd123-cmyk.github.io',
-        },
-      }],
-    });
-  };
 }
 
 // 게임 탭 진입 시 로드
