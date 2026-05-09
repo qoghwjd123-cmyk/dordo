@@ -89,6 +89,8 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .filter-tabs{display:flex;gap:6px;margin-bottom:1rem}
 .ftab{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
 .ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cat-tab{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
+.cat-tab.active{background:#e76f51;color:#fff;border-color:#e76f51}
 .fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:90;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center}
 .fab.show{display:flex}
 #admin-lock{text-align:center;padding:3rem 1.5rem}
@@ -119,7 +121,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <option value="🏃 러닝">🏃 러닝</option>
       <option value="🏔️ 등산">🏔️ 등산</option>
       <option value="🍽️ 식사">🍽️ 식사</option>
-      <option value="📌 기타">📌 기타</option>
+      <option value="기타">기타</option>
     </select>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
       <span style="font-size:13px;color:var(--text3)" id="se-count">0명 선택</span>
@@ -229,7 +231,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <option value="🏃 러닝">🏃 러닝</option>
       <option value="🏔️ 등산">🏔️ 등산</option>
       <option value="🍽️ 식사">🍽️ 식사</option>
-      <option value="📌 기타">📌 기타</option>
+      <option value="기타">기타</option>
     </select>
     <div class="sl2">모임 이름</div>
     <input type="text" id="pub-sess-name" placeholder="예: 5월 정기 러닝"/>
@@ -240,25 +242,51 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <div id="sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
 </div>
 
+<!-- 멤버 상세 모달 -->
+<div class="mb-bg" id="member-detail-modal">
+  <div class="modal">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+      <div id="md-emoji" style="font-size:32px"></div>
+      <div>
+        <div id="md-name" style="font-size:16px;font-weight:700"></div>
+        <div id="md-stats" style="font-size:13px;color:var(--text3)"></div>
+      </div>
+    </div>
+    <div class="ct">참석한 모임</div>
+    <div id="md-sessions" style="max-height:50vh;overflow-y:auto"></div>
+    <button class="btn bs" style="margin-top:.75rem" id="md-close-btn">닫기</button>
+  </div>
+</div>
+
 <!-- 출석 -->
 <div id="page-checkin" class="page">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
-    <div class="filter-tabs" style="margin-bottom:0">
+  <!-- 필터 행 1: 기간 -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+    <div class="filter-tabs" style="margin-bottom:0;flex-wrap:wrap;gap:4px">
       <button class="ftab" data-filter="all">전체</button>
       <button class="ftab" data-filter="year">올해</button>
       <button class="ftab active" data-filter="month">이번달</button>
       <button class="ftab" data-filter="custom">직접선택</button>
     </div>
-    <button id="sort-toggle" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500">가입일순</button>
+    <button id="sort-toggle" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500;white-space:nowrap;margin-left:6px">가입일순</button>
   </div>
-  <div id="custom-filter" style="display:none;gap:8px;margin-bottom:.75rem">
+  <!-- 직접선택 드롭다운 -->
+  <div id="custom-filter" style="display:none;gap:8px;margin-bottom:.5rem">
     <select id="filter-year" style="margin:0;flex:1"></select>
     <select id="filter-month" style="margin:0;flex:1"></select>
+  </div>
+  <!-- 필터 행 2: 카테고리 -->
+  <div class="filter-tabs" style="margin-bottom:.875rem;flex-wrap:wrap;gap:4px">
+    <button class="cat-tab active" data-cat="all">전체</button>
+    <button class="cat-tab" data-cat="🏃 러닝">🏃 러닝</button>
+    <button class="cat-tab" data-cat="🏔️ 등산">🏔️ 등산</button>
+    <button class="cat-tab" data-cat="🍽️ 식사">🍽️ 식사</button>
+    <button class="cat-tab" data-cat="기타">기타</button>
   </div>
   <div class="sb2" style="margin-bottom:.875rem;padding:.75rem;text-align:center">
     <span style="font-size:13px;color:var(--text3)">총 모임 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span>
   </div>
-  <div class="card"><div class="ct">출석부</div><div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
+  <div class="card"><div class="ct">출석부 — 멤버 클릭 시 상세 보기</div><div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
 </div>
 
 <!-- 운영진 -->
@@ -271,11 +299,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <button class="btn bp" style="max-width:280px;margin:0 auto" id="admin-login-btn">입장</button>
   </div>
   <div id="admin-content" style="display:none">
-    <div class="card">
-      <div class="ct">출석 초기화</div>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:.875rem">모든 멤버의 출석 횟수를 0으로 초기화해요. 모임 기록은 유지돼요.</p>
-      <button class="btn" id="reset-counts-btn" style="background:#fee2e2;color:#991b1b;border:none">전체 출석 횟수 초기화</button>
-    </div>
     <div class="card">
       <div class="ct">모임 관리</div>
       <div id="admin-sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
@@ -310,6 +333,7 @@ const db = firebase.firestore();
 const ADMIN_PW = "dordo2023";
 let isAdmin = false;
 let ciFilter = 'month';
+let catFilter = 'all';
 let attSortByCount = false;
 let _membersCache = null;
 let _sessionsCache = null;
@@ -614,6 +638,8 @@ async function renderAttBoard() {
     if (y && m) fs = fs.filter(s => s.date.startsWith(y + '-' + m));
     else if (y) fs = fs.filter(s => s.date.startsWith(y));
   }
+  // 카테고리 필터
+  if (catFilter !== 'all') fs = fs.filter(s => s.cat === catFilter);
   const total = fs.length;
   const countMap = {};
   for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0) + 1;
@@ -625,7 +651,7 @@ async function renderAttBoard() {
     const cnt = countMap[m.id]||0;
     const pct = total > 0 ? Math.round(cnt/total*100) : 0;
     const g = grade(m);
-    return `<div class="mi">
+    return `<div class="mi" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
@@ -674,7 +700,42 @@ document.querySelectorAll('.ftab').forEach(btn => {
   });
 });
 
-document.getElementById('sort-toggle').addEventListener('click', function() {
+document.querySelectorAll('.cat-tab').forEach(btn => {
+  btn.addEventListener('click', function() {
+    catFilter = this.dataset.cat;
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    renderAttBoard();
+  });
+});
+
+async function openMemberDetail(memberId) {
+  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
+  const m = members.find(m => m.id === memberId);
+  if (!m) return;
+  const g = grade(m);
+  const today = new Date().toISOString().split('T')[0];
+  // 해당 멤버가 참석한 모임 (지난 모임만)
+  const attended = sessions
+    .filter(s => s.date <= today && (s.attendees||[]).some(a => a.memberId === memberId))
+    .sort((a,b) => b.date.localeCompare(a.date));
+
+  document.getElementById('md-emoji').textContent = g.e;
+  document.getElementById('md-name').textContent = m.name;
+  document.getElementById('md-stats').textContent = `총 ${attended.length}회 참석`;
+  document.getElementById('md-sessions').innerHTML = attended.length
+    ? attended.map(s => `
+      <div class="hi">
+        <div>
+          <div style="font-weight:500;font-size:14px">${s.cat?s.cat+' · ':''}${s.name}</div>
+          <div style="font-size:12px;color:var(--text3)">${s.date}</div>
+        </div>
+      </div>`).join('')
+    : '<div class="empty">참석한 모임이 없어요</div>';
+  document.getElementById('member-detail-modal').classList.add('open');
+}
+
+document.getElementById('md-close-btn').addEventListener('click', () => closeModal('member-detail-modal'));
   attSortByCount = !attSortByCount;
   this.textContent = attSortByCount ? '출석순' : '가입일순';
   this.style.color = attSortByCount ? 'var(--accent)' : 'var(--text3)';
@@ -733,7 +794,7 @@ async function openSessEdit(sessId) {
   const [members, sessSnap] = await Promise.all([getMembers(), db.collection('sessions').doc(sessId).get()]);
   const sess = sessSnap.data();
   document.getElementById('se-sess-info').textContent = `${sess.name} · ${sess.date}`;
-  document.getElementById('se-cat').value = sess.cat || '📌 기타';
+  document.getElementById('se-cat').value = sess.cat || '기타';
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
   const sorted = sortMembers(members);
   document.getElementById('se-member-list').innerHTML = sorted.map(m => {
