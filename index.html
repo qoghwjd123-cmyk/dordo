@@ -312,15 +312,17 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div id="roulette-result" style="text-align:center;padding:1.5rem 0;font-size:28px;font-weight:700;color:var(--accent);min-height:80px;display:flex;align-items:center;justify-content:center">
       버튼을 눌러보세요!
     </div>
-    <button class="btn bp" id="roulette-btn">🎰 뽑기!</button>
-    <div style="margin-top:.75rem">
-      <div class="sl2">커스텀 항목 추가</div>
+    <div class="sl2">운동 선택 (복수 선택 가능)</div>
+    <div id="roulette-options" style="display:flex;flex-direction:column;gap:6px;margin-bottom:.875rem;background:var(--surface2);border-radius:var(--rs);padding:.75rem"></div>
+    <div id="roulette-custom-wrap" style="display:none;margin-bottom:.75rem">
+      <div class="sl2">기타 직접 입력</div>
       <div style="display:flex;gap:8px">
-        <input type="text" id="roulette-input" placeholder="예: 5km 러닝" style="margin:0;flex:1"/>
+        <input type="text" id="roulette-input" placeholder="예: 줄넘기 100개" style="margin:0;flex:1"/>
         <button class="btn bs" style="width:auto;margin:0;padding:.7rem 1rem;font-size:13px" id="roulette-add-btn">추가</button>
       </div>
-      <div id="roulette-list" style="margin-top:.5rem;display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div id="roulette-custom-list" style="margin-top:.5rem;display:flex;flex-wrap:wrap;gap:6px"></div>
     </div>
+    <button class="btn bp" id="roulette-btn">🎰 뽑기!</button>
   </div>
 
   <!-- ⏱️ 인터벌 타이머 -->
@@ -1104,27 +1106,59 @@ document.getElementById('confirm-cancel').addEventListener('click', function() {
 
 // ── 게임 ─────────────────────────────────────────
 // 룰렛
-let rouletteItems = ['3km 러닝','5km 러닝','10km 러닝','30분 걷기','홈트 20분','스트레칭'];
-function renderRouletteList() {
-  document.getElementById('roulette-list').innerHTML = rouletteItems.map((item,i) =>
-    `<span style="background:var(--surface2);border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:4px">
-      ${item} <span style="cursor:pointer;color:var(--text3)" onclick="removeRoulette(${i})">✕</span>
-    </span>`
-  ).join('');
+const ROULETTE_PRESETS = ['3km 러닝','5km 러닝','10km 러닝','하프 마라톤','30분 걷기','홈트 20분','스트레칭','등산','자전거','수영','기타'];
+let rouletteCustomItems = [];
+
+function initRoulette() {
+  const el = document.getElementById('roulette-options');
+  el.innerHTML = ROULETTE_PRESETS.map(item => {
+    const isEtc = item === '기타';
+    return `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:.25rem 0">
+      <div class="r-box" data-item="${item}" style="width:20px;height:20px;border-radius:5px;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s" onclick="toggleRoulette(this,'${item}')">
+        <span style="color:#fff;font-size:12px;font-weight:700;display:none">✓</span>
+      </div>
+      <span style="font-size:14px">${item}</span>
+    </label>`;
+  }).join('');
 }
-window.removeRoulette = function(i) { rouletteItems.splice(i,1); renderRouletteList(); };
+
+function toggleRoulette(box, item) {
+  const checked = box.style.background === 'var(--accent)' || box.style.background === 'rgb(45, 106, 79)';
+  box.style.background = checked ? '#fff' : 'var(--accent)';
+  box.style.borderColor = checked ? 'var(--border)' : 'var(--accent)';
+  box.querySelector('span').style.display = checked ? 'none' : 'block';
+  // 기타 선택 시 텍스트박스 토글
+  if (item === '기타') {
+    document.getElementById('roulette-custom-wrap').style.display = checked ? 'none' : 'block';
+  }
+}
+
+function getRouletteItems() {
+  const selected = [...document.querySelectorAll('.r-box')].filter(b => {
+    return b.style.background === 'var(--accent)' || b.style.background === 'rgb(45, 106, 79)';
+  }).map(b => b.dataset.item).filter(i => i !== '기타');
+  return [...selected, ...rouletteCustomItems];
+}
+
 document.getElementById('roulette-add-btn').addEventListener('click', function() {
   const val = document.getElementById('roulette-input').value.trim();
   if (!val) return;
-  rouletteItems.push(val);
+  rouletteCustomItems.push(val);
   document.getElementById('roulette-input').value = '';
-  renderRouletteList();
+  document.getElementById('roulette-custom-list').innerHTML = rouletteCustomItems.map((item,i) =>
+    `<span style="background:var(--surface2);border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:4px">
+      ${item} <span style="cursor:pointer;color:var(--text3)" onclick="rouletteCustomItems.splice(${i},1);document.getElementById('roulette-add-btn').click()">✕</span>
+    </span>`
+  ).join('');
 });
+
 document.getElementById('roulette-btn').addEventListener('click', function() {
+  const items = getRouletteItems();
+  if (!items.length) { toast('운동을 선택해주세요!'); return; }
   const el = document.getElementById('roulette-result');
   let count = 0;
   const interval = setInterval(() => {
-    const pick = rouletteItems[Math.floor(Math.random()*rouletteItems.length)];
+    const pick = items[Math.floor(Math.random()*items.length)];
     el.textContent = pick;
     el.style.color = `hsl(${Math.random()*360},60%,40%)`;
     count++;
@@ -1134,7 +1168,6 @@ document.getElementById('roulette-btn').addEventListener('click', function() {
     }
   }, 80);
 });
-renderRouletteList();
 
 // 타이머
 let timerInterval = null;
@@ -1202,22 +1235,13 @@ async function loadGameMembers() {
       <div id="box-${id}" style="width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
         <span style="color:#fff;font-size:13px;font-weight:700;display:none">✓</span>
       </div>
-      <input type="checkbox" id="${id}" class="${cls}" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="display:none"
+      <input type="checkbox" id="${id}" class="${cls}" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" style="display:none"
         onchange="var box=document.getElementById('box-${id}');var chk=document.getElementById('${id}');box.style.background=chk.checked?'var(--accent)':'#fff';box.style.borderColor=chk.checked?'var(--accent)':'var(--border)';box.querySelector('span').style.display=chk.checked?'block':'none'"/>
       <span style="font-size:14px">${g.e} ${m.name}</span>
     </label>`;
   };
   document.getElementById('team-member-list').innerHTML = nonMates.map(m => makeRow(m,'team-cb')).join('');
   document.getElementById('draw-member-list').innerHTML = nonMates.map(m => makeRow(m,'draw-cb')).join('');
-  // 초기 체크 상태 반영
-  document.querySelectorAll('.team-cb, .draw-cb').forEach(cb => {
-    const box = document.getElementById('box-' + cb.id);
-    if (box && cb.checked) {
-      box.style.background = 'var(--accent)';
-      box.style.borderColor = 'var(--accent)';
-      box.querySelector('span').style.display = 'block';
-    }
-  });
 }
 
 function setCheckboxes(cls, checked) {
@@ -1306,6 +1330,7 @@ async function renderChampion() {
 
 // 게임 탭 진입 시 로드
 function initGameTab() {
+  initRoulette();
   loadGameMembers();
   renderChampion();
 }
