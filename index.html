@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>DORDO</title>
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
@@ -113,12 +115,14 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <button class="nb active" data-page="rules">📌 두알두</button>
   <button class="nb" data-page="members">👥 멤버</button>
   <button class="nb" data-page="sessions">📅 모임</button>
+  <button class="nb" data-page="game">🎮 게임</button>
   <button class="nb" data-page="admin">🔥 운영진</button>
 </nav>
 <div id="toast-el" class="toast-el"></div>
 <button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <!-- 모임 수정 모달 -->
+
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div class="mt2">모임 멤버 수정</div>
@@ -143,6 +147,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 커스텀 확인 모달 -->
+
 <div class="mb-bg" id="confirm-modal" style="z-index:500">
   <div class="modal">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
@@ -154,6 +159,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 모달 -->
+
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
     <div id="fab-lock-wrap">
@@ -173,6 +179,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 수정 모달 -->
+
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div class="mt2">멤버 수정</div>
@@ -192,6 +199,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 두알두 -->
+
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
@@ -220,6 +228,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 -->
+
 <div id="page-members" class="page">
   <!-- 멤버/통계 서브탭 -->
   <div class="filter-tabs" style="margin-bottom:1rem">
@@ -228,6 +237,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 멤버 목록 -->
+
   <div id="mtab-list">
     <div class="sr">
       <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
@@ -238,6 +248,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 출석 통계 -->
+
   <div id="mtab-stats" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
       <div class="filter-tabs" style="margin-bottom:0;flex-wrap:wrap;gap:4px">
@@ -267,6 +278,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 -->
+
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 모임 등록</div>
@@ -287,6 +299,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 상세 모달 -->
+
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
@@ -302,7 +315,113 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 </div>
 
+<!-- 게임 -->
+
+<div id="page-game" class="page">
+
+  <!-- 🎯 운동 룰렛 -->
+
+  <div class="card">
+    <div class="ct">🎯 오늘의 운동 룰렛</div>
+    <div id="roulette-result" style="text-align:center;padding:1.5rem 0;font-size:28px;font-weight:700;color:var(--accent);min-height:80px;display:flex;align-items:center;justify-content:center">
+      버튼을 눌러보세요!
+    </div>
+    <button class="btn bp" id="roulette-btn">🎰 뽑기!</button>
+    <div style="margin-top:.75rem">
+      <div class="sl2">커스텀 항목 추가</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="roulette-input" placeholder="예: 5km 러닝" style="margin:0;flex:1"/>
+        <button class="btn bs" style="width:auto;margin:0;padding:.7rem 1rem;font-size:13px" id="roulette-add-btn">추가</button>
+      </div>
+      <div id="roulette-list" style="margin-top:.5rem;display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+  </div>
+
+  <!-- ⏱️ 인터벌 타이머 -->
+
+  <div class="card">
+    <div class="ct">⏱️ 인터벌 타이머</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.875rem">
+      <div>
+        <div class="sl2">운동 시간 (초)</div>
+        <input type="number" id="timer-work" value="40" min="5" style="margin:0"/>
+      </div>
+      <div>
+        <div class="sl2">휴식 시간 (초)</div>
+        <input type="number" id="timer-rest" value="20" min="5" style="margin:0"/>
+      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:1rem">
+      <div id="timer-phase" style="font-size:13px;font-weight:700;color:var(--text3);margin-bottom:.25rem">준비</div>
+      <div id="timer-display" style="font-size:56px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1">00</div>
+      <div id="timer-round" style="font-size:13px;color:var(--text3);margin-top:.25rem"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn bp" style="flex:1;margin:0" id="timer-start-btn">▶ 시작</button>
+      <button class="btn bs" style="flex:1;margin:0" id="timer-reset-btn">↺ 리셋</button>
+    </div>
+  </div>
+
+  <!-- 🎲 팀 랜덤 배정 -->
+
+  <div class="card">
+    <div class="ct">🎲 팀 랜덤 배정</div>
+    <div class="sl2">팀 수</div>
+    <select id="team-count" style="margin-bottom:.875rem">
+      <option value="2">2팀</option>
+      <option value="3">3팀</option>
+      <option value="4">4팀</option>
+    </select>
+    <div class="sl2" style="margin-bottom:.5rem">참여 멤버 선택</div>
+    <div style="display:flex;gap:8px;margin-bottom:.5rem">
+      <button class="btn bs" style="flex:1;margin:0;font-size:13px;padding:.5rem" id="team-select-all-btn">전체선택</button>
+      <button class="btn bs" style="flex:1;margin:0;font-size:13px;padding:.5rem" id="team-deselect-btn">전체해제</button>
+    </div>
+    <div id="team-member-list" style="max-height:200px;overflow-y:auto;margin-bottom:.875rem;background:var(--surface2);border-radius:var(--rs);padding:.5rem">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+    <button class="btn bp" id="team-shuffle-btn">🎲 팀 배정!</button>
+    <div id="team-result" style="margin-top:.875rem"></div>
+  </div>
+
+  <!-- 🎰 멤버 추첨 -->
+
+  <div class="card">
+    <div class="ct">🎰 멤버 추첨</div>
+    <div class="sl2">추첨 인원 수</div>
+    <select id="draw-count" style="margin-bottom:.875rem">
+      <option value="1">1명</option>
+      <option value="2">2명</option>
+      <option value="3">3명</option>
+    </select>
+    <div class="sl2" style="margin-bottom:.5rem">추첨 대상</div>
+    <div style="display:flex;gap:8px;margin-bottom:.5rem">
+      <button class="btn bs" style="flex:1;margin:0;font-size:13px;padding:.5rem" id="draw-select-all-btn">전체선택</button>
+      <button class="btn bs" style="flex:1;margin:0;font-size:13px;padding:.5rem" id="draw-deselect-btn">전체해제</button>
+    </div>
+    <div id="draw-member-list" style="max-height:200px;overflow-y:auto;margin-bottom:.875rem;background:var(--surface2);border-radius:var(--rs);padding:.5rem">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+    <button class="btn bp" id="draw-btn">🎰 추첨!</button>
+    <div id="draw-result" style="text-align:center;margin-top:.875rem;font-size:24px;font-weight:700;color:var(--accent);min-height:60px"></div>
+  </div>
+
+  <!-- 🏆 이번달 출석왕 -->
+
+  <div class="card">
+    <div class="ct">🏆 이번달 출석왕</div>
+    <div id="champion-result" style="text-align:center;padding:1rem 0">
+      <div class="loading"><div class="spinner"></div><br>불러오는 중...</div>
+    </div>
+    <button class="btn" id="kakao-share-btn" style="background:#FEE500;color:#191919;font-weight:700;display:none;margin-top:.5rem">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:18px;vertical-align:middle;margin-right:6px"/>카카오톡으로 공유
+    </button>
+  </div>
+
+</div>
+
 <!-- 운영진 -->
+
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -345,7 +464,7 @@ const db = firebase.firestore();
 
 const ADMIN_PW = "dordo2023";
 let isAdmin = false;
-let ciFilter = 'month';
+let ciFilter = 'all';
 let catFilter = 'all';
 let attSortByCount = false;
 let _membersCache = null;
@@ -445,6 +564,7 @@ function showPage(n, btn) {
   document.getElementById('fab-btn').classList.toggle('show', n === 'sessions');
   if (n === 'members') renderMPage();
   if (n === 'sessions') renderSessionsTab();
+  if (n === 'game') initGameTab();
   if (n === 'admin' && isAdmin) renderAdminContent();
 }
 
@@ -1004,6 +1124,225 @@ document.getElementById('confirm-cancel').addEventListener('click', function() {
   if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
 });
 
+// ── 게임 ─────────────────────────────────────────
+// 룰렛
+let rouletteItems = ['3km 러닝','5km 러닝','10km 러닝','30분 걷기','홈트 20분','스트레칭'];
+function renderRouletteList() {
+  document.getElementById('roulette-list').innerHTML = rouletteItems.map((item,i) =>
+    `<span style="background:var(--surface2);border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:4px">
+      ${item} <span style="cursor:pointer;color:var(--text3)" onclick="removeRoulette(${i})">✕</span>
+    </span>`
+  ).join('');
+}
+window.removeRoulette = function(i) { rouletteItems.splice(i,1); renderRouletteList(); };
+document.getElementById('roulette-add-btn').addEventListener('click', function() {
+  const val = document.getElementById('roulette-input').value.trim();
+  if (!val) return;
+  rouletteItems.push(val);
+  document.getElementById('roulette-input').value = '';
+  renderRouletteList();
+});
+document.getElementById('roulette-btn').addEventListener('click', function() {
+  const el = document.getElementById('roulette-result');
+  let count = 0;
+  const interval = setInterval(() => {
+    const pick = rouletteItems[Math.floor(Math.random()*rouletteItems.length)];
+    el.textContent = pick;
+    el.style.color = `hsl(${Math.random()*360},60%,40%)`;
+    count++;
+    if (count > 20) {
+      clearInterval(interval);
+      el.style.color = 'var(--accent)';
+    }
+  }, 80);
+});
+renderRouletteList();
+
+// 타이머
+let timerInterval = null;
+let timerSeconds = 0;
+let timerIsWork = true;
+let timerRound = 0;
+let timerRunning = false;
+
+function updateTimerDisplay() {
+  document.getElementById('timer-display').textContent = String(timerSeconds).padStart(2,'0');
+  document.getElementById('timer-phase').textContent = timerIsWork ? '🏃 운동!' : '😮‍💨 휴식';
+  document.getElementById('timer-phase').style.color = timerIsWork ? 'var(--accent2)' : 'var(--accent)';
+  document.getElementById('timer-round').textContent = timerRound > 0 ? `${timerRound}라운드` : '';
+}
+
+document.getElementById('timer-start-btn').addEventListener('click', function() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    this.textContent = '▶ 시작';
+    return;
+  }
+  if (timerSeconds === 0) {
+    timerSeconds = parseInt(document.getElementById('timer-work').value) || 40;
+    timerIsWork = true;
+    timerRound = 1;
+  }
+  timerRunning = true;
+  this.textContent = '⏸ 일시정지';
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    if (timerSeconds <= 0) {
+      timerIsWork = !timerIsWork;
+      if (timerIsWork) timerRound++;
+      timerSeconds = timerIsWork
+        ? parseInt(document.getElementById('timer-work').value) || 40
+        : parseInt(document.getElementById('timer-rest').value) || 20;
+    }
+    updateTimerDisplay();
+  }, 1000);
+  updateTimerDisplay();
+});
+
+document.getElementById('timer-reset-btn').addEventListener('click', function() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 0;
+  timerIsWork = true;
+  timerRound = 0;
+  document.getElementById('timer-start-btn').textContent = '▶ 시작';
+  document.getElementById('timer-display').textContent = '00';
+  document.getElementById('timer-phase').textContent = '준비';
+  document.getElementById('timer-phase').style.color = 'var(--text3)';
+  document.getElementById('timer-round').textContent = '';
+});
+
+// 팀 배정 & 추첨 멤버 리스트
+async function loadGameMembers() {
+  const members = await getMembers();
+  const nonMates = sortMembers(members);
+  const teamHtml = nonMates.map(m => {
+    const g = grade(m);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;cursor:pointer" onclick="this.querySelector('input').checked=!this.querySelector('input').checked">
+      <input type="checkbox" class="team-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+      <span style="font-size:14px">${g.e} ${m.name}</span>
+    </div>`;
+  }).join('');
+  const drawHtml = nonMates.map(m => {
+    const g = grade(m);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;cursor:pointer" onclick="this.querySelector('input').checked=!this.querySelector('input').checked">
+      <input type="checkbox" class="draw-cb" data-id="${m.id}" data-name="${m.name}" data-emoji="${g.e}" checked style="width:16px;height:16px;accent-color:var(--accent)"/>
+      <span style="font-size:14px">${g.e} ${m.name}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('team-member-list').innerHTML = teamHtml;
+  document.getElementById('draw-member-list').innerHTML = drawHtml;
+}
+
+document.getElementById('team-select-all-btn').addEventListener('click', () => {
+  document.querySelectorAll('.team-cb').forEach(cb => cb.checked = true);
+});
+document.getElementById('team-deselect-btn').addEventListener('click', () => {
+  document.querySelectorAll('.team-cb').forEach(cb => cb.checked = false);
+});
+document.getElementById('draw-select-all-btn').addEventListener('click', () => {
+  document.querySelectorAll('.draw-cb').forEach(cb => cb.checked = true);
+});
+document.getElementById('draw-deselect-btn').addEventListener('click', () => {
+  document.querySelectorAll('.draw-cb').forEach(cb => cb.checked = false);
+});
+
+// 팀 배정
+document.getElementById('team-shuffle-btn').addEventListener('click', function() {
+  const selected = [...document.querySelectorAll('.team-cb:checked')].map(cb => ({
+    name: cb.dataset.name, emoji: cb.dataset.emoji
+  }));
+  if (selected.length < 2) { toast('2명 이상 선택해주세요'); return; }
+  const teamCount = parseInt(document.getElementById('team-count').value);
+  const shuffled = selected.sort(() => Math.random() - 0.5);
+  const teams = Array.from({length: teamCount}, () => []);
+  shuffled.forEach((m, i) => teams[i % teamCount].push(m));
+  const colors = ['var(--accent)','var(--accent2)','#1a4a9e','#6b21a8'];
+  document.getElementById('team-result').innerHTML = teams.map((team, i) => `
+    <div style="background:var(--surface2);border-radius:var(--rs);padding:.75rem;margin-bottom:.5rem">
+      <div style="font-size:12px;font-weight:700;color:${colors[i]};margin-bottom:.4rem">${i+1}팀</div>
+      <div style="font-size:14px">${team.map(m => m.emoji+' '+m.name).join(' · ')}</div>
+    </div>`).join('');
+});
+
+// 추첨
+document.getElementById('draw-btn').addEventListener('click', function() {
+  const selected = [...document.querySelectorAll('.draw-cb:checked')].map(cb => ({
+    name: cb.dataset.name, emoji: cb.dataset.emoji
+  }));
+  const count = parseInt(document.getElementById('draw-count').value);
+  if (selected.length < count) { toast('추첨 인원보다 선택된 멤버가 적어요'); return; }
+  const el = document.getElementById('draw-result');
+  let tick = 0;
+  const interval = setInterval(() => {
+    const picks = selected.sort(() => Math.random() - 0.5).slice(0, count);
+    el.textContent = picks.map(m => m.emoji+' '+m.name).join('  ·  ');
+    el.style.color = `hsl(${Math.random()*360},60%,35%)`;
+    tick++;
+    if (tick > 20) {
+      clearInterval(interval);
+      const final = selected.sort(() => Math.random() - 0.5).slice(0, count);
+      el.innerHTML = final.map(m => `<div style="font-size:22px;margin:.25rem 0">${m.emoji} ${m.name}</div>`).join('');
+      el.style.color = 'var(--accent)';
+    }
+  }, 80);
+});
+
+// 카카오 초기화
+Kakao.init('a961440bf90100c6847da5ee2fde06e1');
+
+// 출석왕
+async function renderChampion() {
+  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
+  const today = new Date().toISOString().split('T')[0];
+  const thisMonth = today.slice(0,7);
+  const now = new Date();
+  const monthLabel = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
+  const fs = sessions.filter(s => s.date <= today && s.date.startsWith(thisMonth));
+  const countMap = {};
+  for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0)+1;
+  const ranked = members
+    .map(m => ({...m, monthCount: countMap[m.id]||0}))
+    .filter(m => m.monthCount > 0)
+    .sort((a,b) => b.monthCount - a.monthCount);
+  const el = document.getElementById('champion-result');
+  const shareBtn = document.getElementById('kakao-share-btn');
+  if (!ranked.length) { el.innerHTML = '<div class="empty">이번달 출석 기록이 없어요</div>'; shareBtn.style.display='none'; return; }
+  const top = ranked[0];
+  const g = grade(top);
+  el.innerHTML = `
+    <div style="font-size:48px;margin-bottom:.5rem">${g.e}</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:.25rem">${top.name}</div>
+    <div style="font-size:14px;color:var(--text3)">${monthLabel} ${top.monthCount}회 출석 🏆</div>
+    ${ranked.length > 1 ? `<div style="margin-top:1rem;font-size:13px;color:var(--text3)">${ranked.slice(1,4).map((m,i) => `${['🥈','🥉','4️⃣'][i]} ${m.name} (${m.monthCount}회)`).join(' · ')}</div>` : ''}
+  `;
+  shareBtn.style.display = 'block';
+
+  // 공유 텍스트 생성
+  const rankText = ranked.slice(0,5).map((m,i) => {
+    const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+    return `${medals[i]} ${m.name} - ${m.monthCount}회`;
+  }).join('\n');
+
+  shareBtn.onclick = function() {
+    Kakao.Share.sendDefault({
+      objectType: 'text',
+      text: `🏆 두알두 ${monthLabel} 출석왕 🏆\n\n${rankText}\n\n두알두 출석 확인하기 👇`,
+      link: {
+        mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+        webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+      },
+    });
+  };
+}
+
+// 게임 탭 진입 시 로드
+function initGameTab() {
+  loadGameMembers();
+  renderChampion();
+}
+
 // ── 멤버 서브탭 ──────────────────────────────────
 document.querySelectorAll('.mtab').forEach(btn => {
   btn.addEventListener('click', function() {
@@ -1072,5 +1411,6 @@ document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
 });
 </script>
+
 </body>
 </html>
