@@ -143,6 +143,18 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 </div>
 
+<!-- 비번 입력 모달 -->
+<div class="mb-bg" id="prompt-modal" style="z-index:500">
+  <div class="modal">
+    <div id="prompt-msg" style="font-size:15px;font-weight:500;margin-bottom:1rem;text-align:center"></div>
+    <input type="password" id="prompt-input" placeholder="비밀번호" style="margin-bottom:.75rem"/>
+    <div style="display:flex;gap:8px">
+      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="prompt-cancel">취소</button>
+      <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="prompt-ok">확인</button>
+    </div>
+  </div>
+</div>
+
 <!-- 커스텀 확인 모달 -->
 <div class="mb-bg" id="confirm-modal" style="z-index:500">
   <div class="modal">
@@ -451,6 +463,7 @@ firebase.initializeApp({
 const db = firebase.firestore();
 
 const ADMIN_PW = "dordo2023";
+const DELETE_PW = "0401";
 let isAdmin = false;
 let ciFilter = 'all';
 let catFilter = 'all';
@@ -458,7 +471,28 @@ let attSortByCount = false;
 let _membersCache = null;
 let _sessionsCache = null;
 let currentSessEditId = null;
-let _confirmResolve = null;
+let _promptResolve = null;
+function showPrompt(msg) {
+  return new Promise(resolve => {
+    _promptResolve = resolve;
+    document.getElementById('prompt-msg').textContent = msg;
+    document.getElementById('prompt-input').value = '';
+    document.getElementById('prompt-modal').classList.add('open');
+    setTimeout(() => document.getElementById('prompt-input').focus(), 100);
+  });
+}
+document.getElementById('prompt-ok').addEventListener('click', function() {
+  const val = document.getElementById('prompt-input').value;
+  document.getElementById('prompt-modal').classList.remove('open');
+  if (_promptResolve) { _promptResolve(val); _promptResolve = null; }
+});
+document.getElementById('prompt-cancel').addEventListener('click', function() {
+  document.getElementById('prompt-modal').classList.remove('open');
+  if (_promptResolve) { _promptResolve(null); _promptResolve = null; }
+});
+document.getElementById('prompt-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('prompt-ok').click();
+});
 
 const MATE_ORDER = ['호정/리더','황윤정/소통메이트','주동준/운동메이트'];
 const JOIN_DATES = {
@@ -948,6 +982,8 @@ document.getElementById('admin-sess-list').addEventListener('click', async funct
   if (delBtn) {
     const ok = await showConfirm('이 모임을 삭제할까요?');
     if (!ok) return;
+    const pw = await showPrompt('삭제 비밀번호를 입력해주세요');
+    if (pw !== DELETE_PW) { toast('비밀번호가 틀렸어요 🔒'); return; }
     await db.collection('sessions').doc(delBtn.dataset.id).delete();
     clearCache(); renderAdminSessList(); renderSessionsTab(); toast('삭제됐어요');
   }
