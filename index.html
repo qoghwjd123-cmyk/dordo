@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -122,7 +121,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <!-- 모임 수정 모달 -->
-
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div class="mt2">모임 멤버 수정</div>
@@ -147,7 +145,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 커스텀 확인 모달 -->
-
 <div class="mb-bg" id="confirm-modal" style="z-index:500">
   <div class="modal">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
@@ -159,7 +156,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 모달 -->
-
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
     <div id="fab-lock-wrap">
@@ -179,7 +175,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 수정 모달 -->
-
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div class="mt2">멤버 수정</div>
@@ -199,7 +194,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 두알두 -->
-
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
@@ -228,7 +222,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 -->
-
 <div id="page-members" class="page">
   <!-- 멤버/통계 서브탭 -->
   <div class="filter-tabs" style="margin-bottom:1rem">
@@ -237,7 +230,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 멤버 목록 -->
-
   <div id="mtab-list">
     <div class="sr">
       <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
@@ -248,7 +240,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 출석 통계 -->
-
   <div id="mtab-stats" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
       <div class="filter-tabs" style="margin-bottom:0;flex-wrap:wrap;gap:4px">
@@ -278,7 +269,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 -->
-
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 모임 등록</div>
@@ -299,7 +289,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 상세 모달 -->
-
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
@@ -316,11 +305,9 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 게임 -->
-
 <div id="page-game" class="page">
 
   <!-- 🎯 운동 룰렛 -->
-
   <div class="card">
     <div class="ct">🎯 오늘의 운동 룰렛</div>
     <div id="roulette-result" style="text-align:center;padding:1.5rem 0;font-size:28px;font-weight:700;color:var(--accent);min-height:80px;display:flex;align-items:center;justify-content:center">
@@ -338,7 +325,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- ⏱️ 인터벌 타이머 -->
-
   <div class="card">
     <div class="ct">⏱️ 인터벌 타이머</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.875rem">
@@ -363,7 +349,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎲 팀 랜덤 배정 -->
-
   <div class="card">
     <div class="ct">🎲 팀 랜덤 배정</div>
     <div class="sl2">팀 수</div>
@@ -385,7 +370,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎰 멤버 추첨 -->
-
   <div class="card">
     <div class="ct">🎰 멤버 추첨</div>
     <div class="sl2">추첨 인원 수</div>
@@ -407,7 +391,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🏆 이번달 출석왕 -->
-
   <div class="card">
     <div class="ct">🏆 이번달 출석왕</div>
     <div id="champion-result" style="text-align:center;padding:1rem 0">
@@ -421,7 +404,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 운영진 -->
-
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -1326,13 +1308,25 @@ async function renderChampion() {
   }).join('\n');
 
   shareBtn.onclick = function() {
+    if (!Kakao.isInitialized()) Kakao.init('a961440bf90100c6847da5ee2fde06e1');
     Kakao.Share.sendDefault({
-      objectType: 'text',
-      text: `🏆 두알두 ${monthLabel} 출석왕 🏆\n\n${rankText}\n\n두알두 출석 확인하기 👇`,
-      link: {
-        mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-        webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+      objectType: 'feed',
+      content: {
+        title: `🏆 두알두 ${monthLabel} 출석왕`,
+        description: rankText,
+        imageUrl: 'https://qoghwjd123-cmyk.github.io/dordo/logo.png',
+        link: {
+          mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+          webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+        },
       },
+      buttons: [{
+        title: '출석 확인하기',
+        link: {
+          mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+          webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+        },
+      }],
     });
   };
 }
@@ -1411,6 +1405,5 @@ document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
 });
 </script>
-
 </body>
 </html>
