@@ -214,7 +214,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
   <div class="card">
     <div class="ct">모임</div>
-    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">매주 목요일 정기 운동 모임 <span class="rule-badge info">20:30 ~ 21:00</span></div><div class="rule-sub">목요일 정기 시간대에는 벙개 일정 등록 불가</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">매주 목요일 정기 운동 모임 <span class="rule-badge info">21:00 ~</span></div><div class="rule-sub">목요일 정기 시간대에는 벙개 일정 등록 불가</div></div></div>
     <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">참석이 어려울 땐 — 두알두 참석</div><div class="rule-sub">홈트, 야외걷기 등 어떤 운동이든 OK · 댓글에 <b>'두알두 참석'</b> 작성 후 자정 전 인증샷 업로드</div></div></div>
     <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">일정 확인 및 투표</div><div class="rule-sub">카카오톡 오른쪽 상단 '더보기' → 달력 버튼 · [참석 / 불참] 투표 필수</div></div></div>
     <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">누구든 언제든 모임 등록 가능해요</div><div class="rule-sub">일정 목록 → 연필 아이콘 → 등록 · 참석여부 응답요청 체크 필수</div><div class="rule-sub" style="margin-top:4px">제목 형식: <span class="rule-tag">[기간, 목표]</span> <span class="rule-tag">[장소, 거리, 속도]</span></div><div class="rule-sub" style="color:var(--text3)">ex) 미사호수공원, 3k, 6분pace · 주말 동안, 책 두 권 읽기</div></div></div>
@@ -1283,60 +1283,7 @@ document.getElementById('roulette-btn').addEventListener('click', function() {
   }, 80);
 });
 
-// 타이머
-let timerInterval = null;
-let timerSeconds = 0;
-let timerIsWork = true;
-let timerRound = 0;
-let timerRunning = false;
 
-function updateTimerDisplay() {
-  document.getElementById('timer-display').textContent = String(timerSeconds).padStart(2,'0');
-  document.getElementById('timer-phase').textContent = timerIsWork ? '🏃 운동!' : '😮‍💨 휴식';
-  document.getElementById('timer-phase').style.color = timerIsWork ? 'var(--accent2)' : 'var(--accent)';
-  document.getElementById('timer-round').textContent = timerRound > 0 ? `${timerRound}라운드` : '';
-}
-
-document.getElementById('timer-start-btn').addEventListener('click', function() {
-  if (timerRunning) {
-    clearInterval(timerInterval);
-    timerRunning = false;
-    this.textContent = '▶ 시작';
-    return;
-  }
-  if (timerSeconds === 0) {
-    timerSeconds = parseInt(document.getElementById('timer-work').value) || 40;
-    timerIsWork = true;
-    timerRound = 1;
-  }
-  timerRunning = true;
-  this.textContent = '⏸ 일시정지';
-  timerInterval = setInterval(() => {
-    timerSeconds--;
-    if (timerSeconds <= 0) {
-      timerIsWork = !timerIsWork;
-      if (timerIsWork) timerRound++;
-      timerSeconds = timerIsWork
-        ? parseInt(document.getElementById('timer-work').value) || 40
-        : parseInt(document.getElementById('timer-rest').value) || 20;
-    }
-    updateTimerDisplay();
-  }, 1000);
-  updateTimerDisplay();
-});
-
-document.getElementById('timer-reset-btn').addEventListener('click', function() {
-  clearInterval(timerInterval);
-  timerRunning = false;
-  timerSeconds = 0;
-  timerIsWork = true;
-  timerRound = 0;
-  document.getElementById('timer-start-btn').textContent = '▶ 시작';
-  document.getElementById('timer-display').textContent = '00';
-  document.getElementById('timer-phase').textContent = '준비';
-  document.getElementById('timer-phase').style.color = 'var(--text3)';
-  document.getElementById('timer-round').textContent = '';
-});
 
 // 팀 배정 & 추첨 멤버 리스트
 async function loadGameMembers() {
