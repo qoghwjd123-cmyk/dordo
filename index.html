@@ -715,7 +715,11 @@ function renderMonthSessions(sessions, members, today) {
           <div style="font-weight:500;font-size:15px">${s.name}</div>
           <div style="font-size:12px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:6px">${s.date} · ${att.length}명 출석${s.cat ? ' '+catBadge(s.cat) : ''}</div>
         </div>
-        <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
+          ${!isPast ? `<button class="kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
+            style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">💬</button>` : ''}
+        </div>
       </div>
       <div class="sess-card-bd" id="sb-${s.id}">
         <div class="chips-area" style="padding-bottom:.75rem;line-height:2">${chips}</div>
@@ -727,10 +731,6 @@ function renderMonthSessions(sessions, members, today) {
           </div>
           <div id="sc-mlist-${s.id}"></div>
           <button class="btn bp checkin-btn" data-sess="${s.id}" style="margin-top:.75rem">출석 체크인 ✓</button>
-          <button class="btn kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
-            style="margin-top:.5rem;background:#FEE500;color:#191919;border:none;font-weight:700">
-            💬 카카오톡 공유
-          </button>
         </div>` : `${!att.length?'<div style="font-size:13px;color:var(--text3)">출석 멤버 없음</div>':''}`}
       </div>
     </div>`;
