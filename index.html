@@ -259,9 +259,9 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <!-- 출석 통계 -->
   <div id="mtab-stats" style="display:none">
     <div class="filter-tabs" style="margin-bottom:.5rem;flex-wrap:wrap;gap:4px">
-      <button class="ftab" data-filter="all">전체</button>
+      <button class="ftab active" data-filter="all">전체</button>
       <button class="ftab" data-filter="year">올해</button>
-      <button class="ftab active" data-filter="month">이번달</button>
+      <button class="ftab" data-filter="month">이번달</button>
       <button class="ftab" data-filter="custom">직접선택</button>
     </div>
     <div id="custom-filter" style="display:none;gap:8px;margin-bottom:.5rem">
@@ -1229,7 +1229,6 @@ async function openEdit(id) {
   document.getElementById('edit-id').value = id;
   document.getElementById('edit-name').value = m.name;
   document.getElementById('edit-role').value = m.role;
-  document.getElementById('edit-count').value = m.count;
   document.getElementById('edit-joined').value = m.joined || JOIN_DATES[m.name] || '';
   document.getElementById('edit-modal').classList.add('open');
 }
