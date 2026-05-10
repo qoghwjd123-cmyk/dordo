@@ -333,7 +333,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <div class="loading"><div class="spinner"></div><br>불러오는 중...</div>
     </div>
     <button id="kakao-share-btn" style="display:none;width:100%;padding:.85rem;background:#FEE500;color:#191919;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:.5rem">
-      💬 카카오톡으로 공유
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:18px;height:18px;vertical-align:middle;margin-right:6px"/>카카오톡으로 공유
     </button>
   </div>
 
@@ -718,7 +718,7 @@ function renderMonthSessions(sessions, members, today) {
         <div style="display:flex;align-items:center;gap:6px">
           <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
           ${!isPast ? `<button class="kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
-            style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">💬</button>` : ''}
+            style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:14px;height:14px;vertical-align:middle"/></button>` : ''}
         </div>
       </div>
       <div class="sess-card-bd" id="sb-${s.id}">
