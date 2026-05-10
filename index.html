@@ -727,6 +727,10 @@ function renderMonthSessions(sessions, members, today) {
           </div>
           <div id="sc-mlist-${s.id}"></div>
           <button class="btn bp checkin-btn" data-sess="${s.id}" style="margin-top:.75rem">출석 체크인 ✓</button>
+          <button class="btn kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
+            style="margin-top:.5rem;background:#FEE500;color:#191919;border:none;font-weight:700">
+            💬 카카오톡 공유
+          </button>
         </div>` : `${!att.length?'<div style="font-size:13px;color:var(--text3)">출석 멤버 없음</div>':''}`}
       </div>
     </div>`;
@@ -739,12 +743,17 @@ document.getElementById('page-sessions').addEventListener('click', async functio
   const chip = e.target.closest('.att-chip.can-undo');
   const selAll = e.target.closest('.select-all-btn');
   const checkinBtn = e.target.closest('.checkin-btn');
+  const kakaoBtn = e.target.closest('.kakao-share-sess-btn');
   const cb = e.target.closest('input[type=checkbox]');
 
   if (cb) { e.stopPropagation(); updateSessCount(cb.dataset.sess); return; }
   if (chip) { await undoAttendance(chip.dataset.sess, chip.dataset.member); return; }
   if (selAll) { selectAllSess(selAll.dataset.sess); return; }
   if (checkinBtn) { await doCheckinFromSess(checkinBtn.dataset.sess); return; }
+  if (kakaoBtn) {
+    shareSessionKakao(kakaoBtn.dataset.name, kakaoBtn.dataset.date, kakaoBtn.dataset.cat, kakaoBtn.dataset.sess);
+    return;
+  }
   if (hd && hd.dataset.sess) { await toggleSessCard(hd.dataset.sess, hd.dataset.past === 'true'); return; }
 });
 
