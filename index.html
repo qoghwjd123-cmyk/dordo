@@ -602,24 +602,46 @@ async function renderMPage() {
 
   // 등급 현황
   const nonMates = members.filter(m => m.role !== 'mate');
-  const gradeGroups = GRADE_THRESHOLDS.map(t => {
-    const next = GRADE_THRESHOLDS[GRADE_THRESHOLDS.indexOf(t)+1];
-    const inGrade = nonMates.filter(m => m.count >= t.count && (!next || m.count < next.count));
-    // 다음 등급까지 몇 회 남은지
-    const nearNext = next ? nonMates.filter(m => m.count >= t.count && m.count < next.count && (next.count - m.count) <= 3) : [];
-    return {t, next, inGrade, nearNext};
-  });
+  const gradeGroups = [
+    {count:1,  e:'🐣', n:'새내기',    next:{count:5,  e:'🐥', n:'활동 멤버'}},
+    {count:5,  e:'🐥', n:'활동 멤버', next:{count:15, e:'🦢', n:'베테랑'}},
+    {count:15, e:'🦢', n:'베테랑',    next:null},
+  ];
   const el = document.getElementById('grade-status');
   if (!el) return;
-  el.innerHTML = gradeGroups.map(({t, next, inGrade, nearNext}) => `
-    <div class="mi">
-      <div style="font-size:20px;width:36px;text-align:center;flex-shrink:0">${t.e}</div>
-      <div style="flex:1;min-width:0">
-        <div class="mn">${t.n}</div>
-        <div class="mm">${inGrade.length}명${nearNext.length ? ` · 🔥 ${nearNext.map(m=>`${m.name}(${next.count-m.count}회 남음)`).join(', ')}` : ''}</div>
+  el.innerHTML = gradeGroups.map(({count, e, n, next}, gi) => {
+    const inGrade = nonMates.filter(m => {
+      if (gi === 0) return m.count >= 1 && m.count < 5;
+      if (gi === 1) return m.count >= 5 && m.count < 15;
+      return m.count >= 15;
+    }).sort((a,b) => b.count - a.count);
+    const groupId = `grade-group-${gi}`;
+    const rows = inGrade.map(m => {
+      const remaining = next ? next.count - m.count : 0;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:14px">${grade(m).e} ${m.name}</span>
+        <span style="font-size:12px;color:${next&&remaining<=3?'var(--accent2)':'var(--text3)'};font-weight:${next&&remaining<=3?'700':'400'}">
+          ${next ? `${m.count}회 · ${next.e}까지 ${remaining}회` : `${m.count}회`}
+        </span>
+      </div>`;
+    }).join('');
+    return `<div style="border-bottom:1px solid var(--border);padding:.5rem 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:.25rem 0"
+        onclick="var g=document.getElementById('${groupId}');var a=document.getElementById('arr-${gi}');var open=g.style.display!=='none';g.style.display=open?'none':'block';a.textContent=open?'▼':'▲'">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:20px">${e}</span>
+          <span style="font-size:14px;font-weight:500">${n}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="gp green">${inGrade.length}명</span>
+          <span id="arr-${gi}" style="font-size:11px;color:var(--text3)">▼</span>
+        </div>
       </div>
-      <span class="gp green">${inGrade.length}명</span>
-    </div>`).join('');
+      <div id="${groupId}" style="display:none">
+        ${rows || '<div style="font-size:13px;color:var(--text3);padding:.5rem 0">해당 없음</div>'}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── 모임 탭 ─────────────────────────────────────
