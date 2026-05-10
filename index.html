@@ -869,41 +869,35 @@ document.getElementById('create-sess-btn').addEventListener('click', async funct
   const cat = document.getElementById('pub-sess-cat').value;
   if (!name) { toast('모임 이름을 입력해주세요'); return; }
   if (!date) { toast('날짜를 선택해주세요'); return; }
-  await db.collection('sessions').add({ name, date, cat, attendees: [], createdAt: Date.now() });
-  clearCache();
-  document.getElementById('pub-sess-name').value = '';
-  toast('모임이 등록됐어요! 🎉');
-  renderSessionsTab();
-  if (isAdmin) renderAdminSessList();
-
-  // 카카오 공유 여부 묻기
-  const share = await showConfirm(`📅 "${name}" 모임을 카카오톡으로 공유할까요?`);
-  if (share) shareSessionKakao(name, date, cat);
+  await db.collection('sessions').add({ name, date, cat, attendees: [], createdAt: Date.now() }).then(async ref => {
+    clearCache();
+    document.getElementById('pub-sess-name').value = '';
+    toast('모임이 등록됐어요! 🎉');
+    renderSessionsTab();
+    if (isAdmin) renderAdminSessList();
+    const share = await showConfirm(`📅 "${name}" 모임을 카카오톡으로 공유할까요?`);
+    if (share) shareSessionKakao(name, date, cat, ref.id);
+  });
 });
 
-function shareSessionKakao(name, date, cat) {
+function shareSessionKakao(name, date, cat, sessId) {
   if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
     Kakao.init('3eeb670b9d86cdbf75f2345bfcc9a80d');
   }
   const [y, m, d] = date.split('-');
   const dateLabel = `${parseInt(y)}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+  const url = `https://qoghwjd123-cmyk.github.io/dordo#sessions/${sessId}`;
   Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
       title: `📅 두알두 모임 안내`,
       description: `${cat} ${name}\n📆 ${dateLabel}\n\n출석 체크하러 오세요!`,
       imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
-      link: {
-        mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-        webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-      },
+      link: { mobileWebUrl: url, webUrl: url },
     },
     buttons: [{
       title: '출석 체크하기',
-      link: {
-        mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-        webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-      },
+      link: { mobileWebUrl: url, webUrl: url },
     }],
   });
 }
@@ -1540,15 +1534,15 @@ async function renderChampion() {
           description: rankText,
           imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
           link: {
-            mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-            webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+            mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo#sessions',
+            webUrl: 'https://qoghwjd123-cmyk.github.io/dordo#sessions',
           },
         },
         buttons: [{
           title: '출석 확인하기',
           link: {
-            mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
-            webUrl: 'https://qoghwjd123-cmyk.github.io/dordo',
+            mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo#sessions',
+            webUrl: 'https://qoghwjd123-cmyk.github.io/dordo#sessions',
           },
         }],
       });
@@ -1619,13 +1613,36 @@ async function initDefaultMembers() {
 
 // 초기화
 initDefaultMembers();
-// URL 해시로 탭 유지
+// URL 해시로 탭 유지 + 모임 자동 오픈
 (function() {
-  var validPages = ['rules','members','sessions','checkin','admin'];
-  var initPage = location.hash.replace('#','');
-  var startPage = validPages.indexOf(initPage) >= 0 ? initPage : 'rules';
-  var startBtn = document.querySelector('.nb[data-page="'+startPage+'"]');
+  const hash = location.hash.replace('#','');
+  const validPages = ['rules','members','sessions','checkin','admin','game'];
+  let startPage = 'rules';
+  let autoOpenSess = null;
+
+  if (hash.startsWith('sessions/')) {
+    startPage = 'sessions';
+    autoOpenSess = hash.replace('sessions/','');
+  } else if (validPages.includes(hash)) {
+    startPage = hash;
+  }
+
+  const startBtn = document.querySelector(`.nb[data-page="${startPage}"]`);
   showPage(startPage, startBtn);
+
+  if (autoOpenSess) {
+    const tryOpen = setInterval(async () => {
+      const card = document.getElementById('sc-' + autoOpenSess);
+      if (card) {
+        clearInterval(tryOpen);
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          toggleSessCard(autoOpenSess, false);
+        }, 300);
+      }
+    }, 300);
+    setTimeout(() => clearInterval(tryOpen), 6000);
+  }
 })();
 // 탭 클릭시 해시 업데이트
 document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
