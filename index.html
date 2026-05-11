@@ -113,7 +113,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <nav class="nav">
   <button class="nb active" data-page="rules">📌 두알두</button>
   <button class="nb" data-page="members">👥 멤버</button>
-  <button class="nb" data-page="sessions">📅 모임</button>
+  <button class="nb" data-page="sessions">📅 일정</button>
   <button class="nb" data-page="game">🎮 게임</button>
   <button class="nb" data-page="admin">🔥 운영진</button>
 </nav>
@@ -123,7 +123,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <!-- 모임 수정 모달 -->
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
-    <div class="mt2">모임 멤버 수정</div>
+    <div class="mt2">일정 참석자 수정</div>
     <div id="se-sess-info" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:.5rem"></div>
     <div class="sl2">카테고리</div>
     <select id="se-cat" style="margin-bottom:.75rem">
@@ -219,7 +219,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">매주 목요일 정기 운동 모임 <span class="rule-badge info">21:00 ~</span></div><div class="rule-sub">목요일 정기 시간대에는 벙개 일정 등록 불가</div></div></div>
     <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">참석이 어려울 땐 — 두알두 참석</div><div class="rule-sub">홈트, 야외걷기 등 어떤 운동이든 OK · 댓글에 <b>'두알두 참석'</b> 작성 후 자정 전 인증샷 업로드</div></div></div>
     <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">일정 확인 및 투표</div><div class="rule-sub">카카오톡 오른쪽 상단 '더보기' → 달력 버튼 · [참석 / 불참] 투표 필수</div></div></div>
-    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">누구든 언제든 모임 등록 가능해요</div><div class="rule-sub">일정 목록 → 연필 아이콘 → 등록 · 참석여부 응답요청 체크 필수</div><div class="rule-sub" style="margin-top:4px">제목 형식: <span class="rule-tag">[기간, 목표]</span> <span class="rule-tag">[장소, 거리, 속도]</span></div><div class="rule-sub" style="color:var(--text3)">ex) 미사호수공원, 3k, 6분pace · 주말 동안, 책 두 권 읽기</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">누구든 언제든 일정 등록 가능해요</div><div class="rule-sub">일정 목록 → 연필 아이콘 → 등록 · 참석여부 응답요청 체크 필수</div><div class="rule-sub" style="margin-top:4px">제목 형식: <span class="rule-tag">[기간, 목표]</span> <span class="rule-tag">[장소, 거리, 속도]</span></div><div class="rule-sub" style="color:var(--text3)">ex) 미사호수공원, 3k, 6분pace · 주말 동안, 책 두 권 읽기</div></div></div>
   </div>
   <div class="card">
     <div class="ct">멤버 등급</div>
@@ -247,7 +247,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div class="sr">
       <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
       <div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">5회 이상</div></div>
-      <div class="sb2"><div class="sn" id="m-sess">-</div><div class="sl">총 모임</div></div>
+      <div class="sb2"><div class="sn" id="m-sess">-</div><div class="sl">총 일정</div></div>
     </div>
     <!-- 레벨업 현황 -->
     <div class="card" style="margin-bottom:1rem">
@@ -280,7 +280,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <button id="sort-toggle" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500">가입일순 ↕</button>
     </div>
     <div class="sb2" style="margin-bottom:.875rem;padding:.75rem;text-align:center">
-      <span style="font-size:13px;color:var(--text3)">총 모임 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span>
+      <span style="font-size:13px;color:var(--text3)">총 일정 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span>
     </div>
     <div class="card"><div class="ct">출석부 — 멤버 클릭 시 상세 보기</div><div id="ci-att-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div></div>
   </div>
@@ -289,7 +289,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <!-- 모임 -->
 <div id="page-sessions" class="page">
   <div class="card">
-    <div class="ct">새 모임 등록</div>
+    <div class="ct">새 일정 등록</div>
     <div class="sl2">카테고리</div>
     <select id="pub-sess-cat">
       <option value="🏃 러닝">🏃 러닝</option>
@@ -297,11 +297,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <option value="🍽️ 식사">🍽️ 식사</option>
       <option value="🏋️ 운동">🏋️ 운동</option><option value="기타">기타</option>
     </select>
-    <div class="sl2">모임 이름</div>
+    <div class="sl2">일정 이름</div>
     <input type="text" id="pub-sess-name" placeholder="예: 5월 정기 러닝"/>
     <div class="sl2">날짜</div>
     <input type="date" id="pub-sess-date"/>
-    <button class="btn bp" id="create-sess-btn">모임 등록</button>
+    <button class="btn bp" id="create-sess-btn">일정 등록</button>
   </div>
   <div id="sess-month-filter" style="margin-bottom:.75rem"></div>
   <div id="sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
@@ -411,7 +411,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
   <div id="admin-content" style="display:none">
     <div class="card">
-      <div class="ct">모임 관리</div>
+      <div class="ct">일정 관리</div>
       <div id="admin-sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
     </div>
     <div class="card">
@@ -656,7 +656,7 @@ async function renderSessionsTab() {
   const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
   const el = document.getElementById('sess-list');
   const filterEl = document.getElementById('sess-month-filter');
-  if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 모임이 없어요</div>'; filterEl.innerHTML=''; return; }
+  if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 일정이 없어요</div>'; filterEl.innerHTML=''; return; }
   const today = new Date().toISOString().split('T')[0];
   const thisMonth = today.slice(0,7);
 
@@ -698,14 +698,14 @@ function toggleMonthGroup(month) {
 }
 
 function renderMonthSessions(sessions, members, today) {
-  if (!sessions.length) return '<div class="empty">모임이 없어요</div>';
+  if (!sessions.length) return '<div class="empty">일정이 없어요</div>';
   return sessions.map(s => {
     const isPast = s.date < today;
     const att = s.attendees || [];
     const chips = att.map(a => {
       const m = members.find(m => m.id === a.memberId);
       if (!m) return '';
-      return `<span class="att-chip ${isAdmin?'can-undo':''}" data-sess="${s.id}" data-member="${a.memberId}" title="${isAdmin?'클릭하면 출석 취소':''}">
+      return `<span class="att-chip ${isAdmin?'can-undo':''}" data-sess="${s.id}" data-member="${a.memberId}" title="${isAdmin?'클릭하면 참석 취소':''}">
         ${grade(m).e} ${m.name}${isAdmin?' ✕':''}
       </span>`;
     }).join('');
@@ -713,7 +713,7 @@ function renderMonthSessions(sessions, members, today) {
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}">
         <div>
           <div style="font-weight:500;font-size:15px">${s.name}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:6px">${s.date} · ${att.length}명 출석${s.cat ? ' '+catBadge(s.cat) : ''}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:6px">${s.date} · ${att.length}명 참석${s.cat ? ' '+catBadge(s.cat) : ''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
@@ -725,13 +725,12 @@ function renderMonthSessions(sessions, members, today) {
         <div class="chips-area" style="padding-bottom:.75rem;line-height:2">${chips}</div>
         ${!isPast ? `
         <div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-            <span style="font-size:13px;color:var(--text3)" id="sc-count-${s.id}">0명 선택</span>
-            <button class="select-all-btn" data-sess="${s.id}" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
-          </div>
           <div id="sc-mlist-${s.id}"></div>
-          <button class="btn bp checkin-btn" data-sess="${s.id}" style="margin-top:.75rem">출석 체크인 ✓</button>
-        </div>` : `${!att.length?'<div style="font-size:13px;color:var(--text3)">출석 멤버 없음</div>':''}`}
+          <button class="btn kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
+            style="margin-top:.75rem;background:#FEE500;color:#191919;border:none;font-weight:700">
+            <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"/>카카오톡 공유
+          </button>
+        </div>` : `${!att.length?'<div style="font-size:13px;color:var(--text3)">참석자 없음</div>':''}`}
       </div>
     </div>`;
   }).join('');
@@ -776,17 +775,16 @@ async function loadSessMemberList(sessId) {
     const g = grade(m);
     const cbId = `scb-${sessId}-${m.id}`;
     const boxId = `box-${sessId}-${m.id}`;
-    return `<div class="ci-mi ${already?'already':''}">
-      <div id="${boxId}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${already?'var(--accent)':'var(--border)'};background:${already?'var(--accent)':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:${already?'default':'pointer'};transition:all .15s"
-        onclick="if(!${already}){var cb=document.getElementById('${cbId}');cb.checked=!cb.checked;var box=document.getElementById('${boxId}');box.style.background=cb.checked?'var(--accent)':'#fff';box.style.borderColor=cb.checked?'var(--accent)':'var(--border)';box.innerHTML=cb.checked?'<span style=color:#fff;font-size:13px;font-weight:700>✓</span>':'';updateSessCount('${sessId}')}">
-        ${already?'<span style="color:#fff;font-size:13px;font-weight:700">✓</span>':''}
-      </div>
-      <input type="checkbox" id="${cbId}" data-sess="${sessId}" ${already?'checked disabled':''} style="display:none"/>
+    return `<div class="ci-mi" id="row-${sessId}-${m.id}">
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
-        <div class="mm">${already?'✓ 출석완료':m.count+'회 참석'}</div>
+        <div class="mm">${already ? '✓ 참석완료' : m.count+'회 참석'}</div>
       </div>
+      ${already
+        ? `<button onclick="undoSingleAttendance('${sessId}','${m.id}')" style="background:#fee2e2;color:#991b1b;border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-family:inherit;cursor:pointer">취소</button>`
+        : `<button onclick="doSingleAttendance('${sessId}','${m.id}')" style="background:var(--accent-l);color:var(--accent);border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">참석</button>`
+      }
     </div>`;
   }).join('');
   updateSessCount(sessId);
@@ -807,11 +805,51 @@ function selectAllSess(sessId) {
   updateSessCount(sessId);
 }
 
+window.doSingleAttendance = async function(sessId, memberId) {
+  await processCheckin(sessId, [memberId]);
+  toast('참석 처리됐어요 ✓');
+  await loadSessMemberList(sessId);
+  const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
+  const sessSnap = await db.collection('sessions').doc(sessId).get();
+  const sess = sessSnap.data();
+  if (hd) hd.innerHTML = `${sess.date} · ${(sess.attendees||[]).length}명 참석${sess.cat ? ' '+catBadge(sess.cat) : ''}`;
+  const ca = document.querySelector(`#sb-${sessId} .chips-area`);
+  if (ca) {
+    const members = await getMembers();
+    ca.innerHTML = (sess.attendees||[]).map(a => {
+      const m = members.find(m => m.id === a.memberId);
+      if (!m) return '';
+      return `<span class="att-chip ${isAdmin?'can-undo':''}" data-sess="${sessId}" data-member="${a.memberId}">${grade(m).e} ${m.name}${isAdmin?' ✕':''}</span>`;
+    }).join('');
+  }
+};
+
+window.undoSingleAttendance = async function(sessId, memberId) {
+  const ok = await showConfirm('참석을 취소할까요?');
+  if (!ok) return;
+  const sessRef = db.collection('sessions').doc(sessId);
+  const sessSnap = await sessRef.get();
+  const sess = sessSnap.data();
+  const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
+  await sessRef.update({ attendees: newAtt });
+  const mSnap = await db.collection('members').doc(memberId).get();
+  if (mSnap.exists) {
+    const cnt = mSnap.data().count || 0;
+    if (cnt > 0) await db.collection('members').doc(memberId).update({ count: cnt - 1 });
+  }
+  clearCache();
+  toast('참석이 취소됐어요');
+  await loadSessMemberList(sessId);
+  const sessSnap2 = await db.collection('sessions').doc(sessId).get();
+  const sess2 = sessSnap2.data();
+  const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
+  if (hd) hd.innerHTML = `${sess2.date} · ${(sess2.attendees||[]).length}명 참석${sess2.cat ? ' '+catBadge(sess2.cat) : ''}`;
+};
 async function doCheckinFromSess(sessId) {
   const checked = [...document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input:checked`)].map(cb => cb.id.replace(`scb-${sessId}-`,''));
-  if (!checked.length) { toast('출석할 멤버를 선택해주세요'); return; }
+  if (!checked.length) { toast('참석할 멤버를 선택해주세요'); return; }
   await processCheckin(sessId, checked);
-  toast(`${checked.length}명 출석 처리됐어요 🎉`);
+  toast(`${checked.length}명 참석 처리됐어요 🎉`);
   await refreshSessCard(sessId);
 }
 
@@ -835,7 +873,7 @@ async function processCheckin(sessId, memberIds) {
 
 async function undoAttendance(sessId, memberId) {
   if (!isAdmin) { toast('🔒 운영진만 가능해요'); return; }
-  const ok = await showConfirm('출석을 취소할까요?');
+  const ok = await showConfirm('참석을 취소할까요?');
   if (!ok) return;
   const sessRef = db.collection('sessions').doc(sessId);
   const sessSnap = await sessRef.get();
@@ -848,7 +886,7 @@ async function undoAttendance(sessId, memberId) {
     if (cnt > 0) await db.collection('members').doc(memberId).update({ count: cnt - 1 });
   }
   clearCache();
-  toast('출석이 취소됐어요');
+  toast('참석이 취소됐어요');
   await refreshSessCard(sessId);
 }
 
@@ -857,11 +895,11 @@ async function refreshSessCard(sessId) {
   const sess = sessSnap.data();
   const att = sess.attendees || [];
   const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
-  if (hd) hd.innerHTML = `${sess.date} · ${att.length}명 출석${sess.cat ? ' '+catBadge(sess.cat) : ''}`;
+  if (hd) hd.innerHTML = `${sess.date} · ${att.length}명 참석${sess.cat ? ' '+catBadge(sess.cat) : ''}`;
   const chips = att.map(a => {
     const m = members.find(m => m.id === a.memberId);
     if (!m) return '';
-    return `<span class="att-chip ${isAdmin?'can-undo':''}" data-sess="${sessId}" data-member="${a.memberId}" title="${isAdmin?'클릭하면 출석 취소':''}">
+    return `<span class="att-chip ${isAdmin?'can-undo':''}" data-sess="${sessId}" data-member="${a.memberId}" title="${isAdmin?'클릭하면 참석 취소':''}">
       ${grade(m).e} ${m.name}${isAdmin?' ✕':''}
     </span>`;
   }).join('');
@@ -871,20 +909,20 @@ async function refreshSessCard(sessId) {
   clearCache();
 }
 
-// ── 모임 등록 ────────────────────────────────────
+// ── 일정 등록 ────────────────────────────────────
 document.getElementById('create-sess-btn').addEventListener('click', async function() {
   const name = document.getElementById('pub-sess-name').value.trim();
   const date = document.getElementById('pub-sess-date').value;
   const cat = document.getElementById('pub-sess-cat').value;
-  if (!name) { toast('모임 이름을 입력해주세요'); return; }
+  if (!name) { toast('일정 이름을 입력해주세요'); return; }
   if (!date) { toast('날짜를 선택해주세요'); return; }
   await db.collection('sessions').add({ name, date, cat, attendees: [], createdAt: Date.now() }).then(async ref => {
     clearCache();
     document.getElementById('pub-sess-name').value = '';
-    toast('모임이 등록됐어요! 🎉');
+    toast('일정이 등록됐어요! 🎉');
     renderSessionsTab();
     if (isAdmin) renderAdminSessList();
-    const share = await showConfirm(`📅 "${name}" 모임을 카카오톡으로 공유할까요?`);
+    const share = await showConfirm(`📅 "${name}" 일정을 카카오톡으로 공유할까요?`);
     if (share) shareSessionKakao(name, date, cat, ref.id);
   });
 });
@@ -899,13 +937,13 @@ function shareSessionKakao(name, date, cat, sessId) {
   Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
-      title: `📅 두알두 모임 안내`,
-      description: `${cat} ${name}\n📆 ${dateLabel}\n\n출석 체크하러 오세요!`,
+      title: `📅 두알두 일정 안내`,
+      description: `${cat} ${name}\n📆 ${dateLabel}\n\n참석 체크하러 오세요!`,
       imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
       link: { mobileWebUrl: url, webUrl: url },
     },
     buttons: [{
-      title: '출석 체크하기',
+      title: '참석 체크하기',
       link: { mobileWebUrl: url, webUrl: url },
     }],
   });
@@ -934,7 +972,7 @@ async function renderAttBoard() {
   let sorted = sortMembers(members);
   if (attSortByCount) sorted = [...sorted].sort((a,b) => (countMap[b.id]||0) - (countMap[a.id]||0));
   document.getElementById('ci-total-sess').textContent = total;
-  if (!total) { document.getElementById('ci-att-list').innerHTML = '<div class="empty">해당 기간 모임이 없어요</div>'; return; }
+  if (!total) { document.getElementById('ci-att-list').innerHTML = '<div class="empty">해당 기간 일정이 없어요</div>'; return; }
   document.getElementById('ci-att-list').innerHTML = sorted.map(m => {
     const cnt = countMap[m.id]||0;
     const pct = total > 0 ? Math.round(cnt/total*100) : 0;
@@ -1019,7 +1057,7 @@ async function openMemberDetail(memberId) {
           <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px">${s.date}${s.cat?' '+catBadge(s.cat):''}</div>
         </div>
       </div>`).join('')
-    : '<div class="empty">참석한 모임이 없어요</div>';
+    : '<div class="empty">참석한 일정이 없어요</div>';
   document.getElementById('member-detail-modal').classList.add('open');
 }
 
@@ -1089,7 +1127,7 @@ let adminSessMonthFilter = null;
 async function renderAdminSessList() {
   const sessions = await getAllSessions();
   const el = document.getElementById('admin-sess-list');
-  if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 모임이 없어요</div>'; return; }
+  if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 일정이 없어요</div>'; return; }
   const today = new Date().toISOString().split('T')[0];
   const thisMonth = today.slice(0,7);
   const months = [...new Set(sessions.map(s => s.date.slice(0,7)))].sort().reverse();
@@ -1136,7 +1174,7 @@ document.getElementById('admin-sess-list').addEventListener('click', async funct
   const delBtn = e.target.closest('.admin-sess-del');
   if (editBtn) openSessEdit(editBtn.dataset.id);
   if (delBtn) {
-    const ok = await showConfirm('이 모임을 삭제할까요?');
+    const ok = await showConfirm('이 일정을 삭제할까요?');
     if (!ok) return;
     const pw = await showPrompt('삭제 비밀번호를 입력해주세요');
     if (pw !== DELETE_PW) { toast('비밀번호가 틀렸어요 🔒'); return; }
@@ -1215,7 +1253,7 @@ document.getElementById('se-save-btn').addEventListener('click', async function(
     const mSnap = await db.collection('members').doc(mid).get();
     if (mSnap.exists) { const c = mSnap.data().count||0; if(c>0) await db.collection('members').doc(mid).update({ count: c-1 }); }
   }
-  closeModal('sess-edit-modal'); clearCache(); renderAdminSessList(); renderSessionsTab(); toast('모임이 수정됐어요!');
+  closeModal('sess-edit-modal'); clearCache(); renderAdminSessList(); renderSessionsTab(); toast('일정이 수정됐어요!');
 });
 
 document.getElementById('se-cancel-btn').addEventListener('click', () => closeModal('sess-edit-modal'));
@@ -1528,7 +1566,22 @@ async function renderChampion() {
     <div style="font-size:48px;margin-bottom:.5rem">${g.e}</div>
     <div style="font-size:20px;font-weight:700;margin-bottom:.25rem">${top.name}</div>
     <div style="font-size:14px;color:var(--text3)">${monthLabel} ${top.monthCount}회 출석 🏆</div>
-    ${ranked.length > 1 ? `<div style="margin-top:1rem">${ranked.slice(1,3).map((m,i) => `<div style="font-size:13px;color:var(--text3);padding:.2rem 0">${['🥈','🥉'][i]} ${m.name} <span style="color:var(--text3)">(${m.monthCount}회)</span></div>`).join('')}</div>` : ''}
+    ${ranked.length > 1 ? `<div style="margin-top:1rem">${(() => {
+      const medals = ['🥇','🥈','🥉'];
+      let result = [];
+      let rank = 1;
+      for (let i = 1; i < Math.min(ranked.length, 4); i++) {
+        if (ranked[i].monthCount === ranked[i-1].monthCount) {
+          // 공동 순위
+        } else {
+          rank = i + 1;
+        }
+        if (rank <= 3) {
+          result.push('<div style="font-size:13px;color:var(--text3);padding:.2rem 0">' + medals[rank-1] + (ranked[i].monthCount === ranked[i-1].monthCount && rank === 2 ? ' 공동' : '') + ' ' + ranked[i].name + ' <span>(' + ranked[i].monthCount + '회)</span></div>');
+        }
+      }
+      return result.join('');
+    })()}</div>` : ''}
   `;
   if (shareBtn) {
     shareBtn.style.display = 'block';
@@ -1548,7 +1601,7 @@ async function renderChampion() {
           },
         },
         buttons: [{
-          title: '출석 확인하기',
+          title: '참석 확인하기',
           link: {
             mobileWebUrl: 'https://qoghwjd123-cmyk.github.io/dordo#sessions',
             webUrl: 'https://qoghwjd123-cmyk.github.io/dordo#sessions',
