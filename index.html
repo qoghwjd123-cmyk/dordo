@@ -779,22 +779,27 @@ async function loadSessMemberList(sessId) {
   const [members, sessSnap] = await Promise.all([getMembers(), db.collection('sessions').doc(sessId).get()]);
   const sess = sessSnap.data();
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const absentIds = new Set(sess.absentees||[]);
   const sorted = sortMembers(members);
   mlistEl.innerHTML = sorted.map(m => {
-    const already = alreadyIds.has(m.id);
+    const isAtt = alreadyIds.has(m.id);
+    const sessSnap2 = null;
     const g = grade(m);
-    const cbId = `scb-${sessId}-${m.id}`;
-    const boxId = `box-${sessId}-${m.id}`;
     return `<div class="ci-mi" id="row-${sessId}-${m.id}">
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
-        <div class="mm">${already ? '✓ 참석완료' : m.count+'회 참석'}</div>
       </div>
-      ${already
-        ? `<button onclick="undoSingleAttendance('${sessId}','${m.id}')" style="background:#fee2e2;color:#991b1b;border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-family:inherit;cursor:pointer">불참</button>`
-        : `<button onclick="doSingleAttendance('${sessId}','${m.id}')" style="background:var(--accent-l);color:var(--accent);border:none;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">참석</button>`
-      }
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="doSingleAttendance('${sessId}','${m.id}')"
+          style="background:${isAtt?'var(--accent)':'var(--accent-l)'};color:${isAtt?'#fff':'var(--accent)'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
+          참석
+        </button>
+        <button onclick="undoSingleAttendance('${sessId}','${m.id}')"
+          style="background:${!isAtt&&absentIds&&absentIds.has(m.id)?'#991b1b':'#fee2e2'};color:${!isAtt&&absentIds&&absentIds.has(m.id)?'#fff':'#991b1b'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
+          불참
+        </button>
+      </div>
     </div>`;
   }).join('');
   updateSessCount(sessId);
