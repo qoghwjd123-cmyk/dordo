@@ -69,7 +69,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .rule-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:4px}
 .rule-badge.warn{background:#FAEEDA;color:#633806}
 .rule-badge.info{background:#E6F1FB;color:#0C447C}
-.grade-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.grade-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
 .grade-box{background:var(--surface2);border-radius:var(--rs);padding:.75rem .25rem;text-align:center}
 .grade-em{font-size:24px;margin-bottom:4px}
 .grade-name{font-size:11px;font-weight:700;color:var(--text)}
@@ -123,7 +123,10 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <!-- 모임 수정 모달 -->
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
-    <div class="mt2">일정 참석자 수정</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+      <div class="mt2" style="margin-bottom:0">일정 참석자 수정</div>
+      <button onclick="closeModal('sess-edit-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1;padding:0">✕</button>
+    </div>
     <div id="se-sess-info" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:.5rem"></div>
     <div class="sl2">카테고리</div>
     <select id="se-cat" style="margin-bottom:.75rem">
@@ -135,7 +138,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     </select>
     <div style="display:flex;gap:8px;margin-bottom:.75rem">
       <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="se-save-btn">저장</button>
-      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="se-cancel-btn">불참</button>
+      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="se-cancel-btn">닫기</button>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
       <span style="font-size:13px;color:var(--text3)" id="se-count">0명 선택</span>
@@ -190,7 +193,10 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <!-- 멤버 수정 모달 -->
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
-    <div class="mt2">멤버 수정</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div class="mt2" style="margin-bottom:0">멤버 수정</div>
+      <button onclick="closeModal('edit-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1;padding:0">✕</button>
+    </div>
     <input type="hidden" id="edit-id"/>
     <div class="sl2">이름/동네</div><input type="text" id="edit-name"/>
     <div class="sl2">직책</div>
@@ -226,7 +232,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div style="font-size:12px;color:var(--text3);margin-bottom:.875rem">참석 횟수는 운영진이 주최한 모임만 카운트돼요</div>
     <div class="grade-grid">
       <div class="grade-box"><div class="grade-em">🔥</div><div class="grade-name">메이트</div><div class="grade-req">운영진</div></div>
-      <div class="grade-box"><div class="grade-em">🐣</div><div class="grade-name">새내기</div><div class="grade-req">1회 이상</div></div>
+      <div class="grade-box"><div class="grade-em">🥚</div><div class="grade-name">알</div><div class="grade-req">0회</div></div><div class="grade-box"><div class="grade-em">🐣</div><div class="grade-name">새내기</div><div class="grade-req">1회 이상</div></div>
       <div class="grade-box"><div class="grade-em">🐥</div><div class="grade-name">활동 멤버</div><div class="grade-req">5회 이상</div></div>
       <div class="grade-box"><div class="grade-em">🦢</div><div class="grade-name">베테랑</div><div class="grade-req">15회 이상</div></div>
       <div class="grade-box"><div class="grade-em">🪽</div><div class="grade-name">명예 퇴직</div><div class="grade-req">레전드</div></div>
@@ -310,12 +316,15 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <!-- 멤버 상세 모달 -->
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
-      <div id="md-emoji" style="font-size:32px"></div>
-      <div>
-        <div id="md-name" style="font-size:16px;font-weight:700"></div>
-        <div id="md-stats" style="font-size:13px;color:var(--text3)"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="md-emoji" style="font-size:32px"></div>
+        <div>
+          <div id="md-name" style="font-size:16px;font-weight:700"></div>
+          <div id="md-stats" style="font-size:13px;color:var(--text3)"></div>
+        </div>
       </div>
+      <button onclick="closeModal('member-detail-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1;padding:0">✕</button>
     </div>
     <div class="ct">참석한 모임</div>
     <div id="md-sessions" style="max-height:50vh;overflow-y:auto"></div>
@@ -783,20 +792,21 @@ async function loadSessMemberList(sessId) {
   const sorted = sortMembers(members);
   mlistEl.innerHTML = sorted.map(m => {
     const isAtt = alreadyIds.has(m.id);
-    const sessSnap2 = null;
+    const isAbsent = absentIds.has(m.id);
     const g = grade(m);
     return `<div class="ci-mi" id="row-${sessId}-${m.id}">
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
+        <div class="mm" style="color:${isAtt?'var(--accent)':isAbsent?'#991b1b':'var(--text3)'}">${isAtt?'✓ 참석':isAbsent?'✗ 불참':'미응답'}</div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0">
-        <button onclick="doSingleAttendance('${sessId}','${m.id}')"
-          style="background:${isAtt?'var(--accent)':'var(--accent-l)'};color:${isAtt?'#fff':'var(--accent)'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
+        <button onclick="doSingleAttendance('${sessId}','${m.id}',${isAtt})"
+          style="background:${isAtt?'var(--accent)':'var(--surface2)'};color:${isAtt?'#fff':'var(--text3)'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
           참석
         </button>
-        <button onclick="undoSingleAttendance('${sessId}','${m.id}')"
-          style="background:${!isAtt&&absentIds&&absentIds.has(m.id)?'#991b1b':'#fee2e2'};color:${!isAtt&&absentIds&&absentIds.has(m.id)?'#fff':'#991b1b'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
+        <button onclick="undoSingleAttendance('${sessId}','${m.id}',${isAbsent})"
+          style="background:${isAbsent?'#991b1b':'#fee2e2'};color:${isAbsent?'#fff':'#991b1b'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
           불참
         </button>
       </div>
@@ -820,34 +830,47 @@ function selectAllSess(sessId) {
   updateSessCount(sessId);
 }
 
-window.doSingleAttendance = async function(sessId, memberId) {
-  // 불참 목록에서 제거
+window.doSingleAttendance = async function(sessId, memberId, isAlready) {
   const sessRef = db.collection('sessions').doc(sessId);
   const sessSnap = await sessRef.get();
   const sess = sessSnap.data();
-  const newAbsent = (sess.absentees||[]).filter(id => id !== memberId);
-  await sessRef.update({ absentees: newAbsent });
-  await processCheckin(sessId, [memberId]);
-  toast('참석 처리됐어요 ✓');
+  if (isAlready) {
+    // 이미 참석 → 미응답으로
+    const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
+    await sessRef.update({ attendees: newAtt });
+    const mSnap = await db.collection('members').doc(memberId).get();
+    if (mSnap.exists) { const c = mSnap.data().count||0; if(c>0) await db.collection('members').doc(memberId).update({count:c-1}); }
+    clearCache(); toast('미응답으로 변경됐어요');
+  } else {
+    // 불참 목록에서 제거 후 참석 처리
+    const newAbsent = (sess.absentees||[]).filter(id => id !== memberId);
+    await sessRef.update({ absentees: newAbsent });
+    await processCheckin(sessId, [memberId]);
+    toast('참석 처리됐어요 ✓');
+  }
   await refreshChipsAndList(sessId);
 };
 
-window.undoSingleAttendance = async function(sessId, memberId) {
-  const ok = await showConfirm('불참 처리할까요?');
-  if (!ok) return;
+window.undoSingleAttendance = async function(sessId, memberId, isAlready) {
   const sessRef = db.collection('sessions').doc(sessId);
   const sessSnap = await sessRef.get();
   const sess = sessSnap.data();
-  const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
-  const newAbsent = [...new Set([...(sess.absentees||[]), memberId])];
-  await sessRef.update({ attendees: newAtt, absentees: newAbsent });
-  const mSnap = await db.collection('members').doc(memberId).get();
-  if (mSnap.exists) {
-    const cnt = mSnap.data().count || 0;
-    if (cnt > 0) await db.collection('members').doc(memberId).update({ count: cnt - 1 });
+  if (isAlready) {
+    // 이미 불참 → 미응답으로
+    const newAbsent = (sess.absentees||[]).filter(id => id !== memberId);
+    await sessRef.update({ absentees: newAbsent });
+    clearCache(); toast('미응답으로 변경됐어요');
+  } else {
+    // 참석 취소 + 불참 추가
+    const ok = await showConfirm('불참 처리할까요?');
+    if (!ok) return;
+    const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
+    const newAbsent = [...new Set([...(sess.absentees||[]), memberId])];
+    await sessRef.update({ attendees: newAtt, absentees: newAbsent });
+    const mSnap = await db.collection('members').doc(memberId).get();
+    if (mSnap.exists) { const c = mSnap.data().count||0; if(c>0) await db.collection('members').doc(memberId).update({count:c-1}); }
+    clearCache(); toast('불참 처리됐어요');
   }
-  clearCache();
-  toast('불참 처리됐어요');
   await refreshChipsAndList(sessId);
 };
 
