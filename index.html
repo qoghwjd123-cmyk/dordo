@@ -1541,7 +1541,7 @@ document.getElementById('roulette-add-btn').addEventListener('click', async func
 function renderCustomRouletteList() {
   document.getElementById('roulette-custom-list').innerHTML = rouletteCustomItems.map((item,i) =>
     `<span style="background:var(--surface2);border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:4px">
-      ${item} <span style="cursor:pointer;color:var(--text3)" onclick="removeCustomRoulette(${i})">✕</span>
+      ${item}${isAdmin ? ` <span style="cursor:pointer;color:var(--text3)" onclick="removeCustomRoulette(${i})">✕</span>` : ''}
     </span>`
   ).join('');
 }
