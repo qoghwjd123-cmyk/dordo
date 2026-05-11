@@ -839,11 +839,20 @@ window.undoSingleAttendance = async function(sessId, memberId) {
   }
   clearCache();
   toast('참석이 취소됐어요');
-  await loadSessMemberList(sessId);
-  const sessSnap2 = await db.collection('sessions').doc(sessId).get();
-  const sess2 = sessSnap2.data();
+  // chips 영역 즉시 업데이트
+  const members = await getMembers();
+  const chips = newAtt.map(a => {
+    const m = members.find(m => m.id === a.memberId);
+    if (!m) return '';
+    return `<span class="att-chip ${isAdmin?'can-undo':''}" data-sess="${sessId}" data-member="${a.memberId}" title="${isAdmin?'클릭하면 참석 취소':''}">
+      ${grade(m).e} ${m.name}${isAdmin?' ✕':''}
+    </span>`;
+  }).join('');
+  const ca = document.querySelector(`#sb-${sessId} .chips-area`);
+  if (ca) ca.innerHTML = chips || '';
   const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
-  if (hd) hd.innerHTML = `${sess2.date} · ${(sess2.attendees||[]).length}명 참석${sess2.cat ? ' '+catBadge(sess2.cat) : ''}`;
+  if (hd) hd.innerHTML = `${sess.date} · ${newAtt.length}명 참석${sess.cat ? ' '+catBadge(sess.cat) : ''}`;
+  await loadSessMemberList(sessId);
 };
 async function doCheckinFromSess(sessId) {
   const checked = [...document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input:checked`)].map(cb => cb.id.replace(`scb-${sessId}-`,''));
