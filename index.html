@@ -1527,17 +1527,31 @@ function getRouletteItems() {
   return [...selected, ...rouletteCustomItems];
 }
 
-document.getElementById('roulette-add-btn').addEventListener('click', function() {
+document.getElementById('roulette-add-btn').addEventListener('click', async function() {
   const val = document.getElementById('roulette-input').value.trim();
   if (!val) return;
   rouletteCustomItems.push(val);
   document.getElementById('roulette-input').value = '';
+  // Firebase에 저장
+  await db.collection('meta').doc('roulette-custom').set({ items: rouletteCustomItems });
+  renderCustomRouletteList();
+  initRoulette();
+});
+
+function renderCustomRouletteList() {
   document.getElementById('roulette-custom-list').innerHTML = rouletteCustomItems.map((item,i) =>
     `<span style="background:var(--surface2);border-radius:20px;padding:3px 10px;font-size:12px;display:inline-flex;align-items:center;gap:4px">
-      ${item} <span style="cursor:pointer;color:var(--text3)" onclick="rouletteCustomItems.splice(${i},1);document.getElementById('roulette-add-btn').click()">✕</span>
+      ${item} <span style="cursor:pointer;color:var(--text3)" onclick="removeCustomRoulette(${i})">✕</span>
     </span>`
   ).join('');
-});
+}
+
+window.removeCustomRoulette = async function(i) {
+  rouletteCustomItems.splice(i, 1);
+  await db.collection('meta').doc('roulette-custom').set({ items: rouletteCustomItems });
+  renderCustomRouletteList();
+  initRoulette();
+};
 
 document.getElementById('roulette-btn').addEventListener('click', function() {
   const items = getRouletteItems();
@@ -1717,6 +1731,12 @@ async function renderChampion() {
 // 게임 탭 진입 시 로드
 async function initGameTab() {
   await loadRouletteItems();
+  // 커스텀 항목도 Firebase에서 로드
+  try {
+    const snap = await db.collection('meta').doc('roulette-custom').get();
+    rouletteCustomItems = snap.exists ? snap.data().items || [] : [];
+  } catch(e) { rouletteCustomItems = []; }
+  renderCustomRouletteList();
   initRoulette();
   loadGameMembers();
   renderChampion();
