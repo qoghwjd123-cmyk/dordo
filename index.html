@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>DORDO</title>
+<meta property="og:title" content="DORDO 두알두"/>
+<meta property="og:description" content="두알두 러닝 모임 — 일정 참석 및 출석 현황"/>
+<meta property="og:image" content="https://qoghwjd123-cmyk.github.io/logo.png"/>
+<meta property="og:url" content="https://qoghwjd123-cmyk.github.io/dordo"/>
+<meta property="og:type" content="website"/>
 <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -136,6 +141,18 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <option value="🏋️ 운동">🏋️ 운동</option>
       <option value="기타">기타</option>
     </select>
+    <div style="display:flex;gap:8px;margin-bottom:.65rem">
+      <div style="flex:1">
+        <div class="sl2">시작 시간</div>
+        <input type="time" id="se-time" style="margin:0"/>
+      </div>
+      <div style="flex:1">
+        <div class="sl2">종료 시간</div>
+        <input type="time" id="se-endtime" style="margin:0"/>
+      </div>
+    </div>
+    <div class="sl2">장소</div>
+    <input type="text" id="se-place" placeholder="예: 미사호수공원" style="margin-bottom:.75rem"/>
     <div style="display:flex;gap:8px;margin-bottom:.75rem">
       <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="se-save-btn">저장</button>
       <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="se-cancel-btn">닫기</button>
@@ -307,6 +324,18 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <input type="text" id="pub-sess-name" placeholder="예: 5월 정기 러닝"/>
     <div class="sl2">날짜</div>
     <input type="date" id="pub-sess-date"/>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1">
+        <div class="sl2">시작 시간 (선택)</div>
+        <input type="time" id="pub-sess-time" style="margin:0"/>
+      </div>
+      <div style="flex:1">
+        <div class="sl2">종료 시간 (선택)</div>
+        <input type="time" id="pub-sess-endtime" style="margin:0"/>
+      </div>
+    </div>
+    <div class="sl2" style="margin-top:.65rem">장소 (선택)</div>
+    <input type="text" id="pub-sess-place" placeholder="예: 미사호수공원"/>
     <button class="btn bp" id="create-sess-btn">일정 등록</button>
   </div>
   <div id="sess-month-filter" style="margin-bottom:.75rem"></div>
@@ -732,10 +761,12 @@ function renderMonthSessions(sessions, members, today) {
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}">
         <div>
           <div style="font-weight:500;font-size:15px">${s.name}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:6px">${s.date} · ${att.length}명 참석${s.cat ? ' '+catBadge(s.cat) : ''}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:6px">${s.date}${s.time?' · '+s.time+(s.endtime?' ~ '+s.endtime:''):''}${s.cat ? ' '+catBadge(s.cat) : ''}</div>
+          ${s.place ? `<div style="font-size:12px;color:var(--text3);margin-top:1px">📍 ${s.place}</div>` : ''}
+          <div style="font-size:12px;color:var(--text3);margin-top:1px">${att.length}명 참석</div>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
+          <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
           ${!isPast ? `<button class="kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
             style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:14px;height:14px;vertical-align:middle"/></button>` : ''}
         </div>
@@ -745,7 +776,7 @@ function renderMonthSessions(sessions, members, today) {
         ${!isPast ? `
         <div>
           <div id="sc-mlist-${s.id}"></div>
-          <button class="btn kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
+          <button class="btn kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}" data-time="${s.time||''}" data-endtime="${s.endtime||''}" data-place="${s.place||''}"
             style="margin-top:.75rem;background:#FEE500;color:#191919;border:none;font-weight:700">
             <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"/>카카오톡 공유
           </button>
@@ -769,7 +800,7 @@ document.getElementById('page-sessions').addEventListener('click', async functio
   if (selAll) { selectAllSess(selAll.dataset.sess); return; }
   if (checkinBtn) { await doCheckinFromSess(checkinBtn.dataset.sess); return; }
   if (kakaoBtn) {
-    shareSessionKakao(kakaoBtn.dataset.name, kakaoBtn.dataset.date, kakaoBtn.dataset.cat, kakaoBtn.dataset.sess);
+    shareSessionKakao(kakaoBtn.dataset.name, kakaoBtn.dataset.date, kakaoBtn.dataset.cat, kakaoBtn.dataset.sess, {time: kakaoBtn.dataset.time, endtime: kakaoBtn.dataset.endtime, place: kakaoBtn.dataset.place});
     return;
   }
   if (hd && hd.dataset.sess) { await toggleSessCard(hd.dataset.sess, hd.dataset.past === 'true'); return; }
@@ -974,11 +1005,17 @@ document.getElementById('create-sess-btn').addEventListener('click', async funct
   const name = document.getElementById('pub-sess-name').value.trim();
   const date = document.getElementById('pub-sess-date').value;
   const cat = document.getElementById('pub-sess-cat').value;
+  const time = document.getElementById('pub-sess-time').value;
+  const endtime = document.getElementById('pub-sess-endtime').value;
+  const place = document.getElementById('pub-sess-place').value.trim();
   if (!name) { toast('일정 이름을 입력해주세요'); return; }
   if (!date) { toast('날짜를 선택해주세요'); return; }
-  await db.collection('sessions').add({ name, date, cat, attendees: [], createdAt: Date.now() }).then(async ref => {
+  await db.collection('sessions').add({ name, date, cat, time, endtime, place, attendees: [], createdAt: Date.now() }).then(async ref => {
     clearCache();
     document.getElementById('pub-sess-name').value = '';
+    document.getElementById('pub-sess-time').value = '';
+    document.getElementById('pub-sess-endtime').value = '';
+    document.getElementById('pub-sess-place').value = '';
     toast('일정이 등록됐어요! 🎉');
     renderSessionsTab();
     if (isAdmin) renderAdminSessList();
@@ -987,18 +1024,20 @@ document.getElementById('create-sess-btn').addEventListener('click', async funct
   });
 });
 
-function shareSessionKakao(name, date, cat, sessId) {
+function shareSessionKakao(name, date, cat, sessId, sess) {
   if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
     Kakao.init('3eeb670b9d86cdbf75f2345bfcc9a80d');
   }
   const [y, m, d] = date.split('-');
   const dateLabel = `${parseInt(y)}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+  const timeLabel = sess && sess.time ? ` ${sess.time}${sess.endtime?' ~ '+sess.endtime:''}` : '';
+  const placeLabel = sess && sess.place ? `\n📍 ${sess.place}` : '';
   const url = `https://qoghwjd123-cmyk.github.io/dordo#sessions/${sessId}`;
   Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
       title: `📅 두알두 일정 안내`,
-      description: `${cat} ${name}\n📆 ${dateLabel}\n\n참석 체크하러 오세요!`,
+      description: `${cat} ${name}\n📆 ${dateLabel}${timeLabel}${placeLabel}\n\n참석 체크하러 오세요!`,
       imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
       link: { mobileWebUrl: url, webUrl: url },
     },
@@ -1250,6 +1289,9 @@ async function openSessEdit(sessId) {
   const sess = sessSnap.data();
   document.getElementById('se-sess-info').textContent = `${sess.name} · ${sess.date}`;
   document.getElementById('se-cat').value = sess.cat || '기타';
+  document.getElementById('se-time').value = sess.time || '';
+  document.getElementById('se-endtime').value = sess.endtime || '';
+  document.getElementById('se-place').value = sess.place || '';
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
   const sorted = sortMembers(members);
   document.getElementById('se-member-list').innerHTML = sorted.map(m => {
@@ -1304,7 +1346,7 @@ document.getElementById('se-save-btn').addEventListener('click', async function(
   const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
   let newAtt = (sess.attendees||[]).filter(a => !removed.includes(a.memberId));
   for (const mid of added) newAtt.push({ memberId: mid, time });
-  await sessRef.update({ attendees: newAtt, cat: document.getElementById('se-cat').value });
+  await sessRef.update({ attendees: newAtt, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() });
   for (const mid of added) {
     const mSnap = await db.collection('members').doc(mid).get();
     if (mSnap.exists) await db.collection('members').doc(mid).update({ count: (mSnap.data().count||0) + 1 });
