@@ -38,8 +38,8 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .welcome-text { font-size: 14px; font-weight: 700; color: var(--accent); }
 .welcome-reset { font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline; }
 
-/* 일정 카드 내 1:1 체크 박스 */
-.my-check-box { background: var(--accent-l); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; text-align: center; border: 1px solid var(--accent); }
+/* RSVP 개인화 박스 */
+.my-check-box { background: var(--accent-l); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: center; border: 1px solid var(--accent); }
 .my-check-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; }
 .my-check-btns { display: flex; gap: 8px; }
 .btn-rsvp { flex: 1; padding: 0.75rem; border-radius: 8px; border: none; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
@@ -48,7 +48,14 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .btn-rsvp.active-join { background: var(--accent) !important; color: #fff !important; }
 .btn-rsvp.active-absent { background: #991b1b !important; color: #fff !important; }
 
-/* 내 이름 하이라이트 */
+/* 참석/불참 칩 스타일 */
+.status-label { font-size: 11px; font-weight: 700; display: block; margin-bottom: 6px; }
+.status-label.join { color: var(--accent); }
+.status-label.absent { color: #991b1b; margin-top: 10px; }
+.chip-container { display: flex; flex-wrap: wrap; gap: 4px; }
+.status-chip { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--text2); display: flex; align-items: center; gap: 4px; }
+.status-chip.is-me { background: var(--my-highlight); color: #000; font-weight: 700; border: 1px solid #bfff00; }
+
 .mi.is-me { background: var(--my-highlight) !important; border: 1.5px solid #bfff00 !important; border-radius: 12px; margin: 4px 0; }
 .mi.is-me .mn { font-weight: 900; color: #000; }
 
@@ -64,7 +71,6 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 .mm{font-size:12px;color:var(--text3);margin-top:1px}
 .gp{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--surface2);color:var(--text3)}
 .gp.mate{background:#fff3e0;color:#e65100}
-.gp.green{background:var(--accent-l);color:var(--accent)}
 .sr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.875rem}
 .sb2{background:var(--surface2);border-radius:var(--rs);padding:.875rem .5rem;text-align:center}
 .sn{font-size:22px;font-weight:700;color:var(--accent)}
@@ -81,19 +87,10 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 .sess-card-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer}
 .sess-card-bd{padding:0 1.25rem 1rem;display:none}
 .sess-card-bd.open{display:block}
-.cat-badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:700;white-space:nowrap}
-.cat-badge.run{background:#e8f5ee;color:#1a6b3c}
-.cat-badge.hike{background:#e8f0fb;color:#1a4a9e}
-.cat-badge.eat{background:#fdf0ec;color:#b84c1a}
-.cat-badge.workout{background:#f3e8fb;color:#6b21a8}
-.cat-badge.etc{background:#f0efe9;color:#6b6b65}
 .mb-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
 .mb-bg.open{display:flex}
 .modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
 .mt2{font-size:16px;font-weight:700;margin-bottom:1rem}
-.loading{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
-.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.5rem}
-@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -115,274 +112,6 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 
 <div id="toast-el" class="toast-el"></div>
 
-<div class="mb-bg" id="user-setting-modal" style="z-index:1000"><div class="modal"><div class="mt2">👋 반가워요! 누구신가요?</div><div id="user-select-list"></div><button class="btn bs" style="margin-top:1rem" onclick="closeModal('user-setting-modal')">나중에 하기</button></div></div>
-<div class="mb-bg" id="confirm-modal" style="z-index:500"><div class="modal"><div id="confirm-msg" style="text-align:center; margin-bottom:1.25rem; font-weight:500"></div><div style="display:flex;gap:8px"><button class="btn bs" style="flex:1" id="confirm-cancel">취소</button><button class="btn bp" style="flex:1" id="confirm-ok">확인</button></div></div></div>
-<div class="mb-bg" id="member-detail-modal"><div class="modal"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem"><div id="md-header" style="display:flex;align-items:center;gap:10px"></div><button onclick="closeModal('member-detail-modal')" style="background:none;border:none;font-size:22px">✕</button></div><div id="md-sessions" style="max-height:50vh;overflow-y:auto"></div><button class="btn bs" onclick="closeModal('member-detail-modal')" style="margin-top:1rem">닫기</button></div></div>
-
-<div id="page-rules" class="page">
-  <div class="card"><div class="ct">운영 회칙</div><div class="mi">📌 별명은 [이름 / 동네] 형식</div><div class="mi">📌 신규 멤버 2주 이내 인증 필수</div></div>
-</div>
-
-<div id="page-members" class="page active">
-  <div class="filter-tabs"><button class="mtab" data-mtab="list">👥 멤버 목록</button><button class="mtab active" data-mtab="stats">📊 출석 통계</button></div>
-  
-  <div id="mtab-list" style="display:none">
-    <div class="sr"><div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div><div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">5회 이상</div></div><div class="sb2"><div class="sn" id="m-sess">-</div><div class="sl">총 일정</div></div></div>
-    <div class="card" style="margin-bottom:1rem"><div class="ct">🎖️ 등급 현황</div><div id="grade-status"></div></div>
-    <div class="card"><div class="ct">멤버 목록</div><div id="mlist"></div></div>
-  </div>
-
-  <div id="mtab-stats">
-    <div class="filter-tabs"><button class="ftab active" data-filter="all">전체</button><button class="ftab" data-filter="year">올해</button><button class="ftab" data-filter="month">이번달</button><button class="ftab" data-filter="custom">직접선택</button></div>
-    <div id="custom-filter" style="display:none;gap:8px;margin-bottom:.5rem"><select id="filter-year"></select><select id="filter-month"></select></div>
-    <div class="filter-tabs"><button class="cat-tab active" data-cat="all">전체</button><button class="cat-tab" data-cat="🏃 러닝">🏃 러닝</button><button class="cat-tab" data-cat="🏔️ 등산">🏔️ 등산</button><button class="cat-tab" data-cat="🍽️ 식사">🍽️ 식사</button><button class="cat-tab" data-cat="🏋️ 운동">🏋️ 운동</button></div>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:.75rem"><button id="sort-toggle">가입일순 ↕</button></div>
-    <div class="sb2" style="margin-bottom:.875rem"><span style="font-size:13px;color:var(--text3)">총 일정 </span><span class="sn" id="ci-total-sess" style="font-size:18px">-</span></div>
-    <div class="card"><div class="ct">출석부</div><div id="ci-att-list"></div></div>
-  </div>
-</div>
-
-<div id="page-sessions" class="page">
-  <div id="sess-month-filter"></div>
-  <div id="sess-list"></div>
-</div>
-
-<script>
-// Firebase 및 초기 설정
-firebase.initializeApp({ apiKey: "AIzaSyDKLj4tBOmGPmX1keWwkn0m8LlqDixzMEw", authDomain: "dordo-17766.firebaseapp.com", projectId: "dordo-17766", storageBucket: "dordo-17766.firebasestorage.app", messagingSenderId: "616591115480", appId: "1:616591115480:web:ade08d721401f9f6ec03ad" });
-const db = firebase.firestore();
-const USER_NAME_KEY = 'dordo-user-name';
-const MATE_ORDER = ['호정/리더','황윤정/소통메이트','주동준/운동메이트'];
-const JOIN_DATES = { '김병희/덕풍':'230410','성준/미사':'230715','장지연/미사':'230916','왕신민/미사':'231013','김규성/광주':'230730','헤라/광주🐺':'230730','최형규/미사':'240501','주성/미사':'240620','박현정/망월':'250301','김민호/경기광주':'250507','정다운/미사':'250511','양윤석/덕풍':'250512','민연희/미사':'250525','우빛나/미사':'250530','이삭/양평':'250619','은지/미사':'250623','박성민/덕풍':'250804','가은/미사':'250817','도영/덕풍':'250904','큐성/덕풍':'260128','최예인/미사':'260411','이정민/미사':'260422','대훈/덕풍':'260430','원재윤':'260422' };
-
-let isAdmin = false;
-let ciFilter = 'all';
-let catFilter = 'all';
-let attSortByCount = false;
-let _membersCache = null;
-let _sessionsCache = null;
-let _confirmResolve = null;
-
-// 공통 유틸
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function toast(msg) { const t = document.getElementById('toast-el'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-function showConfirm(msg) { return new Promise(resolve => { _confirmResolve = resolve; document.getElementById('confirm-msg').textContent = msg; document.getElementById('confirm-modal').classList.add('open'); }); }
-document.getElementById('confirm-ok').onclick = () => { closeModal('confirm-modal'); if(_confirmResolve) _confirmResolve(true); };
-document.getElementById('confirm-cancel').onclick = () => { closeModal('confirm-modal'); if(_confirmResolve) _confirmResolve(false); };
-
-function grade(m) { if (m.name?.startsWith('헤라')) return {e:'🐺', n:'허스키'}; if (m.role === 'mate') return {e:'🔥', n:'메이트'}; if (m.count >= 15) return {e:'🦢', n:'베테랑'}; if (m.count >= 5) return {e:'🐥', n:'활동'}; if (m.count >= 1) return {e:'🐣', n:'새내기'}; return {e:'🥚', n:'알'}; }
-
-// 정렬 로직 복구 (나 -> 메이트 -> 가입일)
-function sortMembers(members) {
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  return [...members].sort((a, b) => {
-    if (a.name === myName) return -1; if (b.name === myName) return 1;
-    const ai = a.role === 'mate' ? MATE_ORDER.indexOf(a.name) : 999;
-    const bi = b.role === 'mate' ? MATE_ORDER.indexOf(b.name) : 999;
-    if (ai !== bi) return ai - bi;
-    const ja = a.joined || JOIN_DATES[a.name] || '999999';
-    const jb = b.joined || JOIN_DATES[b.name] || '999999';
-    return ja.localeCompare(jb);
-  });
-}
-
-async function getMembers(f) { if (_membersCache && !f) return _membersCache; const s = await db.collection('members').get(); _membersCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _membersCache; }
-async function getAllSessions(f) { if (_sessionsCache && !f) return _sessionsCache; const s = await db.collection('sessions').orderBy('date','desc').get(); _sessionsCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _sessionsCache; }
-
-// 개인화 로직
-async function initUser() {
-  const name = localStorage.getItem(USER_NAME_KEY);
-  if (name) {
-    document.getElementById('welcome-box').style.display = 'flex';
-    document.getElementById('welcome-text').textContent = `${name.split('/')[0]}님 환영해요! 🔥`;
-  } else {
-    document.getElementById('welcome-box').style.display = 'none';
-    setTimeout(async () => {
-      const m = await getMembers();
-      document.getElementById('user-select-list').innerHTML = sortMembers(m).map(x => `<div class="mi" style="cursor:pointer; padding:0.8rem" onclick="setUser('${x.name}')">${grade(x).e} ${x.name}</div>`).join('');
-      document.getElementById('user-setting-modal').classList.add('open');
-    }, 1500);
-  }
-}
-function setUser(n) { localStorage.setItem(USER_NAME_KEY, n); closeModal('user-setting-modal'); initUser(); renderMPage(); toast(`${n.split('/')[0]}님 반가워요!`); }
-function resetUser() { localStorage.removeItem(USER_NAME_KEY); initUser(); location.reload(); }
-
-// 페이지 제어
-function showPage(n, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  const target = document.getElementById('page-' + n); if (target) target.classList.add('active'); if (btn) btn.classList.add('active');
-  if (n === 'members') renderMPage();
-  if (n === 'sessions') renderSessionsTab();
-}
-
-async function renderMPage() {
-  const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  document.getElementById('mlist').innerHTML = sortMembers(m).map(x => {
-    const isMe = x.name === myName;
-    return `<div class="mi ${isMe?'is-me':''}" onclick="openMemberDetail('${x.id}')"><div class="av">${grade(x).e}</div><div style="flex:1"><div class="mn">${x.name}${isMe?' (나)':''}</div><div class="mm">${x.count}회 참석</div></div><span class="gp ${x.role==='mate'?'mate':''}">${x.role==='mate'?'운영진':''}</span></div>`;
-  }).join('');
-  document.getElementById('m-total').textContent = m.length;
-  document.getElementById('m-act').textContent = m.filter(x=>x.count>=5).length;
-  document.getElementById('m-sess').textContent = s.length;
-  renderAttBoard();
-}
-
-async function renderAttBoard() {
-  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const today = new Date().toISOString().split('T')[0];
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  
-  let fs = sessions.filter(s => s.date <= today);
-  if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
-  if (ciFilter === 'year') fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
-  if (ciFilter === 'custom') {
-    const y = document.getElementById('filter-year').value;
-    const mo = document.getElementById('filter-month').value;
-    if (y && mo) fs = fs.filter(s => s.date.startsWith(`${y}-${mo}`));
-  }
-  if (catFilter !== 'all') fs = fs.filter(s => s.cat === catFilter);
-
-  const total = fs.length;
-  const countMap = {};
-  fs.forEach(s => (s.attendees||[]).forEach(a => countMap[a.memberId] = (countMap[a.memberId]||0) + 1));
-  
-  let sorted = sortMembers(members);
-  if (attSortByCount) sorted = [...sorted].sort((a,b) => (countMap[b.id]||0) - (countMap[a.id]||0));
-
-  document.getElementById('ci-total-sess').textContent = total;
-  document.getElementById('ci-att-list').innerHTML = sorted.map(m => {
-    const cnt = countMap[m.id]||0; const pct = total ? Math.round(cnt/total*100) : 0; const isMe = m.name === myName;
-    return `<div class="mi ${isMe?'is-me':''}" onclick="openMemberDetail('${m.id}')"><div class="av">${grade(m).e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${isMe?'#000':'var(--accent)'}"></div></div></div><span class="gp" style="${isMe?'background:#000;color:#fff':''}">${pct}%</span></div>`;
-  }).join('');
-}
-
-// 일정 탭 개인화 로직
-async function renderSessionsTab() {
-  const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
-  const today = new Date().toISOString().split('T')[0];
-  const months = [...new Set(sessions.map(s => s.date.slice(0,7)))].sort().reverse();
-  
-  const el = document.getElementById('sess-month-filter');
-  el.innerHTML = months.map(m => `<div class="sess-card"><div class="sess-card-hd" onclick="this.nextElementSibling.classList.toggle('open')"><span>${m.split('-')[0]}년 ${parseInt(m.split('-')[1])}월 모임</span><span>▼</span></div><div class="sess-card-bd open">${renderSessionCards(sessions.filter(s=>s.date.startsWith(m)), members, today)}</div></div>`).join('');
-}
-
-function renderSessionCards(sessions, members, today) {
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  return sessions.map(s => {
-    const isPast = s.date < today;
-    const att = s.attendees || [];
-    return `<div class="card" id="sc-${s.id}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <div style="font-weight:700; font-size:15px; margin-bottom:4px">${s.name}</div>
-          <div style="font-size:12px; color:var(--text3)">${s.date} · ${att.length}명 참석</div>
-        </div>
-        <span style="font-size:11px; padding:3px 10px; border-radius:20px; background:${isPast?'var(--surface2)':'var(--accent-l)'}; color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
-      </div>
-      <div style="margin-top:1rem">${loadPersonalRSVP(s, members, myName)}</div>
-    </div>`;
-  }).join('');
-}
-
-function loadPersonalRSVP(sess, members, myName) {
-  const me = members.find(m => m.name === myName);
-  if (!me) return `<div style="font-size:12px;color:var(--text3);text-align:center">상단에서 이름을 먼저 설정해주세요</div>`;
-  const isAtt = (sess.attendees||[]).some(a => a.memberId === me.id);
-  const isAbs = (sess.absentees||[]).includes(me.id);
-  
-  return `<div class="my-check-box">
-    <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요? 🔥</div>
-    <div class="my-check-btns">
-      <button class="btn-rsvp join ${isAtt?'active-join':''}" onclick="doSingleAttendance('${sess.id}','${me.id}',${isAtt})">${isAtt?'참석 완료 ✓':'참석할게요'}</button>
-      <button class="btn-rsvp absent ${isAbs?'active-absent':''}" onclick="undoSingleAttendance('${sess.id}','${me.id}',${isAbs})">${isAbs?'불참 완료 ✗':'이번엔 불참'}</button>
-    </div>
-  </div>`;
-}
-
-// 데이터 처리 함수 복구
-window.doSingleAttendance = async function(sid, mid, a) { 
-  const ref = db.collection('sessions').doc(sid); const snap = await ref.get(); const s = snap.data(); 
-  if (a) {
-    const next = (s.attendees||[]).filter(x => x.memberId !== mid); await ref.update({ attendees: next }); 
-    const m = await db.collection('members').doc(mid).get(); if(m.exists && (m.data().count||0)>0) await db.collection('members').doc(mid).update({count: m.data().count-1});
-  } else {
-    const now = new Date(); const t = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-    const nextAtt = [...(s.attendees||[]), {memberId: mid, time: t}]; const nextAbs = (s.absentees||[]).filter(id => id !== mid);
-    await ref.update({ attendees: nextAtt, absentees: nextAbs });
-    const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||0)+1});
-  }
-  clearCache(); renderSessionsTab(); toast('참석 여부가 업데이트됐어요!');
-};
-
-window.undoSingleAttendance = async function(sid, mid, a) {
-  const ref = db.collection('sessions').doc(sid); const snap = await ref.get(); const s = snap.data();
-  if (a) {
-    const nextAbs = (s.absentees||[]).filter(id => id !== mid); await ref.update({ absentees: nextAbs });
-  } else {
-    const ok = await showConfirm('불참 처리할까요?'); if (!ok) return;
-    const nextAtt = (s.attendees||[]).filter(x => x.memberId !== mid); const nextAbs = [...new Set([...(s.absentees||[]), mid])];
-    await ref.update({ attendees: nextAtt, absentees: nextAbs });
-    const m = await db.collection('members').doc(mid).get(); if(m.exists && (m.data().count||0)>0) await db.collection('members').doc(mid).update({count: m.data().count-1});
-  }
-  clearCache(); renderSessionsTab(); toast('불참 처리 완료');
-};
-
-async function openMemberDetail(id) {
-  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const m = members.find(x => x.id === id); if (!m) return;
-  const today = new Date().toISOString().split('T')[0];
-  const attended = sessions.filter(s => s.date <= today && (s.attendees||[]).some(a => a.memberId === id));
-  document.getElementById('md-header').innerHTML = `<div class="av">${grade(m).e}</div><div><div style="font-weight:700">${m.name}</div><div style="font-size:12px;color:var(--text3)">총 ${attended.length}회 참석</div></div>`;
-  document.getElementById('md-sessions').innerHTML = attended.map(s => `<div class="mi"><div><div style="font-weight:500;font-size:14px">${s.name}</div><div style="font-size:12px;color:var(--text3)">${s.date}</div></div></div>`).join('') || '<div class="empty">기록 없음</div>';
-  document.getElementById('member-detail-modal').classList.add('open');
-}
-
-// 필터 버튼 이벤트 복구
-document.querySelectorAll('.ftab').forEach(btn => btn.onclick = function() {
-  ciFilter = this.dataset.filter;
-  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active')); this.classList.add('active');
-  document.getElementById('custom-filter').style.display = ciFilter === 'custom' ? 'flex' : 'none';
-  if(ciFilter === 'custom') {
-    const now = new Date();
-    const ys = ['2023','2024','2025','2026'];
-    document.getElementById('filter-year').innerHTML = ys.map(y => `<option value="${y}">${y}년</option>`).join('');
-    document.getElementById('filter-month').innerHTML = Array.from({length:12}, (_,i)=>`<option value="${String(i+1).padStart(2,'0')}">${i+1}월</option>`).join('');
-    document.getElementById('filter-year').value = now.getFullYear();
-    document.getElementById('filter-month').value = String(now.getMonth()+1).padStart(2,'0');
-  }
-  renderAttBoard();
-});
-
-document.querySelectorAll('.cat-tab').forEach(btn => btn.onclick = function() {
-  catFilter = this.dataset.cat;
-  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active')); this.classList.add('active');
-  renderAttBoard();
-});
-
-document.getElementById('sort-toggle').onclick = function() {
-  attSortByCount = !attSortByCount;
-  this.textContent = attSortByCount ? '출석순 ↕' : '가입일순 ↕';
-  renderAttBoard();
-};
-
-// 초기화
-(async function() {
-  await initUser();
-  const hash = location.hash.replace('#','');
-  let startPage = hash && ['rules','members','sessions','game','admin'].includes(hash) ? hash : 'members';
-  showPage(startPage, document.querySelector(`.nb[data-page="${startPage}"]`));
-})();
-
-document.querySelectorAll('.nb').forEach(btn => btn.onclick = () => { location.hash = btn.dataset.page; showPage(btn.dataset.page, btn); });
-document.querySelectorAll('.mtab').forEach(btn => btn.onclick = function() { 
-  document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active')); this.classList.add('active');
-  const t = this.dataset.mtab; document.getElementById('mtab-list').style.display = t === 'list'?'block':'none'; document.getElementById('mtab-stats').style.display = t === 'stats'?'block':'none';
-});
-</script>
-</body>
-</html>
 <div class="mb-bg" id="user-setting-modal" style="z-index:1000"><div class="modal"><div class="mt2">👋 반가워요! 누구신가요?</div><div id="user-select-list"></div></div></div>
 <div class="mb-bg" id="confirm-modal" style="z-index:500"><div class="modal"><div id="confirm-msg" style="text-align:center; margin-bottom:1.25rem;"></div><div style="display:flex;gap:8px"><button class="btn bs" style="flex:1" id="confirm-cancel">취소</button><button class="btn bp" style="flex:1" id="confirm-ok">확인</button></div></div></div>
 <div class="mb-bg" id="member-detail-modal"><div class="modal"><div id="md-header" style="display:flex;align-items:center;gap:10px;margin-bottom:1rem"></div><div id="md-sessions" style="max-height:50vh;overflow-y:auto"></div><button class="btn bs" onclick="closeModal('member-detail-modal')" style="margin-top:1rem">닫기</button></div></div>
@@ -405,9 +134,8 @@ document.querySelectorAll('.mtab').forEach(btn => btn.onclick = function() {
   <div id="sess-month-filter"></div>
   <div id="sess-list"></div>
 </div>
-
 <script>
-// Firebase 및 기초 설정
+// Firebase 설정
 firebase.initializeApp({ apiKey: "AIzaSyDKLj4tBOmGPmX1keWwkn0m8LlqDixzMEw", authDomain: "dordo-17766.firebaseapp.com", projectId: "dordo-17766", storageBucket: "dordo-17766.firebasestorage.app", messagingSenderId: "616591115480", appId: "1:616591115480:web:ade08d721401f9f6ec03ad" });
 const db = firebase.firestore();
 const USER_NAME_KEY = 'dordo-user-name';
@@ -419,10 +147,12 @@ let _membersCache = null;
 let _sessionsCache = null;
 let _confirmResolve = null;
 
-// 공통 유틸
+// 공통 유틸리티
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function toast(msg) { const t = document.getElementById('toast-el'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 function showConfirm(msg) { return new Promise(resolve => { _confirmResolve = resolve; document.getElementById('confirm-msg').textContent = msg; document.getElementById('confirm-modal').classList.add('open'); }); }
+document.getElementById('confirm-ok').onclick = () => { closeModal('confirm-modal'); if(_confirmResolve) _confirmResolve(true); };
+document.getElementById('confirm-cancel').onclick = () => { closeModal('confirm-modal'); if(_confirmResolve) _confirmResolve(false); };
 
 function grade(m) { if (m.name?.startsWith('헤라')) return {e:'🐺', n:'허스키'}; if (m.role === 'mate') return {e:'🔥', n:'메이트'}; if (m.count >= 15) return {e:'🦢', n:'베테랑'}; if (m.count >= 5) return {e:'🐥', n:'활동'}; return {e:'🐣', n:'새내기'}; }
 
@@ -440,7 +170,7 @@ function sortMembers(members) {
 async function getMembers(f) { if (_membersCache && !f) return _membersCache; const s = await db.collection('members').get(); _membersCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _membersCache; }
 async function getAllSessions(f) { if (_sessionsCache && !f) return _sessionsCache; const s = await db.collection('sessions').orderBy('date','desc').get(); _sessionsCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _sessionsCache; }
 
-// 개인화 로직
+// 개인화 및 웰컴
 async function initUser() {
   const name = localStorage.getItem(USER_NAME_KEY);
   if (name) {
@@ -449,55 +179,19 @@ async function initUser() {
   } else {
     setTimeout(async () => {
       const m = await getMembers();
-      document.getElementById('user-select-list').innerHTML = sortMembers(m).map(x => `<div class="mi" style="cursor:pointer" onclick="setUser('${x.name}')">${grade(x).e} ${x.name}</div>`).join('');
+      document.getElementById('user-select-list').innerHTML = sortMembers(m).map(x => `<div class="mi" style="cursor:pointer; padding:0.8rem" onclick="setUser('${x.name}')">${grade(x).e} ${x.name}</div>`).join('');
       document.getElementById('user-setting-modal').classList.add('open');
     }, 1500);
   }
 }
 function setUser(n) { localStorage.setItem(USER_NAME_KEY, n); closeModal('user-setting-modal'); initUser(); renderMPage(); toast(`${n.split('/')[0]}님 반가워요!`); }
-function resetUser() { localStorage.removeItem(USER_NAME_KEY); initUser(); location.reload(); }
+function resetUser() { localStorage.removeItem(USER_NAME_KEY); location.reload(); }
 
-// 페이지 전환
-function showPage(n, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + n).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (n === 'members') renderMPage();
-  if (n === 'sessions') renderSessionsTab();
-}
-
-async function renderMPage() {
-  const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  document.getElementById('mlist').innerHTML = sortMembers(m).map(x => `<div class="mi ${x.name===myName?'is-me':''}" onclick="openMemberDetail('${x.id}')"><div class="av">${grade(x).e}</div><div style="flex:1"><div class="mn">${x.name}${x.name===myName?' (나)':''}</div><div class="mm">${x.count}회 참석</div></div></div>`).join('');
-  document.getElementById('m-total').textContent = m.length;
-  document.getElementById('m-act').textContent = m.filter(x=>x.count>=5).length;
-  document.getElementById('m-sess').textContent = s.length;
-  renderAttBoard();
-}
-
-async function renderAttBoard() {
-  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const today = new Date().toISOString().split('T')[0];
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  let fs = sessions.filter(s => s.date <= today);
-  if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
-  if (ciFilter === 'year') fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
-  
-  const total = fs.length; document.getElementById('ci-total-sess').textContent = total;
-  const countMap = {}; fs.forEach(s => (s.attendees||[]).forEach(a => countMap[a.memberId] = (countMap[a.memberId]||0) + 1));
-  
-  document.getElementById('ci-att-list').innerHTML = sortMembers(members).map(m => {
-    const cnt = countMap[m.id]||0; const pct = total ? Math.round(cnt/total*100) : 0; const isMe = m.name === myName;
-    return `<div class="mi ${isMe?'is-me':''}"><div class="av">${grade(m).e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${isMe?'#000':'var(--accent)'}"></div></div></div><span class="gp">${pct}%</span></div>`;
-  }).join('');
-}
-
-// ── [요청사항 반영] 일정 탭 로직 ──────────────────────
+// ── [수정된 핵심] 일정 탭 렌더링 ──────────────────────
 async function renderSessionsTab() {
   const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
-  const today = new Date().toISOString().split('T')[0];
+  const d = new Date();
+  const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const months = [...new Set(sessions.map(s => s.date.slice(0,7)))].sort().reverse();
   
   document.getElementById('sess-month-filter').innerHTML = months.map(m => {
@@ -513,79 +207,95 @@ async function renderSessionsTab() {
 
 function renderCards(sessions, members, today) {
   const myName = localStorage.getItem(USER_NAME_KEY);
+  const me = members.find(m => m.name === myName);
+
   return sessions.map(s => {
     const isPast = s.date < today;
     const atts = s.attendees || [];
     const abss = s.absentees || [];
     
-    // 참석자/불참자 칩 렌더링 (미응답 제외)
+    // 명단 필터링 (응답자만 표시)
     const attChips = atts.map(a => {
       const m = members.find(x => x.id === a.memberId);
       return m ? `<span class="status-chip ${m.name===myName?'is-me':''}">${grade(m).e} ${m.name.split('/')[0]}</span>` : '';
     }).join('');
-    
     const absChips = abss.map(mid => {
       const m = members.find(x => x.id === mid);
       return m ? `<span class="status-chip ${m.name===myName?'is-me':''}">${grade(m).e} ${m.name.split('/')[0]}</span>` : '';
     }).join('');
 
-    const me = members.find(m => m.name === myName);
-    const isAtt = atts.some(a => a.memberId === me?.id);
-    const isAbs = abss.includes(me?.id);
+    const isMeAtt = atts.some(a => a.memberId === me?.id);
+    const isMeAbs = abss.includes(me?.id);
 
-    return `<div class="card" style="padding:1rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
-        <div><div style="font-weight:700;font-size:15px">${s.name}</div><div style="font-size:12px;color:var(--text3)">${s.date}</div></div>
-        <span style="font-size:11px;padding:2px 8px;border-radius:10px;height:fit-content;background:${isPast?'#eee':'var(--accent-l)'};color:${isPast?'#666':'var(--accent)'}">${isPast?'종료':'예정'}</span>
+    return `<div class="card" style="padding:1.25rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <div><div style="font-weight:700;font-size:16px">${s.name}</div><div style="font-size:12px;color:var(--text3)">${s.date} · ${atts.length}명 참석</div></div>
+        <span style="font-size:11px;padding:3px 10px;border-radius:10px;background:${isPast?'#eee':'var(--accent-l)'};color:${isPast?'#666':'var(--accent)'}">${isPast?'종료':'예정'}</span>
       </div>
       
       ${(!isPast && me) ? `
         <div class="my-check-box">
-          <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요?</div>
+          <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요? 🔥</div>
           <div class="my-check-btns">
-            <button class="btn-rsvp join ${isAtt?'active-join':''}" onclick="doAttend('${s.id}','${me.id}',${isAtt})">${isAtt?'참석 완료 ✓':'참석'}</button>
-            <button class="btn-rsvp absent ${isAbs?'active-absent':''}" onclick="doAbsent('${s.id}','${me.id}',${isAbs})">${isAbs?'불참 완료 ✗':'불참'}</button>
+            <button class="btn-rsvp join ${isMeAtt?'active-join':''}" onclick="doAttend('${s.id}','${me.id}',${isMeAtt})">${isMeAtt?'참석 완료 ✓':'참석할게요'}</button>
+            <button class="btn-rsvp absent ${isMeAbs?'active-absent':''}" onclick="doAbsent('${s.id}','${me.id}',${isMeAbs})">${isMeAbs?'불참 완료 ✗':'이번엔 불참'}</button>
           </div>
         </div>` : ''}
 
-      <div style="text-align:left">
+      <div style="text-align:left; border-top: 1px solid var(--border); padding-top: 12px;">
         ${attChips ? `<span class="status-label join">참석 (${atts.length})</span><div class="chip-container">${attChips}</div>` : ''}
         ${absChips ? `<span class="status-label absent">불참 (${abss.length})</span><div class="chip-container">${absChips}</div>` : ''}
+        ${(!attChips && !absChips) ? '<div style="font-size:12px;color:var(--text3);text-align:center">아직 응답자가 없어요</div>' : ''}
       </div>
     </div>`;
   }).join('');
 }
 
+// ── 데이터 처리 및 통계 ──────────────────────
 window.doAttend = async (sid, mid, a) => {
   const ref = db.collection('sessions').doc(sid); const snap = await ref.get(); const s = snap.data();
-  if(a) {
-    await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid) });
-    const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||1)-1});
-  } else {
-    const now = new Date(); const t = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  if(a) { await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid) }); const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||1)-1}); }
+  else { const t = new Date().getHours().toString().padStart(2,'0')+':'+new Date().getMinutes().toString().padStart(2,'0');
     await ref.update({ attendees: [...(s.attendees||[]), {memberId:mid, time:t}], absentees: (s.absentees||[]).filter(id => id !== mid) });
-    const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||0)+1});
-  }
+    const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||0)+1}); }
   clearCache(); renderSessionsTab(); toast('업데이트 완료!');
 };
-
 window.doAbsent = async (sid, mid, a) => {
   const ref = db.collection('sessions').doc(sid); const snap = await ref.get(); const s = snap.data();
   if(a) { await ref.update({ absentees: s.absentees.filter(id => id !== mid) }); }
-  else {
-    const ok = await showConfirm('불참 처리할까요?'); if(!ok) return;
+  else { const ok = await showConfirm('불참 처리할까요?'); if(!ok) return;
     const wasAtt = s.attendees.some(x => x.memberId === mid);
     await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid), absentees: [...new Set([...(s.absentees||[]), mid])] });
-    if(wasAtt) { const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||1)-1}); }
-  }
-  clearCache(); renderSessionsTab(); toast('업데이트 완료!');
+    if(wasAtt) { const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||1)-1}); } }
+  clearCache(); renderSessionsTab(); toast('불참 등록 완료');
 };
 
+async function renderMPage() {
+  const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
+  const myName = localStorage.getItem(USER_NAME_KEY);
+  document.getElementById('mlist').innerHTML = sortMembers(m).map(x => `<div class="mi ${x.name===myName?'is-me':''}" onclick="openMemberDetail('${x.id}')"><div class="av">${grade(x).e}</div><div style="flex:1"><div class="mn">${x.name}${x.name===myName?' (나)':''}</div><div class="mm">${x.count}회 참석</div></div></div>`).join('');
+  document.getElementById('m-total').textContent = m.length; document.getElementById('m-act').textContent = m.filter(x=>x.count>=5).length; document.getElementById('m-sess').textContent = s.length;
+  renderAttBoard();
+}
+async function renderAttBoard() {
+  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
+  const d = new Date(); const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const myName = localStorage.getItem(USER_NAME_KEY);
+  let fs = sessions.filter(s => s.date <= today);
+  if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
+  if (ciFilter === 'year') fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
+  const total = fs.length; document.getElementById('ci-total-sess').textContent = total;
+  const countMap = {}; fs.forEach(s => (s.attendees||[]).forEach(a => countMap[a.memberId] = (countMap[a.memberId]||0) + 1));
+  document.getElementById('ci-att-list').innerHTML = sortMembers(members).map(m => {
+    const cnt = countMap[m.id]||0; const pct = total ? Math.round(cnt/total*100) : 0; const isMe = m.name === myName;
+    return `<div class="mi ${isMe?'is-me':''}" onclick="openMemberDetail('${m.id}')"><div class="av">${grade(m).e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${isMe?'#000':'var(--accent)'}"></div></div></div><span class="gp" style="${isMe?'background:#000;color:#fff':''}">${pct}%</span></div>`;
+  }).join('');
+}
 async function openMemberDetail(id) {
-  const [mems, sess] = await Promise.all([getMembers(), getAllSessions()]);
-  const m = mems.find(x => x.id === id); const today = new Date().toISOString().split('T')[0];
+  const [mems, sess] = await Promise.all([getMembers(), getAllSessions()]); const m = mems.find(x => x.id === id); if(!m) return;
+  const d = new Date(); const today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const attended = sess.filter(s => s.date <= today && (s.attendees||[]).some(a => a.memberId === id));
-  document.getElementById('md-header').innerHTML = `<div class="av">${grade(m).e}</div><div><div style="font-weight:700">${m.name}</div><div style="font-size:12px;color:var(--text3)">${attended.length}회 참석</div></div>`;
+  document.getElementById('md-header').innerHTML = `<div class="av">${grade(m).e}</div><div><div style="font-weight:700">${m.name}</div><div style="font-size:12px;color:var(--text3)">총 ${attended.length}회 참석</div></div>`;
   document.getElementById('md-sessions').innerHTML = attended.map(s => `<div class="mi" style="font-size:13px"><div>${s.name}</div><div style="color:var(--text3)">${s.date}</div></div>`).join('') || '기록 없음';
   document.getElementById('member-detail-modal').classList.add('open');
 }
@@ -597,7 +307,6 @@ async function openMemberDetail(id) {
   let startPage = hash && ['rules','members','sessions'].includes(hash) ? hash : 'members';
   showPage(startPage, document.querySelector(`.nb[data-page="${startPage}"]`));
 })();
-
 document.querySelectorAll('.nb').forEach(btn => btn.onclick = () => { location.hash = btn.dataset.page; showPage(btn.dataset.page, btn); });
 document.querySelectorAll('.mtab').forEach(btn => btn.onclick = function() { 
   document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active')); this.classList.add('active');
