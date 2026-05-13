@@ -33,16 +33,24 @@ header{background:#1a1a18; padding:1rem; text-align:center; position:sticky; top
 .card{background:var(--surface); border-radius:var(--rs); padding:1.25rem; border:1px solid var(--border); margin-bottom:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.02);}
 .ct{font-size:11px; font-weight:700; color:var(--text3); letter-spacing:.08em; text-transform:uppercase; margin-bottom:.875rem}
 
-/* 탭 및 필터 (클로드 UI 스타일) */
+/* 회칙 아이템 */
+.rule-item{display:flex; gap:10px; padding:.75rem 0; border-bottom:1px solid var(--border)}
+.rule-item:last-child{border-bottom:none}
+.rule-icon{font-size:16px; flex-shrink:0; margin-top:1px}
+.rule-main{font-size:14px; font-weight:500; line-height:1.5; margin-bottom:4px}
+.rule-sub{font-size:12px; color:var(--text2); line-height:1.6}
+.rule-tag{display:inline-block; font-size:12px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:1px 7px; color:var(--text2); margin:0 2px}
+.rule-badge{display:inline-block; font-size:11px; padding:2px 8px; border-radius:20px; font-weight:700; margin-left:4px}
+.rule-badge.warn{background:#FAEEDA; color:#633806}
+.rule-badge.info{background:#E6F1FB; color:#0C447C}
+
+/* 탭 및 필터 */
 .tab-container { display:flex; background:var(--surface2); border-radius:100px; padding:4px; margin-bottom:1.5rem; }
 .tab-btn { flex:1; padding:8px 0; border:none; border-radius:100px; font-size:13px; font-weight:600; color:var(--text3); background:none; cursor:pointer; }
 .tab-btn.active { background:var(--surface); color:var(--accent); box-shadow:0 2px 6px rgba(0,0,0,0.05); }
-
 .filter-group { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:0.8rem; }
 .filter-chip { padding:6px 14px; border-radius:100px; border:1px solid var(--border); background:var(--surface); font-size:12px; color:var(--text2); cursor:pointer; }
 .filter-chip.active { background:var(--accent); color:#fff; border-color:var(--accent); }
-
-/* 정렬 버튼 */
 #sort-toggle { float:right; border:1px solid var(--border); background:var(--surface); padding:4px 12px; border-radius:20px; font-size:11px; color:var(--text2); font-weight:700; margin-bottom:10px; cursor:pointer; }
 
 /* 리스트 항목 */
@@ -51,61 +59,115 @@ header{background:#1a1a18; padding:1rem; text-align:center; position:sticky; top
 .av{width:40px; height:40px; border-radius:50%; background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:18px;}
 .mn{font-size:15px; font-weight:600;}
 .mm{font-size:12px; color:var(--text3);}
-.gp{font-size:11px; padding:2px 8px; border-radius:20px; font-weight:500; background:var(--surface2); color:var(--text3);}
 
 /* 출석 바 */
 .att-bar-bg{background:var(--surface2); border-radius:100px; height:8px; width:100%; overflow:hidden; margin-top:6px;}
 .att-bar-fill{background:var(--accent); height:100%; border-radius:100px; transition:width 0.6s ease;}
 
-.btn-main { width:100%; padding:0.85rem; border:none; border-radius:var(--rs); font-size:14px; font-weight:700; cursor:pointer; background:var(--accent); color:#fff; }
+/* 버튼 및 칩 */
+.btn-main { width:100%; padding:0.85rem; border:none; border-radius:var(--rs); font-size:14px; font-weight:700; cursor:pointer; background:var(--accent); color:#fff; margin-bottom:0.5rem;}
 .btn-sub { width:100%; padding:0.85rem; border:1px solid var(--border); border-radius:var(--rs); font-size:14px; font-weight:700; background:var(--surface2); color:var(--text2); }
+.btn-kakao { background:#FEE500; color:#191919; border:none; }
+.att-list-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+.att-chip { padding: 4px 10px; background: var(--surface2); border-radius: 20px; font-size: 12px; color: var(--text2); font-weight: 500; border: 1px solid var(--border); }
+.att-chip.is-me { background: var(--my-highlight); color: #000; font-weight: 700; }
+
+/* 기타 */
+.welcome-box { background:var(--accent); border-radius:var(--rs); padding:1.25rem; color:#fff; display:none; align-items:center; justify-content:space-between; margin:1rem auto 0; max-width:480px; }
+.welcome-reset { font-size:11px; opacity:0.8; text-decoration:underline; cursor:pointer; }
 .toast-el{position:fixed; bottom:5rem; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 24px; border-radius:100px; font-size:13px; opacity:0; transition:0.3s; z-index:999;}
 .toast-el.show{opacity:1; bottom:6rem;}
+.mb-bg{display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:1000; align-items:flex-end; justify-content:center}
+.mb-bg.open{display:flex}
+.modal{background:var(--surface); border-radius:var(--r) var(--r) 0 0; padding:1.5rem; width:100%; max-width:480px; max-height:85vh; overflow-y:auto}
+.game-result { text-align:center; padding:1.5rem 0; font-size:22px; font-weight:700; color:var(--accent); min-height:80px; display:flex; align-items:center; justify-content:center; flex-direction:column; }
 </style>
 </head>
 <body>
 <header><div class="logo-text">DO<span>R</span>DO</div></header>
 <nav class="nav">
+  <button class="nb" data-page="rules">📌 회칙</button>
   <button class="nb active" data-page="members">👥 멤버</button>
   <button class="nb" data-page="sessions">📅 일정</button>
-  <button class="nb" data-page="rules">📌 회칙</button>
   <button class="nb" data-page="game">🎮 게임</button>
   <button class="nb" data-page="admin">🔥 운영진</button>
 </nav>
 
+<div class="welcome-box" id="welcome-box">
+  <div style="font-weight:700; font-size:15px;" id="welcome-text"></div>
+  <div class="welcome-reset" onclick="resetUser()">이름 변경</div>
+</div>
+
 <div id="toast-el" class="toast-el"></div>
+
+<div class="mb-bg" id="user-setting-modal">
+  <div class="modal">
+    <div style="font-size:16px; font-weight:700; margin-bottom:1rem;">👋 누구신가요?</div>
+    <div id="user-select-list" style="max-height:50vh; overflow-y:auto; margin-bottom:1rem;"></div>
+    <button class="btn-sub" onclick="closeModal('user-setting-modal')">나중에 하기</button>
+  </div>
+</div>
+
+<div id="page-rules" class="page">
+  <div class="card">
+    <div class="ct">운영</div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">별명은 <span class="rule-tag">[이름 / 동네]</span> 형식으로 설정해주세요</div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">신규 멤버 필수 인증 <span class="rule-badge warn">가입 후 2주 이내</span></div><div class="rule-sub">오프라인 모임 1회 참석 또는 목표인증 1회 중 택1 · 미이행 시 경고 처리</div></div></div>
+  </div>
+  <div class="card">
+    <div class="ct">모임</div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">매주 목요일 정기 운동 모임 <span class="rule-badge info">21:00 ~</span></div></div></div>
+    <div class="rule-item"><div class="rule-icon">📌</div><div class="rule-body"><div class="rule-main">참석이 어려울 땐 — 두알두 참석</div><div class="rule-sub">홈트, 야외걷기 등 어떤 운동이든 OK</div></div></div>
+  </div>
+</div>
 
 <div id="page-members" class="page active">
   <div class="tab-container">
     <button class="tab-btn active" data-mtab="list">멤버 목록</button>
     <button class="tab-btn" data-mtab="stats">출석 통계</button>
   </div>
-
-  <div id="mtab-list">
-    <div class="card"><div id="mlist"></div></div>
-  </div>
-
+  <div id="mtab-list"><div class="card"><div id="mlist"></div></div></div>
   <div id="mtab-stats" style="display:none">
-    <div class="filter-group">
-      <button class="filter-chip active" data-filter="all">전체</button>
-      <button class="filter-chip" data-filter="year">올해</button>
-      <button class="filter-chip" data-filter="month">이번달</button>
-    </div>
-    <div class="filter-group">
-      <button class="filter-chip active" data-cat="all">전체</button>
-      <button class="filter-chip" data-cat="🏃 러닝">🏃 러닝</button>
-      <button class="filter-chip" data-cat="🏔️ 등산">🏔️ 등산</button>
-      <button class="filter-chip" data-cat="🍽️ 식사">🍽️ 식사</button>
-      <button class="filter-chip" data-cat="🏋️ 운동">🏋️ 운동</button>
-    </div>
+    <div class="filter-group"><button class="filter-chip active" data-filter="all">전체</button><button class="filter-chip" data-filter="year">올해</button><button class="filter-chip" data-filter="month">이번달</button></div>
     <div style="overflow:hidden;"><button id="sort-toggle">가입일순 ↕</button></div>
     <div class="card"><div id="ci-att-list"></div></div>
   </div>
 </div>
 
 <div id="page-sessions" class="page">
-  <div class="card"><div class="ct">새 일정 등록</div><input type="text" id="pub-sess-name" placeholder="일정 이름"/><input type="date" id="pub-sess-date"/><button class="btn-main" id="create-sess-btn">일정 등록</button></div>
+  <div class="card">
+    <div class="ct">새 일정 등록</div>
+    <input type="text" id="pub-sess-name" placeholder="일정 이름"/>
+    <input type="date" id="pub-sess-date"/>
+    <button class="btn-main" id="create-sess-btn">일정 등록</button>
+  </div>
   <div id="sess-list"></div>
+</div>
+
+<div id="page-game" class="page">
+  <div class="card">
+    <div class="ct">🏆 이번달 출석왕</div>
+    <div id="champion-result" class="game-result">로드 중...</div>
+    <button id="kakao-share-champion" class="btn-main btn-kakao" style="display:none;">결과 공유</button>
+  </div>
+  <div class="card"><div class="ct">🎯 오늘의 룰렛</div><div id="roulette-result" class="game-result">버튼을 눌러보세요!</div><button class="btn-main" onclick="spinRoulette()">🎰 뽑기!</button></div>
+  <div class="card">
+    <div class="ct">🎲 팀 배정</div>
+    <div id="game-member-list" style="max-height:150px; overflow-y:auto; background:var(--surface2); border-radius:12px; padding:10px; margin-bottom:10px;"></div>
+    <button class="btn-main" onclick="shuffleTeams()">🎲 팀 배정하기</button>
+    <div id="team-result" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<div id="page-admin" class="page">
+  <div id="admin-lock" class="card" style="text-align:center;">
+    <div style="font-size:40px; margin-bottom:1rem;">🔒</div>
+    <input type="password" id="admin-pw" placeholder="비밀번호" style="text-align:center;"/>
+    <button class="btn-main" onclick="checkAdmin()">입장</button>
+  </div>
+  <div id="admin-content" style="display:none;">
+    <div class="card"><div class="ct">멤버 관리</div><div id="admin-mlist"></div></div>
+  </div>
 </div>
 
 <script>
@@ -118,28 +180,30 @@ firebase.initializeApp({
   appId: "1:616591115480:web:ade08d721401f9f6ec03ad"
 });
 const db = firebase.firestore();
+try { Kakao.init('a961440bf90100c6847da5ee2fde06e1'); } catch(e) {}
+
+const ADMIN_PW = "dordo2023";
 const USER_NAME_KEY = 'dordo-user-name';
 const MATE_ORDER = ['호정/리더', '황윤정/소통메이트', '주동준/운동메이트'];
 const JOIN_DATES = { '김병희/덕풍':'230410','성준/미사':'230715','장지연/미사':'230916','왕신민/미사':'231013','김규성/광주':'230730','헤라/광주🐺':'230730','최형규/미사':'240501','주성/미사':'240620','박현정/망월':'250301','김민호/경기광주':'250507','정다운/미사':'250511','양윤석/덕풍':'250512','민연희/미사':'250525','우빛나/미사':'250530','이삭/양평':'250619','은지/미사':'250623','박성민/덕풍':'250804','가은/미사':'250817','도영/덕풍':'250904','큐성/덕풍':'260128','최예인/미사':'260411','이정민/미사':'260422','대훈/덕풍':'260430','원재윤':'260422' };
 
 let ciFilter = 'all';
-let catFilter = 'all';
 let attSortByCount = false;
 let _membersCache = null;
+let _sessionsCache = null;
 
-function grade(m) { if (m.role === 'mate') return '🔥'; if (m.count >= 15) return '🦢'; if (m.count >= 5) return '🐥'; return '🐣'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function toast(msg) { const t = document.getElementById('toast-el'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+function grade(m) { if (m.role === 'mate') return '🔥'; if (m.count >= 15) return '🦢'; if (m.count >= 5) return '🐥'; return '🐣'; }
 
-// 정렬 로직 (메이트 우선 -> 가입일 순)
+async function getMembers(f) { if (_membersCache && !f) return _membersCache; const s = await db.collection('members').get(); _membersCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _membersCache; }
+async function getAllSessions(f) { if (_sessionsCache && !f) return _sessionsCache; const s = await db.collection('sessions').orderBy('date','desc').get(); _sessionsCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _sessionsCache; }
+
 function sortMembers(members) {
   return [...members].sort((a, b) => {
     const ai = MATE_ORDER.indexOf(a.name);
     const bi = MATE_ORDER.indexOf(b.name);
-    if (ai !== bi) {
-      if (ai === -1) return 1;
-      if (bi === -1) return -1;
-      return ai - bi;
-    }
+    if (ai !== bi) { if (ai === -1) return 1; if (bi === -1) return -1; return ai - bi; }
     const ja = a.joined || JOIN_DATES[a.name] || '999999';
     const jb = b.joined || JOIN_DATES[b.name] || '999999';
     return ja.localeCompare(jb);
@@ -147,11 +211,9 @@ function sortMembers(members) {
 }
 
 async function renderMPage() {
-  const mSnap = await db.collection('members').get();
-  const members = mSnap.docs.map(d => ({id: d.id, ...d.data()}));
+  const members = await getMembers();
   const sorted = sortMembers(members);
   const myName = localStorage.getItem(USER_NAME_KEY);
-  
   document.getElementById('mlist').innerHTML = sorted.map(m => `
     <div class="mi ${m.name===myName?'is-me':''}">
       <div class="av">${grade(m)}</div>
@@ -160,70 +222,94 @@ async function renderMPage() {
 }
 
 async function renderAttBoard() {
-  const mSnap = await db.collection('members').get();
-  const members = mSnap.docs.map(d => ({id: d.id, ...d.data()}));
-  const sSnap = await db.collection('sessions').orderBy('date','desc').get();
-  const sessions = sSnap.docs.map(d => ({id: d.id, ...d.data()}));
-  
+  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const today = new Date().toISOString().split('T')[0];
   const myName = localStorage.getItem(USER_NAME_KEY);
-
   let filtered = sessions.filter(s => s.date <= today);
   if (ciFilter === 'year') filtered = filtered.filter(s => s.date.startsWith(today.slice(0,4)));
   if (ciFilter === 'month') filtered = filtered.filter(s => s.date.startsWith(today.slice(0,7)));
-  if (catFilter !== 'all') filtered = filtered.filter(s => s.cat === catFilter);
-
   const countMap = {};
   filtered.forEach(s => (s.attendees||[]).forEach(a => countMap[a.memberId] = (countMap[a.memberId]||0) + 1));
-
   let sorted = attSortByCount ? [...members].sort((a,b) => (countMap[b.id]||0) - (countMap[a.id]||0)) : sortMembers(members);
-
-  // '나'를 항상 맨 위로
   const myIdx = sorted.findIndex(m => m.name === myName);
-  if (myIdx > -1) {
-    const [me] = sorted.splice(myIdx, 1);
-    sorted.unshift(me);
-  }
-
+  if (myIdx > -1) { const [me] = sorted.splice(myIdx, 1); sorted.unshift(me); }
   document.getElementById('ci-att-list').innerHTML = sorted.map(m => {
-    const cnt = countMap[m.id]||0;
-    const pct = filtered.length ? Math.round(cnt/filtered.length*100) : 0;
+    const cnt = countMap[m.id]||0; const pct = filtered.length ? Math.round(cnt/filtered.length*100) : 0;
     return `<div class="mi ${m.name===myName?'is-me':''}">
       <div class="av">${grade(m)}</div>
       <div style="flex:1">
-        <div style="display:flex; justify-content:space-between; align-items:center;"><div class="mn">${m.name}</div><span class="mm">${cnt}/${filtered.length}회</span></div>
+        <div style="display:flex; justify-content:space-between;"><div class="mn">${m.name}</div><span class="mm">${cnt}/${filtered.length}회</span></div>
         <div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${m.name===myName?'#000':'var(--accent)'}"></div></div>
       </div>
-      <div style="font-weight:700; color:var(--accent); font-size:14px; width:40px; text-align:right;">${pct}%</div>
+      <div style="font-weight:700; color:var(--accent); font-size:13px; width:40px; text-align:right;">${pct}%</div>
     </div>`;
   }).join('');
 }
 
-// 이벤트 핸들러
-document.getElementById('sort-toggle').onclick = function() {
-  attSortByCount = !attSortByCount;
-  this.textContent = attSortByCount ? '출석순 ↕' : '가입일순 ↕';
-  renderAttBoard();
-};
+async function renderSessionsTab() {
+  const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
+  const today = new Date().toISOString().split('T')[0];
+  const myName = localStorage.getItem(USER_NAME_KEY);
+  document.getElementById('sess-list').innerHTML = sessions.map(s => {
+    const isPast = s.date < today; const atts = s.attendees || []; const me = members.find(m => m.name === myName); const isAtt = me && atts.some(a => a.memberId === me.id);
+    const chips = atts.map(a => { const m = members.find(mem => mem.id === a.memberId); return m ? `<span class="att-chip ${m.name===myName?'is-me':''}">${grade(m)} ${m.name.split('/')[0]}</span>` : ''; }).join('');
+    return `<div class="card"><div style="display:flex; justify-content:space-between; margin-bottom:8px;"><div style="font-weight:700;">${s.name}</div><span style="font-size:11px; padding:2px 8px; border-radius:4px; background:${isPast?'#eee':'var(--accent-l)'};">${isPast?'종료':'예정'}</span></div><div style="font-size:12px; color:var(--text3); margin-bottom:12px;">${s.date}</div><div class="att-list-wrap">${chips}</div>${!isPast && me ? `<div class="my-check-box"><button class="btn-main ${isAtt?'':'btn-sub'}" onclick="toggleAttend('${s.id}', ${isAtt})">${isAtt?'✓ 완료':'참석하기'}</button></div>` : ''}</div>`;
+  }).join('');
+}
+
+async function toggleAttend(sid, isAtt) {
+  const name = localStorage.getItem(USER_NAME_KEY); const me = (await getMembers()).find(x => x.name === name); const ref = db.collection('sessions').doc(sid);
+  const s = (await ref.get()).data(); let next = s.attendees || [];
+  if (isAtt) { next = next.filter(x => x.memberId !== me.id); await db.collection('members').doc(me.id).update({count: (me.count||1)-1}); }
+  else { next.push({memberId: me.id}); await db.collection('members').doc(me.id).update({count: (me.count||0)+1}); }
+  await ref.update({ attendees: next }); _sessionsCache = null; _membersCache = null; renderSessionsTab(); toast('완료!');
+}
+
+async function initGameTab() {
+  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
+  const thisMonth = new Date().toISOString().slice(0,7); const fs = sessions.filter(s => s.date.startsWith(thisMonth)); const counts = {};
+  fs.forEach(s => (s.attendees||[]).forEach(a => counts[a.memberId] = (counts[a.memberId]||0) + 1));
+  const ranked = members.map(m => ({...m, mc: counts[m.id]||0})).sort((a,b) => b.mc - a.mc);
+  if (ranked[0]?.mc > 0) document.getElementById('champion-result').innerHTML = `👑 ${ranked[0].name} (${ranked[0].mc}회)`;
+  document.getElementById('game-member-list').innerHTML = members.map(m => `<label style="display:block; margin:5px 0;"><input type="checkbox" class="team-cb" value="${m.id}" data-name="${m.name}"> ${m.name}</label>`).join('');
+}
+
+function spinRoulette() { const options = ['3km', '5km', '홈트', '휴식']; const res = document.getElementById('roulette-result'); let count = 0; const inv = setInterval(() => { res.textContent = options[Math.floor(Math.random()*options.length)]; if (++count > 15) clearInterval(inv); }, 100); }
+function shuffleTeams() { const selected = [...document.querySelectorAll('.team-cb:checked')].map(cb => cb.dataset.name); if (selected.length < 2) return toast('2명 이상 선택'); const shuffled = selected.sort(() => Math.random() - 0.5); const teams = [[], []]; shuffled.forEach((n, i) => teams[i % 2].push(n)); document.getElementById('team-result').innerHTML = teams.map((t, i) => `<div class="card"><b>${i+1}팀:</b> ${t.join(', ')}</div>`).join(''); }
+function checkAdmin() { if (document.getElementById('admin-pw').value === ADMIN_PW) { document.getElementById('admin-lock').style.display = 'none'; document.getElementById('admin-content').style.display = 'block'; getMembers().then(m => document.getElementById('admin-mlist').innerHTML = m.map(x => `<div class="mi">${x.name}</div>`).join('')); } else toast('비번 오류'); }
+
+// 초기화 및 이벤트
+async function init() {
+  const name = localStorage.getItem(USER_NAME_KEY);
+  if (name) { document.getElementById('welcome-box').style.display = 'flex'; document.getElementById('welcome-text').textContent = `${name.split('/')[0]}님 환영해요!`; }
+  else { const m = await getMembers(); document.getElementById('user-select-list').innerHTML = m.map(x => `<div class="mi" style="cursor:pointer" onclick="setUser('${x.name}')">${x.name}</div>`).join(''); document.getElementById('user-setting-modal').classList.add('open'); }
+  renderMPage();
+}
+
+function setUser(n) { localStorage.setItem(USER_NAME_KEY, n); location.reload(); }
+function resetUser() { localStorage.removeItem(USER_NAME_KEY); location.reload(); }
+
+document.querySelectorAll('.nb').forEach(btn => btn.onclick = () => {
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active')); document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active'); document.getElementById('page-'+btn.dataset.page).classList.add('active');
+  const p = btn.dataset.page; if(p==='sessions') renderSessionsTab(); if(p==='members') renderMPage(); if(p==='game') initGameTab();
+});
 
 document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = () => {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const t = btn.dataset.mtab;
-  document.getElementById('mtab-list').style.display = t === 'list' ? 'block' : 'none';
-  document.getElementById('mtab-stats').style.display = t === 'stats' ? 'block' : 'none';
-  if(t === 'stats') renderAttBoard(); else renderMPage();
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+  const t = btn.dataset.mtab; document.getElementById('mtab-list').style.display = t==='list'?'block':'none'; document.getElementById('mtab-stats').style.display = t==='stats'?'block':'none';
+  if(t==='stats') renderAttBoard();
 });
 
 document.querySelectorAll('.filter-chip').forEach(btn => btn.onclick = () => {
-  btn.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (btn.dataset.filter) ciFilter = btn.dataset.filter;
-  if (btn.dataset.cat) catFilter = btn.dataset.cat;
-  renderAttBoard();
+  btn.parentElement.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+  ciFilter = btn.dataset.filter; renderAttBoard();
 });
 
-renderMPage();
+document.getElementById('sort-toggle').onclick = () => { attSortByCount = !attSortByCount; document.getElementById('sort-toggle').textContent = attSortByCount ? '출석순 ↕' : '가입일순 ↕'; renderAttBoard(); };
+document.getElementById('create-sess-btn').onclick = async () => { const n = document.getElementById('pub-sess-name').value; const d = document.getElementById('pub-sess-date').value; if(!n||!d) return; await db.collection('sessions').add({name:n, date:d, attendees:[]}); _sessionsCache=null; renderSessionsTab(); };
+
+init();
 </script>
 </body>
 </html>
