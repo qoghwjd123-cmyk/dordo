@@ -48,7 +48,7 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .btn-rsvp.active-absent { background: #991b1b; color: #fff; box-shadow: 0 0 0 3px #fee2e2; }
 
 /* 참석자 이름표 스타일 */
-.att-list-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.att-list-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
 .att-chip { padding: 4px 10px; background: var(--surface2); border-radius: 20px; font-size: 12px; color: var(--text2); font-weight: 500; border: 1px solid var(--border); }
 .att-chip.is-me { background: var(--my-highlight); color: #000; border-color: #bfff00; font-weight: 700; }
 
@@ -59,7 +59,6 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
 input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem;-webkit-appearance:none;appearance:none;box-sizing:border-box}
 .btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:.4rem}
-.btn:active{transform:scale(.98)}
 .bp{background:var(--accent);color:#fff}
 .bs{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .mi{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border)}
@@ -79,9 +78,6 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 .mb-bg.open{display:flex}
 .modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
 .mt2{font-size:16px;font-weight:700;margin-bottom:1rem}
-.loading{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
-.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.5rem}
-@keyframes spin{to{transform:rotate(360deg)}}
 .sess-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);margin-bottom:.75rem;overflow:hidden}
 .sess-card-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer}
 .sess-card-bd{padding:0 1.25rem 1rem;display:none}
@@ -281,29 +277,34 @@ function loadPersonalRSVP(sess, members, myName, isPast) {
   const me = members.find(m => m.name === myName);
   const attendees = sess.attendees || [];
 
-  // [종료된 일정] 심플한 명단 보기
-  if (isPast) {
-    if (attendees.length === 0) return `<div class="empty" style="padding:0.5rem">참석자가 없습니다.</div>`;
-    
-    const nameChips = attendees.map(a => {
+  // 공통 참석자 명단 칩 생성 함수
+  const getNameChips = () => {
+    if (attendees.length === 0) return `<div class="empty" style="padding:0.5rem; font-size:12px;">가장 먼저 참석을 알려보세요! 🏃💨</div>`;
+    return attendees.map(a => {
       const m = members.find(mem => mem.id === a.memberId);
       if (!m) return '';
       const isMe = m.name === myName;
       return `<span class="att-chip ${isMe ? 'is-me' : ''}">${m.name.split('/')[0]}</span>`;
     }).join('');
+  };
 
+  // [종료된 일정] 심플한 명단 보기
+  if (isPast) {
     return `
       <div class="ct" style="margin-top:10px; margin-bottom:8px">참석자 ${attendees.length}명</div>
-      <div class="att-list-wrap">${nameChips}</div>
+      <div class="att-list-wrap">${getNameChips()}</div>
     `;
   }
 
-  // [예정된 일정] 참석 체크박스 보기
+  // [예정된 일정] 참석자 명단 + 체크박스 보기
   if (!me) return `<div class="empty">상단에서 이름을 먼저 설정해주세요</div>`;
   const isAtt = attendees.some(a => a.memberId === me.id);
   const isAbs = (sess.absentees||[]).includes(me.id);
   
   return `
+    <div class="ct" style="margin-top:10px; margin-bottom:4px">현재 참석 현황 (${attendees.length}명)</div>
+    <div class="att-list-wrap">${getNameChips()}</div>
+    
     <div class="my-check-box">
       <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요? 🔥</div>
       <div class="my-check-btns">
@@ -318,7 +319,6 @@ function loadPersonalRSVP(sess, members, myName, isPast) {
   `;
 }
 
-// 출석 데이터 처리 로직 (기존과 동일)
 window.doSingleAttendance = async function(sid, mid, a) { 
   const ref = db.collection('sessions').doc(sid); 
   const snap = await ref.get(); 
