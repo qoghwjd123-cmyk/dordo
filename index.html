@@ -37,6 +37,7 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .welcome-text { font-size: 14px; font-weight: 700; color: var(--accent); }
 .welcome-reset { font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline; }
 
+/* 일정 관련 스타일 */
 .my-check-box { background: var(--accent-l); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; text-align: center; border: 1px solid var(--accent); transition: all 0.3s; }
 .my-check-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; }
 .my-check-btns { display: flex; gap: 8px; }
@@ -45,6 +46,11 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .btn-rsvp.absent { background: #fee2e2; color: #991b1b; }
 .btn-rsvp.active-join { background: var(--accent); color: #fff; box-shadow: 0 0 0 3px var(--accent-l); }
 .btn-rsvp.active-absent { background: #991b1b; color: #fff; box-shadow: 0 0 0 3px #fee2e2; }
+
+/* 참석자 이름표 스타일 */
+.att-list-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.att-chip { padding: 4px 10px; background: var(--surface2); border-radius: 20px; font-size: 12px; color: var(--text2); font-weight: 500; border: 1px solid var(--border); }
+.att-chip.is-me { background: var(--my-highlight); color: #000; border-color: #bfff00; font-weight: 700; }
 
 .mi.is-me { background: var(--my-highlight) !important; border: 1.5px solid #bfff00 !important; border-radius: 12px; margin: 4px 0; }
 .mi.is-me .mn { font-weight: 900; color: #000; }
@@ -76,12 +82,6 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 .loading{text-align:center;padding:2rem;color:var(--text3);font-size:14px}
 .spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:.5rem}
 @keyframes spin{to{transform:rotate(360deg)}}
-.grade-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.grade-box{background:var(--surface2);border-radius:var(--rs);padding:.75rem .25rem;text-align:center}
-.grade-em{font-size:24px;margin-bottom:4px}
-.grade-name{font-size:11px;font-weight:700;color:var(--text)}
-.att-bar-bg{background:var(--surface2);border-radius:4px;height:4px;width:100%;overflow:hidden}
-.att-bar-fill{background:var(--accent);height:4px;border-radius:4px}
 .sess-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);margin-bottom:.75rem;overflow:hidden}
 .sess-card-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer}
 .sess-card-bd{padding:0 1.25rem 1rem;display:none}
@@ -91,8 +91,6 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 .ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .mtab{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
 .mtab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.fab{position:fixed;bottom:1.5rem;right:1.5rem;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:22px;cursor:pointer;z-index:90;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none;align-items:center;justify-content:center}
-.fab.show{display:flex}
 </style>
 </head>
 <body>
@@ -113,7 +111,6 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
 </div>
 
 <div id="toast-el" class="toast-el"></div>
-<button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <div class="mb-bg" id="user-setting-modal" style="z-index:1000">
   <div class="modal">
@@ -124,23 +121,10 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
   </div>
 </div>
 
-<div class="mb-bg" id="confirm-modal" style="z-index:500">
-  <div class="modal">
-    <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="confirm-cancel">취소</button>
-      <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="confirm-ok">확인</button>
-    </div>
-  </div>
-</div>
-
 <div id="page-rules" class="page">
   <div class="card">
     <div class="ct">운영 회칙</div>
-    <div style="font-size:14px; line-height:1.6">
-      별명은 [이름 / 동네] 형식으로 설정해주세요.<br>
-      신규 멤버는 2주 이내 인증 필수입니다.
-    </div>
+    <div style="font-size:14px; line-height:1.6">별명은 [이름 / 동네] 형식으로 설정해주세요.<br>신규 멤버는 2주 이내 인증 필수입니다.</div>
   </div>
 </div>
 
@@ -195,7 +179,6 @@ const db = firebase.firestore();
 const ADMIN_PW = "dordo2023";
 const USER_NAME_KEY = 'dordo-user-name';
 let isAdmin = false;
-let ciFilter = 'all';
 let _membersCache = null;
 let _sessionsCache = null;
 
@@ -284,12 +267,11 @@ async function renderSessionsTab() {
 function renderSessionCards(sessions, members, today) {
   const myName = localStorage.getItem(USER_NAME_KEY);
   return sessions.map(s => {
-    const att = s.attendees || [];
-    const isPast = s.date < today; // 오늘보다 이전 날짜인지 체크
+    const isPast = s.date < today; 
     return `
       <div class="card" id="sc-${s.id}">
         <div style="font-weight:700; margin-bottom:5px">${s.name}</div>
-        <div style="font-size:12px; color:var(--text3); margin-bottom:10px">${s.date} · ${att.length}명 참석</div>
+        <div style="font-size:12px; color:var(--text3); margin-bottom:10px">${s.date}</div>
         <div id="sc-mlist-${s.id}">${loadPersonalRSVP(s, members, myName, isPast)}</div>
       </div>`;
   }).join('');
@@ -297,35 +279,46 @@ function renderSessionCards(sessions, members, today) {
 
 function loadPersonalRSVP(sess, members, myName, isPast) {
   const me = members.find(m => m.name === myName);
-  if (!me) return `<div class="empty">상단에서 이름을 먼저 설정해주세요</div>`;
-  
-  const isAtt = (sess.attendees||[]).some(a => a.memberId === me.id);
-  const isAbs = (sess.absentees||[]).includes(me.id);
-  
-  // 날짜에 따른 문구 변화
-  let titleMsg = `${me.name.split('/')[0]}님, 참석하시나요? 🔥`;
-  let boxStyle = "";
-  
+  const attendees = sess.attendees || [];
+
+  // [종료된 일정] 심플한 명단 보기
   if (isPast) {
-    titleMsg = isAtt ? "이 모임에 참여하셨네요! ✨" : "이 모임은 종료되었습니다.";
-    boxStyle = !isAtt ? "opacity: 0.6; background: #eee; border-color: transparent;" : "background: #fdfdfd;";
+    if (attendees.length === 0) return `<div class="empty" style="padding:0.5rem">참석자가 없습니다.</div>`;
+    
+    const nameChips = attendees.map(a => {
+      const m = members.find(mem => mem.id === a.memberId);
+      if (!m) return '';
+      const isMe = m.name === myName;
+      return `<span class="att-chip ${isMe ? 'is-me' : ''}">${m.name.split('/')[0]}</span>`;
+    }).join('');
+
+    return `
+      <div class="ct" style="margin-top:10px; margin-bottom:8px">참석자 ${attendees.length}명</div>
+      <div class="att-list-wrap">${nameChips}</div>
+    `;
   }
 
+  // [예정된 일정] 참석 체크박스 보기
+  if (!me) return `<div class="empty">상단에서 이름을 먼저 설정해주세요</div>`;
+  const isAtt = attendees.some(a => a.memberId === me.id);
+  const isAbs = (sess.absentees||[]).includes(me.id);
+  
   return `
-    <div class="my-check-box" style="${boxStyle}">
-      <div class="my-check-title" style="${isPast && !isAtt ? 'color: #999;' : ''}">${titleMsg}</div>
+    <div class="my-check-box">
+      <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요? 🔥</div>
       <div class="my-check-btns">
         <button class="btn-rsvp join ${isAtt?'active-join':''}" onclick="doSingleAttendance('${sess.id}','${me.id}',${isAtt})">
-          ${isAtt ? (isPast ? '✓ 출석완료' : '✓ 참석완료') : '참석'}
+          ${isAtt ? '✓ 참석완료' : '참석'}
         </button>
         <button class="btn-rsvp absent ${isAbs?'active-absent':''}" onclick="undoSingleAttendance('${sess.id}','${me.id}',${isAbs})">
-          ${isAbs ? (isPast ? '✗ 미출석' : '✗ 불참완료') : '불참'}
+          ${isAbs ? '✗ 불참완료' : '불참'}
         </button>
       </div>
     </div>
   `;
 }
 
+// 출석 데이터 처리 로직 (기존과 동일)
 window.doSingleAttendance = async function(sid, mid, a) { 
   const ref = db.collection('sessions').doc(sid); 
   const snap = await ref.get(); 
