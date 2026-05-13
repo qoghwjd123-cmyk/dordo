@@ -18,7 +18,7 @@
   --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:rgba(0,0,0,.08);
   --text:#1a1a18;--text2:#6b6b65;--text3:#a0a09a;
   --accent:#2d6a4f;--accent-l:#e8f5ee;--accent2:#e76f51;--accent2-l:#fdf0ec;
-  --my-highlight: #dfff00; /* 형광 옐로 */
+  --my-highlight: #dfff00;
   --r:16px;--rs:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -31,14 +31,10 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .nb.active{color:var(--accent);border-bottom-color:var(--accent)}
 .page{display:none;padding:1.25rem 1rem 5rem;max-width:480px;margin:0 auto}
 .page.active{display:block}
-
-/* 개인화 웰컴 박스 */
 .welcome-container { padding: 1.25rem 1rem 0; max-width: 480px; margin: 0 auto; }
 .welcome-box { background: var(--surface); border-radius: var(--rs); padding: 1rem; border: 1px solid var(--border); display: none; align-items: center; justify-content: space-between; }
 .welcome-text { font-size: 14px; font-weight: 700; color: var(--accent); }
 .welcome-reset { font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline; }
-
-/* RSVP 개인화 박스 */
 .my-check-box { background: var(--accent-l); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: center; border: 1px solid var(--accent); }
 .my-check-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; }
 .my-check-btns { display: flex; gap: 8px; }
@@ -47,29 +43,25 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .btn-rsvp.absent { background: #fff; color: #991b1b; border: 1px solid #fee2e2; }
 .btn-rsvp.active-join { background: var(--accent) !important; color: #fff !important; }
 .btn-rsvp.active-absent { background: #991b1b !important; color: #fff !important; }
-
-/* 명단 칩 스타일 */
 .status-label { font-size: 11px; font-weight: 700; display: block; margin-bottom: 6px; }
 .status-label.join { color: var(--accent); }
 .status-label.absent { color: #991b1b; margin-top: 10px; }
 .chip-container { display: flex; flex-wrap: wrap; gap: 4px; }
-.status-chip { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--text2); display: flex; align-items: center; gap: 4px; }
+.status-chip { font-size: 12px; padding: 4px 10px; border-radius: 20px; background: var(--surface2); color: var(--text2); display: flex; align-items: center; gap: 4px; border: 1px solid var(--border); }
 .status-chip.is-me { background: var(--my-highlight); color: #000; font-weight: 700; border: 1px solid #bfff00; }
-
-.mi.is-me { background: var(--my-highlight) !important; border: 1.5px solid #bfff00 !important; border-radius: 12px; margin: 4px 0; }
+.mi.is-me { background: var(--my-highlight) !important; border: 1.5px solid #bfff00 !important; border-radius: 12px; margin: 4px 0; padding: 8px; }
 .mi.is-me .mn { font-weight: 900; color: #000; }
-
 .card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem}
 .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
-input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;margin-bottom:.65rem}
-.btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer}
+input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;margin-bottom:.65rem;box-sizing:border-box}
+.btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s}
 .bp{background:var(--accent);color:#fff}
 .bs{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .mi{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border)}
 .av{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .mn{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mm{font-size:12px;color:var(--text3);margin-top:1px}
-.gp{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--surface2);color:var(--text3)}
+.gp{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--surface2);color:var(--text3);white-space:nowrap}
 .gp.mate{background:#fff3e0;color:#e65100}
 .toast-el{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%) translateY(300px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;z-index:999;transition:all .3s;opacity:0}
 .toast-el.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -108,87 +100,79 @@ input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border
     <div class="welcome-reset" onclick="resetUser()">이름 변경</div>
   </div>
 </div>
+
 <div id="toast-el" class="toast-el"></div>
-<button class="fab" id="fab-btn" style="display:none">🔐</button>
 
 <div class="mb-bg" id="user-setting-modal" style="z-index:1000"><div class="modal"><div class="mt2">👋 반가워요! 누구신가요?</div><div id="user-select-list" style="max-height:60vh;overflow-y:auto"></div></div></div>
 <div class="mb-bg" id="confirm-modal" style="z-index:500"><div class="modal"><div id="confirm-msg" style="text-align:center; margin-bottom:1.25rem;"></div><div style="display:flex;gap:8px"><button class="btn bs" style="flex:1" id="confirm-cancel">취소</button><button class="btn bp" style="flex:1" id="confirm-ok">확인</button></div></div></div>
-<div class="mb-bg" id="prompt-modal" style="z-index:500"><div class="modal"><div id="prompt-msg" style="margin-bottom:1rem; text-align:center"></div><input type="password" id="prompt-input" placeholder="비밀번호" style="margin-bottom:.75rem"/><div style="display:flex;gap:8px"><button class="btn bs" style="flex:1" id="prompt-cancel">취소</button><button class="btn bp" style="flex:1" id="prompt-ok">확인</button></div></div></div>
-<div class="mb-bg" id="edit-modal"><div class="modal"><div class="mt2">멤버 수정</div><input type="hidden" id="edit-id"/><input type="text" id="edit-name"/><select id="edit-role"><option value="member">멤버</option><option value="mate">🔥 메이트</option></select><input type="text" id="edit-joined"/><button class="btn bp" id="edit-save-btn">저장</button><button class="btn bs" onclick="closeModal('edit-modal')">취소</button></div></div>
+<div class="mb-bg" id="prompt-modal" style="z-index:500"><div class="modal"><div id="prompt-msg" style="margin-bottom:1rem; text-align:center"></div><input type="password" id="prompt-input" placeholder="비밀번호"/><div style="display:flex;gap:8px"><button class="btn bs" style="flex:1" id="prompt-cancel">취소</button><button class="btn bp" style="flex:1" id="prompt-ok">확인</button></div></div></div>
+<div class="mb-bg" id="edit-modal"><div class="modal"><div class="mt2">멤버 수정</div><input type="hidden" id="edit-id"/><input type="text" id="edit-name"/><select id="edit-role"><option value="member">일반 멤버</option><option value="mate">🔥 메이트</option></select><input type="text" id="edit-joined" placeholder="가입일(YYMMDD)"/><button class="btn bp" id="edit-save-btn">저장</button><button class="btn bs" onclick="closeModal('edit-modal')">취소</button></div></div>
 <div class="mb-bg" id="member-detail-modal"><div class="modal"><div id="md-header" style="display:flex;align-items:center;gap:10px;margin-bottom:1rem"></div><div id="md-sessions" style="max-height:50vh;overflow-y:auto"></div><button class="btn bs" onclick="closeModal('member-detail-modal')" style="margin-top:1rem">닫기</button></div></div>
 
 <div id="page-rules" class="page">
-  <div class="card"><div class="ct">운영 회칙</div><div class="mi">📌 별명은 [이름 / 동네] 형식</div><div class="mi">📌 신규 멤버 2주 이내 인증 필수</div><div class="mi">📸 모임 중 사진/영상 촬영이 있을 수 있어요</div></div>
-  <div class="card"><div class="ct">멤버 등급</div><div class="grade-grid"><div class="grade-box">🔥 메이트</div><div class="grade-box">🦢 15회</div><div class="grade-box">🐥 5회</div><div class="grade-box">🐣 1회</div><div class="grade-box">🥚 0회</div></div></div>
+  <div class="card"><div class="ct">운영 회칙</div><div class="mi">📌 별명은 [이름 / 동네] 형식으로 설정</div><div class="mi">📌 가입 후 2주 이내 필수 인증</div><div class="mi">📸 사진/영상 촬영이 있을 수 있어요</div></div>
+  <div class="card"><div class="ct">멤버 등급</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><div style="text-align:center;font-size:10px">🔥<br>메이트</div><div style="text-align:center;font-size:10px">🦢<br>15회</div><div style="text-align:center;font-size:10px">🐥<br>5회</div><div style="text-align:center;font-size:10px">🐣<br>1회</div><div style="text-align:center;font-size:10px">🥚<br>알</div></div></div>
 </div>
 
 <div id="page-members" class="page active">
   <div class="filter-tabs"><button class="mtab" data-mtab="list">👥 멤버 목록</button><button class="mtab active" data-mtab="stats">📊 출석 통계</button></div>
-  <div id="mtab-list" style="display:none"><div id="grade-status"></div><div id="mlist"></div></div>
+  <div id="mtab-list" style="display:none"><div id="grade-status" style="margin-bottom:1rem"></div><div class="card"><div class="ct">멤버 목록</div><div id="mlist"></div></div></div>
   <div id="mtab-stats">
     <div class="filter-tabs"><button class="ftab active" data-filter="all">전체</button><button class="ftab" data-filter="year">올해</button><button class="ftab" data-filter="month">이번달</button></div>
-    <div class="sb2" style="margin-bottom:1rem">총 일정 <span class="sn" id="ci-total-sess">-</span></div>
-    <div id="ci-att-list"></div>
+    <div class="filter-tabs"><button class="cat-tab active" data-cat="all">전체</button><button class="cat-tab" data-cat="🏃 러닝">🏃 러닝</button><button class="cat-tab" data-cat="🏔️ 등산">🏔️ 등산</button><button class="cat-tab" data-cat="🍽️ 식사">🍽️ 식사</button><button class="cat-tab" data-cat="🏋️ 운동">🏋️ 운동</button></div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:.75rem"><button id="sort-toggle" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--text3);cursor:pointer">가입일순 ↕</button></div>
+    <div class="sb2" style="margin-bottom:.875rem">총 일정 <span class="sn" id="ci-total-sess" style="font-size:18px">-</span></div>
+    <div class="card"><div class="ct">출석부</div><div id="ci-att-list"></div></div>
   </div>
 </div>
 
-<div id="page-sessions" class="page">
-  <div class="card"><div class="ct">새 일정 등록 (운영진)</div><input type="text" id="pub-sess-name" placeholder="일정 이름"/><input type="date" id="pub-sess-date"/><button class="btn bp" id="create-sess-btn">등록</button></div>
-  <div id="sess-month-filter"></div><div id="sess-list"></div>
-</div>
+<div id="page-sessions" class="page"><div id="sess-month-filter"></div><div id="sess-list"></div></div>
 
 <div id="page-game" class="page">
-  <div class="card"><div class="ct">🏆 이번달 출석왕</div><div id="champion-result"></div><button id="kakao-share-btn" class="btn bp" style="background:#FEE500; color:#191919; display:none">카톡으로 공유</button></div>
-  <div class="card"><div class="ct">🎯 오늘의 룰렛</div><div id="roulette-result" style="text-align:center; padding:1.5rem 0; font-size:24px; font-weight:700;">버튼 클릭!</div><div id="roulette-options"></div><button class="btn bp" id="roulette-btn">뽑기!</button></div>
-  <div class="card"><div class="ct">🎲 팀 랜덤 배정</div><div id="team-member-list" style="max-height:200px; overflow-y:auto; background:var(--surface2); padding:.5rem; border-radius:8px;"></div><button class="btn bp" id="team-shuffle-btn" style="margin-top:1rem">🎲 팀 배정!</button><div id="team-result"></div></div>
+  <div class="card"><div class="ct">🏆 이번달 출석왕</div><div id="champion-result" style="text-align:center;padding:1rem 0"></div><button id="kakao-share-btn" class="btn bp" style="background:#FEE500; color:#191919; display:none; border:none">카톡 공유</button></div>
+  <div class="card"><div class="ct">🎯 오늘의 룰렛</div><div id="roulette-result" style="text-align:center; padding:1.5rem 0; font-size:24px; font-weight:700; min-height:80px; display:flex; align-items:center; justify-content:center">버튼 클릭!</div><div id="roulette-options" style="margin-bottom:1rem; background:var(--surface2); padding:0.8rem; border-radius:10px"></div><button class="btn bp" id="roulette-btn">🎰 뽑기!</button></div>
+  <div class="card"><div class="ct">🎲 팀 배정</div><div id="team-member-list" style="max-height:200px; overflow-y:auto; background:var(--surface2); padding:.8rem; border-radius:10px; margin-bottom:1rem"></div>팀 수: <select id="team-count" style="margin-top:4px"><option value="2">2팀</option><option value="3">3팀</option><option value="4">4팀</option></select><button class="btn bp" id="team-shuffle-btn">🎲 배정 시작!</button><div id="team-result" style="margin-top:1rem"></div></div>
 </div>
 
 <div id="page-admin" class="page">
-  <div id="admin-lock">🔒 <input type="password" id="admin-pw" style="max-width:200px; margin: 10px auto; display:block;"/><button class="btn bp" id="admin-login-btn">운영진 입장</button></div>
-  <div id="admin-content" style="display:none"><div id="admin-sess-list"></div><div id="admin-mlist"></div></div>
+  <div id="admin-lock">🔒 <input type="password" id="admin-pw" style="max-width:200px; margin: 10px auto; display:block;"/><button class="btn bp" id="admin-login-btn">입장</button></div>
+  <div id="admin-content" style="display:none">
+    <div class="card"><div class="ct">새 일정 등록</div><input type="text" id="adm-sess-name" placeholder="일정 이름"/><input type="date" id="adm-sess-date"/><button class="btn bp" onclick="adminCreateSess()">등록</button></div>
+    <div class="card"><div class="ct">최근 일정 관리</div><div id="admin-sess-list"></div></div>
+    <div class="card"><div class="ct">멤버 관리</div><div id="admin-mlist"></div></div>
+  </div>
 </div>
 <script>
-// Firebase 및 기초 설정
 firebase.initializeApp({ apiKey: "AIzaSyDKLj4tBOmGPmX1keWwkn0m8LlqDixzMEw", authDomain: "dordo-17766.firebaseapp.com", projectId: "dordo-17766", storageBucket: "dordo-17766.firebasestorage.app", messagingSenderId: "616591115480", appId: "1:616591115480:web:ade08d721401f9f6ec03ad" });
 const db = firebase.firestore();
 const USER_NAME_KEY = 'dordo-user-name';
 const ADMIN_PW = "dordo2023";
-const DELETE_PW = "0401";
 const MATE_ORDER = ['호정/리더','황윤정/소통메이트','주동준/운동메이트'];
 const JOIN_DATES = { '김병희/덕풍':'230410','성준/미사':'230715','장지연/미사':'230916','왕신민/미사':'231013','김규성/광주':'230730','헤라/광주🐺':'230730','최형규/미사':'240501','주성/미사':'240620','박현정/망월':'250301','김민호/경기광주':'250507','정다운/미사':'250511','양윤석/덕풍':'250512','민연희/미사':'250525','우빛나/미사':'250530','이삭/양평':'250619','은지/미사':'250623','박성민/덕풍':'250804','가은/미사':'250817','도영/덕풍':'250904','큐성/덕풍':'260128','최예인/미사':'260411','이정민/미사':'260422','대훈/덕풍':'260430','원재윤':'260422' };
 
-let isAdmin = false;
-let ciFilter = 'all';
-let _membersCache = null;
-let _sessionsCache = null;
-let _confirmResolve = null;
-let _promptResolve = null;
+let isAdmin = false; let ciFilter = 'all'; let catFilter = 'all'; let attSortByCount = false;
+let _membersCache = null; let _sessionsCache = null; let _confirmResolve = null; let _promptResolve = null;
 
-// 공통 함수
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function toast(msg) { const t = document.getElementById('toast-el'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 function showConfirm(msg) { return new Promise(resolve => { _confirmResolve = resolve; document.getElementById('confirm-msg').textContent = msg; document.getElementById('confirm-modal').classList.add('open'); }); }
-function showPrompt(msg) { return new Promise(resolve => { _promptResolve = resolve; document.getElementById('prompt-msg').textContent = msg; document.getElementById('prompt-modal').classList.add('open'); }); }
-document.getElementById('prompt-ok').onclick = () => { const v = document.getElementById('prompt-input').value; closeModal('prompt-modal'); if(_promptResolve) _promptResolve(v); };
-document.getElementById('prompt-cancel').onclick = () => { closeModal('prompt-modal'); if(_promptResolve) _promptResolve(null); };
+document.getElementById('confirm-ok').onclick = () => { closeModal('confirm-modal'); if(_confirmResolve) _confirmResolve(true); };
+document.getElementById('confirm-cancel').onclick = () => { closeModal('confirm-modal'); if(_confirmResolve) _confirmResolve(false); };
 
-function grade(m) { if (m.name?.startsWith('헤라')) return {e:'🐺', n:'허스키'}; if (m.role === 'mate') return {e:'🔥', n:'메이트'}; if (m.count >= 15) return {e:'🦢', n:'베테랑'}; if (m.count >= 5) return {e:'🐥', n:'활동'}; return {e:'🐣', n:'새내기'}; }
-
+function grade(m) { if (m.name?.startsWith('헤라')) return {e:'🐺', n:'허스키'}; if (m.role === 'mate') return {e:'🔥', n:'메이트'}; if (m.count >= 15) return {e:'Swan', n:'베테랑'}; if (m.count >= 5) return {e:'🐥', n:'활동'}; return {e:'🐣', n:'새내기'}; }
 function sortMembers(members) {
   const myName = localStorage.getItem(USER_NAME_KEY);
   return [...members].sort((a, b) => {
     if (a.name === myName) return -1; if (b.name === myName) return 1;
-    const ai = a.role === 'mate' ? MATE_ORDER.indexOf(a.name) : 999;
-    const bi = b.role === 'mate' ? MATE_ORDER.indexOf(b.name) : 999;
-    if (ai !== bi) return ai - bi;
+    const ai = MATE_ORDER.indexOf(a.name); const bi = MATE_ORDER.indexOf(b.name);
+    if (ai !== -1 && bi !== -1) return ai - bi; if (ai !== -1) return -1; if (bi !== -1) return 1;
     return (a.joined || JOIN_DATES[a.name] || '999999').localeCompare(b.joined || JOIN_DATES[b.name] || '999999');
   });
 }
-
+function clearCache() { _membersCache = null; _sessionsCache = null; }
 async function getMembers(f) { if (_membersCache && !f) return _membersCache; const s = await db.collection('members').get(); _membersCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _membersCache; }
 async function getAllSessions(f) { if (_sessionsCache && !f) return _sessionsCache; const s = await db.collection('sessions').orderBy('date','desc').get(); _sessionsCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _sessionsCache; }
 
-// 개인화 및 웰컴 로직
 async function initUser() {
   const name = localStorage.getItem(USER_NAME_KEY);
   if (name) {
@@ -197,7 +181,7 @@ async function initUser() {
   } else {
     setTimeout(async () => {
       const m = await getMembers();
-      document.getElementById('user-select-list').innerHTML = sortMembers(m).map(x => `<div class="mi" style="cursor:pointer; padding:0.8rem" onclick="setUser('${x.name}')">${grade(x).e} ${x.name}</div>`).join('');
+      document.getElementById('user-select-list').innerHTML = sortMembers(m).map(x => `<div class="mi" style="cursor:pointer; padding:1rem" onclick="setUser('${x.name}')">${grade(x).e} ${x.name}</div>`).join('');
       document.getElementById('user-setting-modal').classList.add('open');
     }, 1500);
   }
@@ -205,41 +189,34 @@ async function initUser() {
 function setUser(n) { localStorage.setItem(USER_NAME_KEY, n); closeModal('user-setting-modal'); initUser(); renderMPage(); toast(`${n.split('/')[0]}님 반가워요!`); }
 function resetUser() { localStorage.removeItem(USER_NAME_KEY); location.reload(); }
 
-// 페이지 제어
 function showPage(n, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + n).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (n === 'members') renderMPage();
-  if (n === 'sessions') renderSessionsTab();
-  if (n === 'game') initGameTab();
+  document.getElementById('page-' + n).classList.add('active'); if (btn) btn.classList.add('active');
+  if (n === 'members') renderMPage(); if (n === 'sessions') renderSessionsTab(); if (n === 'game') initGameTab();
 }
 
 async function renderMPage() {
-  const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  document.getElementById('mlist').innerHTML = sortMembers(m).map(x => `<div class="mi ${x.name===myName?'is-me':''}" onclick="openMemberDetail('${x.id}')"><div class="av">${grade(x).e}</div><div style="flex:1"><div class="mn">${x.name}${x.name===myName?' (나)':''}</div><div class="mm">${x.count}회 참석</div></div></div>`).join('');
-  document.getElementById('m-total').textContent = m.length; document.getElementById('m-act').textContent = m.filter(x=>x.count>=5).length; document.getElementById('m-sess').textContent = s.length;
+  const [m, s] = await Promise.all([getMembers(), getAllSessions()]); const myName = localStorage.getItem(USER_NAME_KEY);
+  document.getElementById('mlist').innerHTML = sortMembers(m).map(x => `<div class="mi ${x.name===myName?'is-me':''}" onclick="openMemberDetail('${x.id}')"><div class="av">${grade(x).e}</div><div style="flex:1"><div class="mn">${x.name}${x.name===myName?' (나)':''}</div><div class="mm">${x.count}회 참석</div></div><span class="gp ${x.role==='mate'?'mate':''}">${x.role==='mate'?'운영진':''}</span></div>`).join('');
   renderAttBoard();
 }
 
 async function renderAttBoard() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const today = new Date().toLocaleDateString('en-CA'); // 현지 날짜 YYYY-MM-DD
-  const myName = localStorage.getItem(USER_NAME_KEY);
+  const today = new Date().toLocaleDateString('en-CA'); const myName = localStorage.getItem(USER_NAME_KEY);
   let fs = sessions.filter(s => s.date <= today);
   if (ciFilter === 'month') fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
   if (ciFilter === 'year') fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
+  if (catFilter !== 'all') fs = fs.filter(s => s.cat === catFilter);
   const total = fs.length; document.getElementById('ci-total-sess').textContent = total;
-  const countMap = {}; fs.forEach(s => (s.attendees||[]).forEach(a => countMap[a.memberId] = (countMap[a.memberId]||0) + 1));
+  const counts = {}; fs.forEach(s => (s.attendees||[]).forEach(a => counts[a.memberId] = (counts[a.memberId]||0) + 1));
   document.getElementById('ci-att-list').innerHTML = sortMembers(members).map(m => {
-    const cnt = countMap[m.id]||0; const pct = total ? Math.round(cnt/total*100) : 0; const isMe = m.name === myName;
-    return `<div class="mi ${isMe?'is-me':''}"><div class="av">${grade(m).e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${isMe?'#000':'var(--accent)'}"></div></div></div><span class="gp">${pct}%</span></div>`;
+    const cnt = counts[m.id]||0; const pct = total ? Math.round(cnt/total*100) : 0; const isMe = m.name === myName;
+    return `<div class="mi ${isMe?'is-me':''}" onclick="openMemberDetail('${m.id}')"><div class="av">${grade(m).e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${isMe?'#000':'var(--accent)'}"></div></div></div><span class="gp" style="${isMe?'background:#000;color:#fff':''}">${pct}%</span></div>`;
   }).join('');
 }
-
-// ── [최종 완성] 일정 탭 로직 ──────────────────────
+  // 일정 탭 및 RSVP 처리
 async function renderSessionsTab() {
   const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
   const today = new Date().toLocaleDateString('en-CA');
@@ -248,12 +225,11 @@ async function renderSessionsTab() {
 }
 
 function renderCards(sessions, members, today) {
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  const me = members.find(m => m.name === myName);
+  const myName = localStorage.getItem(USER_NAME_KEY); const me = members.find(m => m.name === myName);
   return sessions.map(s => {
     const isPast = s.date < today; const atts = s.attendees || []; const abss = s.absentees || [];
-    const attChips = atts.map(a => { const m = members.find(x => x.id === a.memberId); return m ? `<span class="status-chip ${m.name===myName?'is-me':''}">${grade(m).e} ${m.name.split('/')[0]}</span>` : ''; }).join('');
-    const absChips = abss.map(mid => { const m = members.find(x => x.id === mid); return m ? `<span class="status-chip ${m.name===myName?'is-me':''}">${grade(m).e} ${m.name.split('/')[0]}</span>` : ''; }).join('');
+    const attChips = atts.map(a => { const m = members.find(x => x.id === a.memberId); return m ? `<span class="status-chip ${m.name===myName?'is-me':''}" onclick="openMemberDetail('${m.id}')">${grade(m).e} ${m.name.split('/')[0]}</span>` : ''; }).join('');
+    const absChips = abss.map(mid => { const m = members.find(x => x.id === mid); return m ? `<span class="status-chip ${m.name===myName?'is-me':''}" onclick="openMemberDetail('${mid}')">${grade(m).e} ${m.name.split('/')[0]}</span>` : ''; }).join('');
     const isMeAtt = atts.some(a => a.memberId === me?.id); const isMeAbs = abss.includes(me?.id);
     return `<div class="card" style="padding:1.25rem"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><div><div style="font-weight:700;font-size:16px">${s.name}</div><div style="font-size:12px;color:var(--text3)">${s.date} · ${atts.length}명 참석</div></div><span style="font-size:11px;padding:3px 10px;border-radius:10px;background:${isPast?'#eee':'var(--accent-l)'};color:${isPast?'#666':'var(--accent)'}">${isPast?'종료':'예정'}</span></div>${(!isPast && me) ? `<div class="my-check-box"><div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요? 🔥</div><div class="my-check-btns"><button class="btn-rsvp join ${isMeAtt?'active-join':''}" onclick="doAttend('${s.id}','${me.id}',${isMeAtt})">${isMeAtt?'참석 완료 ✓':'참석할게요'}</button><button class="btn-rsvp absent ${isMeAbs?'active-absent':''}" onclick="doAbsent('${s.id}','${me.id}',${isMeAbs})">${isMeAbs?'불참 완료 ✗':'이번엔 불참'}</button></div></div>` : ''}<div style="text-align:left; border-top: 1px solid var(--border); padding-top: 12px;">${attChips ? `<span class="status-label join">참석 (${atts.length})</span><div class="chip-container">${attChips}</div>` : ''}${absChips ? `<span class="status-label absent">불참 (${abss.length})</span><div class="chip-container">${absChips}</div>` : ''}${(!attChips && !absChips) ? '<div style="font-size:12px;color:var(--text3);text-align:center">아직 응답자가 없어요</div>' : ''}</div></div>`;
   }).join('');
@@ -261,68 +237,51 @@ function renderCards(sessions, members, today) {
 
 window.doAttend = async (sid, mid, a) => {
   const ref = db.collection('sessions').doc(sid); const snap = await ref.get(); const s = snap.data();
-  if(a) { await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid) }); const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||1)-1}); }
+  if(a) { await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid) }); const m = await db.collection('members').doc(mid).get(); if(m.exists && (m.data().count||0)>0) await db.collection('members').doc(mid).update({count: m.data().count-1}); }
   else { const t = new Date().getHours().toString().padStart(2,'0')+':'+new Date().getMinutes().toString().padStart(2,'0'); await ref.update({ attendees: [...(s.attendees||[]), {memberId:mid, time:t}], absentees: (s.absentees||[]).filter(id => id !== mid) }); const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||0)+1}); }
-  clearCache(); renderSessionsTab(); toast('업데이트 완료!');
+  clearCache(); renderSessionsTab(); toast('참석 여부가 업데이트됐어요!');
 };
+
 window.doAbsent = async (sid, mid, a) => {
   const ref = db.collection('sessions').doc(sid); const snap = await ref.get(); const s = snap.data();
   if(a) { await ref.update({ absentees: s.absentees.filter(id => id !== mid) }); }
-  else { const ok = await showConfirm('불참 처리할까요?'); if(!ok) return; const wasAtt = s.attendees.some(x => x.memberId === mid); await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid), absentees: [...new Set([...(s.absentees||[]), mid])] }); if(wasAtt) { const m = await db.collection('members').doc(mid).get(); if(m.exists) await db.collection('members').doc(mid).update({count: (m.data().count||1)-1}); } }
-  clearCache(); renderSessionsTab(); toast('불참 완료');
+  else { const ok = await showConfirm('불참 처리할까요?'); if(!ok) return; const wasAtt = s.attendees.some(x => x.memberId === mid); await ref.update({ attendees: s.attendees.filter(x => x.memberId !== mid), absentees: [...new Set([...(s.absentees||[]), mid])] }); if(wasAtt) { const m = await db.collection('members').doc(mid).get(); if(m.exists && (m.data().count||0)>0) await db.collection('members').doc(mid).update({count: m.data().count-1}); } }
+  clearCache(); renderSessionsTab(); toast('불참 처리 완료');
 };
 
-// 게임 로직 복구 (룰렛, 팀배정, 추첨)
-let rouletteItems = [];
 async function initGameTab() {
   const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
-  const snap = await db.collection('meta').doc('roulette').get();
-  rouletteItems = snap.exists ? snap.data().items : ['러닝 3km','홈트 20분','등산','걷기 30분'];
-  document.getElementById('roulette-options').innerHTML = rouletteItems.map(it => `<label style="display:block; padding:4px 0"><input type="checkbox" checked data-val="${it}"/> ${it}</label>`).join('');
-  document.getElementById('team-member-list').innerHTML = sortMembers(m).map(x => `<label style="display:block; padding:4px 0"><input type="checkbox" checked data-name="${x.name}" data-emoji="${grade(x).e}"/> ${grade(x).e} ${x.name}</label>`).join('');
-  renderChampion(m, s);
+  const rSnap = await db.collection('meta').doc('roulette').get(); const rItems = rSnap.exists ? rSnap.data().items : ['러닝 3km','홈트 20분','등산','걷기 30분'];
+  document.getElementById('roulette-options').innerHTML = rItems.map(it => `<label style="display:inline-block; margin-right:8px; font-size:13px"><input type="checkbox" checked data-val="${it}"/> ${it}</label>`).join('');
+  document.getElementById('team-member-list').innerHTML = sortMembers(m).map(x => `<label style="display:block; padding:4px 0; font-size:14px"><input type="checkbox" checked data-name="${x.name}"/> ${grade(x).e} ${x.name}</label>`).join('');
 }
-
 document.getElementById('roulette-btn').onclick = () => {
-  const all = [...document.querySelectorAll('#roulette-options input:checked')].map(i => i.dataset.val);
-  if(!all.length) return toast('선택해주세요');
-  const res = document.getElementById('roulette-result'); let c = 0;
-  const iv = setInterval(() => { res.textContent = all[Math.floor(Math.random()*all.length)]; if(++c > 20) clearInterval(iv); }, 80);
+  const all = [...document.querySelectorAll('#roulette-options input:checked')].map(i => i.dataset.val); if(!all.length) return toast('선택해주세요');
+  const res = document.getElementById('roulette-result'); let c = 0; const iv = setInterval(() => { res.textContent = all[Math.floor(Math.random()*all.length)]; if(++c > 20) clearInterval(iv); }, 80);
 };
-
 document.getElementById('team-shuffle-btn').onclick = () => {
-  const sel = [...document.querySelectorAll('#team-member-list input:checked')].map(i => ({n:i.dataset.name, e:i.dataset.emoji}));
-  if(sel.length < 2) return toast('2명 이상 선택');
-  const shuf = sel.sort(() => Math.random()-0.5);
-  document.getElementById('team-result').innerHTML = `1팀: ${shuf.slice(0, shuf.length/2).map(x=>x.n).join(', ')} <br> 2팀: ${shuf.slice(shuf.length/2).map(x=>x.n).join(', ')}`;
+  const sel = [...document.querySelectorAll('#team-member-list input:checked')].map(i => i.dataset.name); const count = parseInt(document.getElementById('team-count').value);
+  if(sel.length < count) return toast('멤버 부족'); const shuf = sel.sort(() => Math.random()-0.5); const teams = Array.from({length:count},()=>[]); shuf.forEach((x,i)=>teams[i%count].push(x));
+  document.getElementById('team-result').innerHTML = teams.map((t,i)=>`<div style="background:var(--surface2);padding:8px;border-radius:8px;margin-top:4px"><strong>${i+1}팀:</strong> ${t.join(', ')}</div>`).join('');
 };
 
-async function renderChampion(m, s) {
-  const today = new Date().toLocaleDateString('en-CA'); const thisM = today.slice(0,7);
-  const count = {}; s.filter(x => x.date<=today && x.date.startsWith(thisM)).forEach(x => (x.attendees||[]).forEach(a => count[a.memberId] = (count[a.memberId]||0)+1));
-  const ranked = m.map(x => ({...x, mc: count[x.id]||0})).filter(x => x.mc > 0).sort((a,b) => b.mc - a.mc);
-  if(!ranked.length) return document.getElementById('champion-result').innerHTML = '기록 없음';
-  document.getElementById('champion-result').innerHTML = `🏆 ${ranked[0].name} (${ranked[0].mc}회)`;
-}
-
-// 운영진 로직 복구
-document.getElementById('admin-login-btn').onclick = () => {
-  if(document.getElementById('admin-pw').value === ADMIN_PW) {
-    isAdmin = true; document.getElementById('admin-lock').style.display='none'; document.getElementById('admin-content').style.display='block';
-    renderAdminContent();
-  } else toast('틀렸어요');
-};
-
+document.getElementById('admin-login-btn').onclick = () => { if(document.getElementById('admin-pw').value === ADMIN_PW) { isAdmin=true; document.getElementById('admin-lock').style.display='none'; document.getElementById('admin-content').style.display='block'; renderAdminContent(); } else toast('틀렸어요'); };
 async function renderAdminContent() {
-  const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
-  document.getElementById('admin-sess-list').innerHTML = s.slice(0,10).map(x => `<div class="mi"><span>${x.name}</span><button class="ebtn" onclick="openSessEdit('${x.id}')">수정</button></div>`).join('');
-  document.getElementById('admin-mlist').innerHTML = sortMembers(m).map(x => `<div class="mi"><span>${x.name}</span><button class="ebtn" onclick="openEdit('${x.id}')">수정</button></div>`).join('');
+  const [m, s] = await Promise.all([getMembers(true), getAllSessions(true)]);
+  document.getElementById('admin-sess-list').innerHTML = s.slice(0,10).map(x => `<div class="mi"><span>${x.name} (${x.date})</span></div>`).join('');
+  document.getElementById('admin-mlist').innerHTML = sortMembers(m).map(x => `<div class="mi"><span>${x.name}</span><button class="bs" onclick="openEdit('${x.id}')">수정</button></div>`).join('');
 }
 
-// 초기화
+async function openMemberDetail(id) {
+  const [mems, sess] = await Promise.all([getMembers(), getAllSessions()]); const m = mems.find(x => x.id === id); if(!m) return;
+  const today = new Date().toLocaleDateString('en-CA'); const attended = sess.filter(s => s.date <= today && (s.attendees||[]).some(a => a.memberId === id));
+  document.getElementById('md-header').innerHTML = `<div class="av">${grade(m).e}</div><div><div style="font-weight:700">${m.name}</div><div style="font-size:12px;color:var(--text3)">총 ${attended.length}회 참석</div></div>`;
+  document.getElementById('md-sessions').innerHTML = attended.map(s => `<div class="mi"><div>${s.name}</div><div style="font-size:11px;color:var(--text3)">${s.date}</div></div>`).join('') || '기록 없음';
+  document.getElementById('member-detail-modal').classList.add('open');
+}
+
 (async function() {
-  await initUser();
-  const hash = location.hash.replace('#','');
+  await initUser(); const hash = location.hash.replace('#','');
   let startPage = hash && ['rules','members','sessions','game','admin'].includes(hash) ? hash : 'members';
   showPage(startPage, document.querySelector(`.nb[data-page="${startPage}"]`));
 })();
@@ -330,8 +289,10 @@ document.querySelectorAll('.nb').forEach(btn => btn.onclick = () => { location.h
 document.querySelectorAll('.mtab').forEach(btn => btn.onclick = function() { 
   document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active')); this.classList.add('active');
   const t = this.dataset.mtab; document.getElementById('mtab-list').style.display = t === 'list'?'block':'none'; document.getElementById('mtab-stats').style.display = t === 'stats'?'block':'none';
+  if(t==='stats') renderAttBoard();
 });
 document.querySelectorAll('.ftab').forEach(btn => btn.onclick = function() { ciFilter = this.dataset.filter; document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active')); this.classList.add('active'); renderAttBoard(); });
+document.querySelectorAll('.cat-tab').forEach(btn => btn.onclick = function() { catFilter = this.dataset.cat; document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active')); this.classList.add('active'); renderAttBoard(); });
 </script>
 </body>
 </html>
