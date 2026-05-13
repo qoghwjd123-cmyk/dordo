@@ -18,6 +18,7 @@
   --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--border:rgba(0,0,0,.08);
   --text:#1a1a18;--text2:#6b6b65;--text3:#a0a09a;
   --accent:#2d6a4f;--accent-l:#e8f5ee;--accent2:#e76f51;--accent2-l:#fdf0ec;
+  --kakao:#FEE500;--kakao-text:#191919;
   --my-highlight: #dfff00; 
   --r:16px;--rs:10px;
 }
@@ -32,136 +33,80 @@ header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;ju
 .page{display:none;padding:1.25rem 1rem 5rem;max-width:480px;margin:0 auto}
 .page.active{display:block}
 
-.welcome-container { padding: 1.25rem 1rem 0; max-width: 480px; margin: 0 auto; }
-.welcome-box { background: var(--surface); border-radius: var(--rs); padding: 1rem; border: 1px solid var(--border); display: none; align-items: center; justify-content: space-between; }
-.welcome-text { font-size: 14px; font-weight: 700; color: var(--accent); }
-.welcome-reset { font-size: 11px; color: var(--text3); cursor: pointer; text-decoration: underline; }
+/* 카테고리 배지 & 상태 태그 */
+.cat-badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:700;margin-right:4px}
+.cat-badge.run{background:#e8f5ee;color:#1a6b3c}
+.cat-badge.hike{background:#e8f0fb;color:#1a4a9e}
+.cat-badge.eat{background:#fdf0ec;color:#b84c1a}
+.cat-badge.workout{background:#f3e8fb;color:#6b21a8}
+.cat-badge.etc{background:#f0efe9;color:#6b6b65}
 
-/* 일정 관련 스타일 */
-.my-check-box { background: var(--accent-l); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; text-align: center; border: 1px solid var(--accent); transition: all 0.3s; }
+.status-tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:700;float:right}
+.status-tag.upcoming{background:#e8f5ee;color:#2d6a4f}
+.status-tag.past{background:#f0efe9;color:var(--text3)}
+
+/* 체크박스 & 명단 칩 */
+.my-check-box { background: var(--accent-l); border-radius: 12px; padding: 1.25rem; margin-top: 1rem; text-align: center; border: 1px solid var(--accent); }
 .my-check-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; }
 .my-check-btns { display: flex; gap: 8px; }
 .btn-rsvp { flex: 1; padding: 0.75rem; border-radius: 8px; border: none; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
 .btn-rsvp.join { background: var(--accent); color: #fff; }
 .btn-rsvp.absent { background: #fee2e2; color: #991b1b; }
 .btn-rsvp.active-join { background: var(--accent); color: #fff; box-shadow: 0 0 0 3px var(--accent-l); }
-.btn-rsvp.active-absent { background: #991b1b; color: #fff; box-shadow: 0 0 0 3px #fee2e2; }
 
-/* 참석자 이름표 스타일 */
 .att-list-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
-.att-chip { padding: 4px 10px; background: var(--surface2); border-radius: 20px; font-size: 12px; color: var(--text2); font-weight: 500; border: 1px solid var(--border); }
+.att-chip { padding: 4px 10px; background: var(--surface2); border-radius: 20px; font-size: 12px; color: var(--text2); font-weight: 500; border: 1px solid var(--border); display:flex; align-items:center; gap:4px;}
 .att-chip.is-me { background: var(--my-highlight); color: #000; border-color: #bfff00; font-weight: 700; }
 
-.mi.is-me { background: var(--my-highlight) !important; border: 1.5px solid #bfff00 !important; border-radius: 12px; margin: 4px 0; }
-.mi.is-me .mn { font-weight: 900; color: #000; }
+.btn-kakao { background: var(--kakao); color: var(--kakao-text); border:none; border-radius:8px; padding:0.85rem; width:100%; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:6px; }
 
-.card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem}
+.card{background:var(--surface);border-radius:var(--r);padding:1.25rem;border:1px solid var(--border);margin-bottom:1rem; position:relative;}
 .ct{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.875rem}
-input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s;margin-bottom:.65rem;-webkit-appearance:none;appearance:none;box-sizing:border-box}
-.btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:.4rem}
+input,select{width:100%;padding:.7rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface2);outline:none;margin-bottom:.65rem;box-sizing:border-box}
+.btn{width:100%;padding:.85rem;border:none;border-radius:var(--rs);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;}
 .bp{background:var(--accent);color:#fff}
-.bs{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .mi{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border)}
-.av{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.mn{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mm{font-size:12px;color:var(--text3);margin-top:1px}
-.gp{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--surface2);color:var(--text3);white-space:nowrap;flex-shrink:0}
-.sr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.875rem}
-.sb2{background:var(--surface2);border-radius:var(--rs);padding:.875rem .5rem;text-align:center}
-.sn{font-size:22px;font-weight:700;color:var(--accent)}
-.sl{font-size:11px;color:var(--text3);margin-top:2px}
 .toast-el{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%) translateY(300px);background:#1a1a18;color:#fff;padding:.7rem 1.4rem;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s, opacity .3s;z-index:999;white-space:nowrap;opacity:0}
 .toast-el.show{transform:translateX(-50%) translateY(0);opacity:1}
-.empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:14px}
-.sl2{font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin-bottom:.4rem}
-.mb-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
-.mb-bg.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:1.5rem;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
-.mt2{font-size:16px;font-weight:700;margin-bottom:1rem}
-.sess-card{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);margin-bottom:.75rem;overflow:hidden}
-.sess-card-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer}
-.sess-card-bd{padding:0 1.25rem 1rem;display:none}
-.sess-card-bd.open{display:block}
-.filter-tabs{display:flex;gap:6px;margin-bottom:1rem}
-.ftab{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
-.ftab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.mtab{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-family:inherit;cursor:pointer;color:var(--text3);font-weight:500}
-.mtab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 </style>
 </head>
 <body>
 <header><div class="logo-text">DO<span>R</span>DO</div></header>
 <nav class="nav">
-  <button class="nb" data-page="rules">📌 두알두</button>
-  <button class="nb active" data-page="members">👥 멤버</button>
-  <button class="nb" data-page="sessions">📅 일정</button>
+  <button class="nb" data-page="members">👥 멤버</button>
+  <button class="nb active" data-page="sessions">📅 일정</button>
   <button class="nb" data-page="game">🎮 게임</button>
-  <button class="nb" data-page="admin">🔥 운영진</button>
 </nav>
-
-<div class="welcome-container">
-  <div id="welcome-box" class="welcome-box">
-    <div class="welcome-text" id="welcome-text"></div>
-    <div class="welcome-reset" onclick="resetUser()">이름 변경</div>
-  </div>
-</div>
 
 <div id="toast-el" class="toast-el"></div>
 
-<div class="mb-bg" id="user-setting-modal" style="z-index:1000">
-  <div class="modal">
-    <div class="mt2">👋 반가워요! 누구신가요?</div>
-    <div style="font-size:13px; color:var(--text2); margin-bottom:1rem;">이름을 선택하면 일정 참석 체크가 더 편해져요.</div>
-    <div id="user-select-list" style="max-height:50vh; overflow-y:auto; margin-bottom:1rem;"></div>
-    <button class="btn bs" onclick="closeModal('user-setting-modal')">나중에 하기</button>
-  </div>
-</div>
-
-<div id="page-rules" class="page">
-  <div class="card">
-    <div class="ct">운영 회칙</div>
-    <div style="font-size:14px; line-height:1.6">별명은 [이름 / 동네] 형식으로 설정해주세요.<br>신규 멤버는 2주 이내 인증 필수입니다.</div>
-  </div>
-</div>
-
-<div id="page-members" class="page active">
-  <div class="filter-tabs" style="margin-bottom:1rem">
-    <button class="mtab" data-mtab="list">👥 멤버 목록</button>
-    <button class="mtab active" data-mtab="stats">📊 출석 통계</button>
-  </div>
-  <div id="mtab-list" style="display:none">
-    <div class="sr">
-      <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
-      <div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">활동</div></div>
-      <div class="sb2"><div class="sn" id="m-sess">-</div><div class="sl">총 일정</div></div>
-    </div>
-    <div class="card"><div class="ct">멤버 목록</div><div id="mlist"></div></div>
-  </div>
-  <div id="mtab-stats">
-    <div class="filter-tabs"><button class="ftab active" data-filter="all">전체</button><button class="ftab" data-filter="year">올해</button><button class="ftab" data-filter="month">이번달</button></div>
-    <div id="ci-att-list"></div>
-  </div>
-</div>
-
-<div id="page-sessions" class="page">
+<div id="page-sessions" class="page active">
   <div class="card">
     <div class="ct">새 일정 등록</div>
-    <input type="text" id="pub-sess-name" placeholder="일정 이름"/><input type="date" id="pub-sess-date"/><button class="btn bp" id="create-sess-btn">일정 등록</button>
+    <input type="text" id="pub-sess-name" placeholder="일정 이름"/>
+    <input type="date" id="pub-sess-date"/>
+    <select id="pub-sess-cat">
+      <option value="run">🏃 런닝</option>
+      <option value="hike">🏔️ 등산</option>
+      <option value="eat">🍽️ 식사</option>
+      <option value="workout">🏋️ 운동</option>
+      <option value="etc">기타</option>
+    </select>
+    <button class="btn bp" id="create-sess-btn">일정 등록</button>
   </div>
-  <div id="sess-month-filter" style="margin-bottom:.75rem"></div>
   <div id="sess-list"></div>
 </div>
 
-<div id="page-game" class="page">
-  <div class="card"><div class="ct">🎯 오늘의 룰렛</div><div id="roulette-result" style="text-align:center; padding:1rem 0; font-size:24px; font-weight:700;">버튼을 눌러보세요!</div><button class="btn bp" id="roulette-btn">뽑기!</button></div>
-</div>
-
-<div id="page-admin" class="page">
-  <div id="admin-lock">🔒 비밀번호: <input type="password" id="admin-pw" style="max-width:200px; margin: 10px auto; display:block;"/><button class="btn bp" id="admin-login-btn">입장</button></div>
-  <div id="admin-content" style="display:none"><div id="admin-mlist"></div></div>
+<div id="page-members" class="page">
+  <div class="card"><div class="ct">준비중</div></div>
 </div>
 
 <script>
+// 카카오 SDK 초기화
+try { 
+  Kakao.init('a961440bf90100c6847da5ee2fde06e1'); 
+} catch(e) { console.error('Kakao SDK Init Error:', e); }
+
 firebase.initializeApp({
   apiKey: "AIzaSyDKLj4tBOmGPmX1keWwkn0m8LlqDixzMEw",
   authDomain: "dordo-17766.firebaseapp.com",
@@ -171,215 +116,110 @@ firebase.initializeApp({
   appId: "1:616591115480:web:ade08d721401f9f6ec03ad"
 });
 const db = firebase.firestore();
-
-const ADMIN_PW = "dordo2023";
 const USER_NAME_KEY = 'dordo-user-name';
-let isAdmin = false;
 let _membersCache = null;
-let _sessionsCache = null;
 
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function grade(m) { if (m.role === 'mate') return '🔥'; if (m.count >= 15) return '🦢'; if (m.count >= 5) return '🐥'; return '🐣'; }
 function toast(msg) { const t = document.getElementById('toast-el'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
-function grade(m) { if (m.role === 'mate') return {e:'🔥', n:'메이트'}; if (m.count >= 15) return {e:'🦢', n:'베테랑'}; if (m.count >= 5) return {e:'🐥', n:'활동'}; if (m.count >= 1) return {e:'🐣', n:'새내기'}; return {e:'🥚', n:'알'}; }
-
-async function getMembers(f) { if (_membersCache && !f) return _membersCache; const s = await db.collection('members').get(); _membersCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _membersCache; }
-async function getAllSessions(f) { if (_sessionsCache && !f) return _sessionsCache; const s = await db.collection('sessions').orderBy('date','desc').get(); _sessionsCache = s.docs.map(d => ({id: d.id, ...d.data()})); return _sessionsCache; }
-
-function clearCache() { _membersCache = null; _sessionsCache = null; }
-
-async function initUser() {
-  const name = localStorage.getItem(USER_NAME_KEY);
-  if (name) {
-    document.getElementById('welcome-box').style.display = 'flex';
-    document.getElementById('welcome-text').textContent = `${name.split('/')[0]}님 환영해요! 🔥`;
-  } else {
-    document.getElementById('welcome-box').style.display = 'none';
-    setTimeout(async () => {
-      const m = await getMembers();
-      document.getElementById('user-select-list').innerHTML = m.map(x => `<div class="mi" style="cursor:pointer; padding:0.5rem" onclick="setUser('${x.name}')">${grade(x).e} ${x.name}</div>`).join('');
-      document.getElementById('user-setting-modal').classList.add('open');
-    }, 1000);
-  }
-}
-function setUser(n) { localStorage.setItem(USER_NAME_KEY, n); closeModal('user-setting-modal'); initUser(); renderMPage(); toast(`${n.split('/')[0]}님 반가워요!`); }
-function resetUser() { localStorage.removeItem(USER_NAME_KEY); location.reload(); }
-
-function showPage(n, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + n).classList.add('active');
-  if (btn) btn.classList.add('active');
-  if (n === 'members') renderMPage();
-  if (n === 'sessions') renderSessionsTab();
-}
-
-async function renderMPage() {
-  const [m, s] = await Promise.all([getMembers(), getAllSessions()]);
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  document.getElementById('mlist').innerHTML = m.map(x => {
-    const isMe = x.name === myName;
-    return `<div class="mi ${isMe?'is-me':''}"><div class="av">${grade(x).e}</div><div style="flex:1"><div class="mn">${x.name}${isMe?' (나)':''}</div><div class="mm">${x.count}회 참석</div></div></div>`;
-  }).join('');
-  document.getElementById('m-total').textContent = m.length;
-  document.getElementById('m-act').textContent = m.filter(x=>x.count>=5).length;
-  document.getElementById('m-sess').textContent = s.length;
-  renderAttBoard();
-}
-
-async function renderAttBoard() {
-  const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const today = new Date().toISOString().split('T')[0];
-  const myName = localStorage.getItem(USER_NAME_KEY);
-  let fs = sessions.filter(s => s.date <= today);
-  const countMap = {};
-  fs.forEach(s => (s.attendees||[]).forEach(a => countMap[a.memberId] = (countMap[a.memberId]||0) + 1));
-  document.getElementById('ci-att-list').innerHTML = members.map(m => {
-    const cnt = countMap[m.id]||0; const pct = fs.length ? Math.round(cnt/fs.length*100) : 0; const isMe = m.name === myName;
-    return `<div class="mi ${isMe?'is-me':''}"><div class="av">${grade(m).e}</div><div style="flex:1"><div class="mn">${m.name}</div><div class="att-bar-bg"><div class="att-bar-fill" style="width:${pct}%; background:${isMe?'#000':'var(--accent)'}"></div></div></div><span class="gp">${pct}%</span></div>`;
-  }).join('');
+async function getMembers() { 
+  if (_membersCache) return _membersCache; 
+  const s = await db.collection('members').get(); 
+  _membersCache = s.docs.map(d => ({id: d.id, ...d.data()})); 
+  return _membersCache; 
 }
 
 async function renderSessionsTab() {
-  const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
+  const members = await getMembers();
+  const sSnap = await db.collection('sessions').orderBy('date','desc').get();
+  const sessions = sSnap.docs.map(d => ({id: d.id, ...d.data()}));
   const today = new Date().toISOString().split('T')[0];
-  const months = [...new Set(sessions.map(s => s.date.slice(0,7)))].sort().reverse();
-  const el = document.getElementById('sess-month-filter');
-  
-  el.innerHTML = months.map(m => {
-    const filtered = sessions.filter(s=>s.date.startsWith(m));
-    return `
-      <div class="sess-card">
-        <div class="sess-card-hd" onclick="this.nextElementSibling.classList.toggle('open')">
-          <span>${m} 모임 (${filtered.length})</span><span>▼</span>
-        </div>
-        <div class="sess-card-bd">
-          ${renderSessionCards(filtered, members, today)}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function renderSessionCards(sessions, members, today) {
   const myName = localStorage.getItem(USER_NAME_KEY);
-  return sessions.map(s => {
-    const isPast = s.date < today; 
+  
+  const catMap = { run:'🏃 런닝', hike:'🏔️ 등산', eat:'🍽️ 식사', workout:'🏋️ 운동', etc:'기타' };
+  
+  document.getElementById('sess-list').innerHTML = sessions.map(s => {
+    const isPast = s.date < today;
+    const attendees = s.attendees || [];
+    
+    const getNameChips = () => {
+      if (attendees.length === 0) return `<div class="empty" style="padding:0.5rem; font-size:12px; color:var(--text3)">참석자를 기다리고 있어요!</div>`;
+      return attendees.map(a => {
+        const m = members.find(mem => mem.id === a.memberId);
+        if (!m) return '';
+        return `<span class="att-chip ${m.name === myName ? 'is-me' : ''}">${grade(m)} ${m.name.split('/')[0]}</span>`;
+      }).join('');
+    };
+
+    const me = members.find(m => m.name === myName);
+    const isAtt = me ? attendees.some(a => a.memberId === me.id) : false;
+
     return `
-      <div class="card" id="sc-${s.id}">
-        <div style="font-weight:700; margin-bottom:5px">${s.name}</div>
-        <div style="font-size:12px; color:var(--text3); margin-bottom:10px">${s.date}</div>
-        <div id="sc-mlist-${s.id}">${loadPersonalRSVP(s, members, myName, isPast)}</div>
+      <div class="card">
+        <span class="status-tag ${isPast?'past':'upcoming'}">${isPast?'종료':'예정'}</span>
+        <div style="font-weight:700; font-size:16px; margin-bottom:4px">${s.name}</div>
+        <div style="font-size:12px; color:var(--text3); margin-bottom:12px">
+          <span class="cat-badge ${s.category || 'etc'}">${catMap[s.category] || '기타'}</span>
+          ${s.date}
+        </div>
+        
+        <div class="ct" style="margin-bottom:8px">참석 현황 (${attendees.length}명)</div>
+        <div class="att-list-wrap">${getNameChips()}</div>
+
+        ${!isPast && me ? `
+          <div class="my-check-box">
+            <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요?</div>
+            <div class="my-check-btns">
+              <button class="btn-rsvp join ${isAtt?'active-join':''}" onclick="doAttend('${s.id}','${me.id}',${isAtt})">${isAtt?'✓ 완료':'참석하기'}</button>
+            </div>
+          </div>
+        ` : ''}
+
+        ${!isPast ? `<button class="btn-kakao" onclick="shareKakao('${s.name}', '${s.date}')">💬 카카오톡 공유</button>` : ''}
       </div>`;
   }).join('');
 }
 
-function loadPersonalRSVP(sess, members, myName, isPast) {
-  const me = members.find(m => m.name === myName);
-  const attendees = sess.attendees || [];
-
-  // 공통 참석자 명단 칩 생성 함수
-  const getNameChips = () => {
-    if (attendees.length === 0) return `<div class="empty" style="padding:0.5rem; font-size:12px;">가장 먼저 참석을 알려보세요! 🏃💨</div>`;
-    return attendees.map(a => {
-      const m = members.find(mem => mem.id === a.memberId);
-      if (!m) return '';
-      const isMe = m.name === myName;
-      return `<span class="att-chip ${isMe ? 'is-me' : ''}">${m.name.split('/')[0]}</span>`;
-    }).join('');
-  };
-
-  // [종료된 일정] 심플한 명단 보기
-  if (isPast) {
-    return `
-      <div class="ct" style="margin-top:10px; margin-bottom:8px">참석자 ${attendees.length}명</div>
-      <div class="att-list-wrap">${getNameChips()}</div>
-    `;
-  }
-
-  // [예정된 일정] 참석자 명단 + 체크박스 보기
-  if (!me) return `<div class="empty">상단에서 이름을 먼저 설정해주세요</div>`;
-  const isAtt = attendees.some(a => a.memberId === me.id);
-  const isAbs = (sess.absentees||[]).includes(me.id);
-  
-  return `
-    <div class="ct" style="margin-top:10px; margin-bottom:4px">현재 참석 현황 (${attendees.length}명)</div>
-    <div class="att-list-wrap">${getNameChips()}</div>
-    
-    <div class="my-check-box">
-      <div class="my-check-title">${me.name.split('/')[0]}님, 참석하시나요? 🔥</div>
-      <div class="my-check-btns">
-        <button class="btn-rsvp join ${isAtt?'active-join':''}" onclick="doSingleAttendance('${sess.id}','${me.id}',${isAtt})">
-          ${isAtt ? '✓ 참석완료' : '참석'}
-        </button>
-        <button class="btn-rsvp absent ${isAbs?'active-absent':''}" onclick="undoSingleAttendance('${sess.id}','${me.id}',${isAbs})">
-          ${isAbs ? '✗ 불참완료' : '불참'}
-        </button>
-      </div>
-    </div>
-  `;
+function shareKakao(name, date) {
+  if (!window.Kakao || !Kakao.isInitialized()) return toast('카카오 인증 오류');
+  Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: `[DORDO] ${name}`,
+      description: `${date} 모임에 함께해요!`,
+      imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
+      link: { mobileWebUrl: location.href, webUrl: location.href }
+    },
+    buttons: [{ title: '참석 체크하기', link: { mobileWebUrl: location.href, webUrl: location.href } }]
+  });
 }
-
-window.doSingleAttendance = async function(sid, mid, a) { 
-  const ref = db.collection('sessions').doc(sid); 
-  const snap = await ref.get(); 
-  const s = snap.data(); 
-  if (a) {
-    const next = (s.attendees||[]).filter(x => x.memberId !== mid); 
-    await ref.update({ attendees: next }); 
-    const mSnap = await db.collection('members').doc(mid).get();
-    if(mSnap.exists) await db.collection('members').doc(mid).update({count: (mSnap.data().count||1)-1});
-  } else {
-    const next = [...(s.attendees||[]), {memberId: mid, time: new Date().toLocaleTimeString()}];
-    const nextAbs = (s.absentees||[]).filter(id => id !== mid);
-    await ref.update({ attendees: next, absentees: nextAbs });
-    const mSnap = await db.collection('members').doc(mid).get();
-    if(mSnap.exists) await db.collection('members').doc(mid).update({count: (mSnap.data().count||0)+1});
-  }
-  clearCache(); renderSessionsTab(); toast('업데이트 완료!');
-};
-
-window.undoSingleAttendance = async function(sid, mid, a) {
-  const ref = db.collection('sessions').doc(sid); 
-  const snap = await ref.get(); 
-  const s = snap.data();
-  if (a) {
-    const nextAbs = (s.absentees||[]).filter(id => id !== mid);
-    await ref.update({ absentees: nextAbs });
-  } else {
-    const nextAtt = (s.attendees||[]).filter(x => x.memberId !== mid);
-    const nextAbs = [...new Set([...(s.absentees||[]), mid])];
-    await ref.update({ attendees: nextAtt, absentees: nextAbs });
-    const mSnap = await db.collection('members').doc(mid).get();
-    if(mSnap.exists && (mSnap.data().count||0) > 0) await db.collection('members').doc(mid).update({count: mSnap.data().count-1});
-  }
-  clearCache(); renderSessionsTab(); toast('업데이트 완료!');
-};
 
 document.getElementById('create-sess-btn').onclick = async () => {
   const name = document.getElementById('pub-sess-name').value;
   const date = document.getElementById('pub-sess-date').value;
-  if(!name || !date) return toast('입력해주세요');
-  await db.collection('sessions').add({ name, date, attendees: [], absentees: [] });
-  clearCache(); renderSessionsTab(); toast('등록 완료!');
+  const category = document.getElementById('pub-sess-cat').value;
+  if(!name || !date) return toast('내용을 입력하세요');
+  await db.collection('sessions').add({ name, date, category, attendees: [], absentees: [] });
+  renderSessionsTab(); toast('일정이 등록되었습니다!');
 };
 
-document.querySelectorAll('.nb').forEach(btn => btn.onclick = () => showPage(btn.dataset.page, btn));
-
-document.getElementById('admin-login-btn').onclick = () => {
-  if(document.getElementById('admin-pw').value === ADMIN_PW) {
-    isAdmin = true;
-    document.getElementById('admin-lock').style.display='none';
-    document.getElementById('admin-content').style.display='block';
-    getMembers().then(m => {
-      document.getElementById('admin-mlist').innerHTML = m.map(x => `<div class="mi"><div class="mn">${x.name}</div></div>`).join('');
-    });
-  } else toast('비밀번호가 틀렸습니다');
+window.doAttend = async (sid, mid, a) => {
+  const ref = db.collection('sessions').doc(sid);
+  const s = (await ref.get()).data();
+  const next = a ? s.attendees.filter(x => x.memberId !== mid) : [...(s.attendees||[]), {memberId: mid}];
+  await ref.update({ attendees: next });
+  renderSessionsTab(); toast(a ? '참석 취소' : '참석 완료!');
 };
 
-(async function() {
-  await initUser();
-  showPage('members', document.querySelector('.nb[data-page="members"]'));
-})();
+document.querySelectorAll('.nb').forEach(btn => btn.onclick = () => {
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-'+btn.dataset.page).classList.add('active');
+  if(btn.dataset.page === 'sessions') renderSessionsTab();
+});
+
+renderSessionsTab();
 </script>
 </body>
 </html>
