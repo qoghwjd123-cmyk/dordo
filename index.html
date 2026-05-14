@@ -802,10 +802,6 @@ function renderMonthSessions(sessions, members, today) {
         ${!isPast ? `
         <div>
           <div id="sc-mlist-${s.id}"></div>
-          <button class="btn kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}" data-time="${s.time||''}" data-endtime="${s.endtime||''}" data-place="${s.place||''}"
-            style="margin-top:.75rem;background:#FEE500;color:#191919;border:none;font-weight:700">
-            <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:16px;height:16px;vertical-align:middle;margin-right:6px"/>카카오톡 공유
-          </button>
         </div>` : `${!att.length?'<div style="font-size:13px;color:var(--text3)">참석자 없음</div>':''}`}
       </div>
     </div>`;
