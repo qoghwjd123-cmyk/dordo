@@ -599,8 +599,14 @@ function clearCache() { _membersCache = null; _sessionsCache = null; }
 async function getMembers(force) {
   if (_membersCache && !force) return _membersCache;
   const snap = await db.collection('members').get();
-  _membersCache = snap.docs.map(d => ({id: d.id, ...d.data()}));
+  const all = snap.docs.map(d => ({id: d.id, ...d.data()}));
+  _membersCache = all.filter(m => m.active !== false); // 내보내진 멤버 제외
   return _membersCache;
+}
+
+async function getAllMembersIncludeInactive(force) {
+  const snap = await db.collection('members').get();
+  return snap.docs.map(d => ({id: d.id, ...d.data()}));
 }
 
 async function getAllSessions(force) {
@@ -1435,8 +1441,9 @@ document.getElementById('se-cancel-btn').addEventListener('click', () => closeMo
 
 // 멤버 관리
 async function renderAMList() {
-  const members = await getMembers();
-  const sorted = sortMembers(members);
+  const members = await getAllMembersIncludeInactive();
+  const sorted = sortMembers(members.filter(m => m.active !== false));
+  const inactive = members.filter(m => m.active === false);
   const mates = sorted.filter(m => m.role === 'mate');
   const mems = sorted.filter(m => m.role !== 'mate');
   let h = '';
@@ -1446,22 +1453,49 @@ async function renderAMList() {
     h += `<div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin:10px 0 6px">멤버 (${mems.length}명)</div>`;
   }
   h += mems.map(amRow).join('');
+  if (inactive.length) {
+    h += `<div style="font-size:11px;color:var(--text3);font-weight:700;letter-spacing:.05em;margin:14px 0 6px">🚪 내보낸 멤버 (${inactive.length}명)</div>`;
+    h += inactive.map(m => {
+      const g = grade(m);
+      return `<div class="mi" style="opacity:.5">
+        <div class="av">${g.e}</div>
+        <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">내보낸 멤버</div></div>
+        <button class="ebtn admin-restore-btn" data-id="${m.id}" style="margin-right:4px">복귀</button>
+        <button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button>
+      </div>`;
+    }).join('');
+  }
   document.getElementById('admin-mlist').innerHTML = h || '<div class="empty">멤버가 없어요</div>';
 }
 
 function amRow(m) {
   const g = grade(m);
   const joined = m.joined || JOIN_DATES[m.name] || '';
-  return `<div class="mi"><div class="av">${g.e}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진 · '+m.count+'회':m.count+'회 · '+fmtJoined(joined)}</div></div><button class="ebtn admin-edit-btn" data-id="${m.id}" style="margin-right:4px">수정</button><button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button></div>`;
+  return `<div class="mi"><div class="av">${g.e}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진 · '+m.count+'회':m.count+'회 · '+fmtJoined(joined)}</div></div><button class="ebtn admin-edit-btn" data-id="${m.id}" style="margin-right:4px">수정</button><button class="ebtn admin-kick-btn" data-id="${m.id}" data-name="${m.name}" style="margin-right:4px;background:#fff3e0;color:#e65100;border-color:#e65100">내보내기</button><button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button></div>`;
 }
 
 document.getElementById('admin-mlist').addEventListener('click', async function(e) {
   const editBtn = e.target.closest('.admin-edit-btn');
   const delBtn = e.target.closest('.admin-del-btn');
+  const kickBtn = e.target.closest('.admin-kick-btn');
+  const restoreBtn = e.target.closest('.admin-restore-btn');
   if (editBtn) openEdit(editBtn.dataset.id);
+  if (kickBtn) {
+    const ok = await showConfirm(`${kickBtn.dataset.name}을(를) 내보낼까요?\n과거 참석 기록은 유지돼요.`);
+    if (!ok) return;
+    await db.collection('members').doc(kickBtn.dataset.id).update({ active: false });
+    clearCache(); renderAMList(); renderMPage(); toast('내보냈어요');
+  }
+  if (restoreBtn) {
+    const mSnap = await db.collection('members').doc(restoreBtn.dataset.id).get();
+    const ok = await showConfirm((mSnap.data()?.name||'') + '을(를) 복귀시킬까요?');
+    if (!ok) return;
+    await db.collection('members').doc(restoreBtn.dataset.id).update({ active: true });
+    clearCache(); renderAMList(); renderMPage(); toast('복귀됐어요! 🎉');
+  }
   if (delBtn) {
     const mSnap = await db.collection('members').doc(delBtn.dataset.id).get();
-    const ok = await showConfirm((mSnap.data()?.name||'') + ' 삭제할까요?');
+    const ok = await showConfirm((mSnap.data()?.name||'') + ' 완전히 삭제할까요?');
     if (!ok) return;
     await db.collection('members').doc(delBtn.dataset.id).delete();
     clearCache(); renderAMList(); renderMPage(); toast('삭제됐어요');
