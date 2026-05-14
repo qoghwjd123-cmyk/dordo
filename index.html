@@ -847,35 +847,79 @@ async function loadSessMemberList(sessId) {
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
   const absentIds = new Set(sess.absentees||[]);
   const sorted = sortMembers(members);
-  // 내 멤버가 있으면 맨 위로
-  const myIdx = sorted.findIndex(m => m.id === myMemberId);
-  if (myIdx > 0) { const [me] = sorted.splice(myIdx, 1); sorted.unshift(me); }
 
-  mlistEl.innerHTML = sorted.map(m => {
+  // ── 내 카드 (크게) ──
+  let myCardHtml = '';
+  if (myMemberId) {
+    const me = members.find(m => m.id === myMemberId);
+    if (me) {
+      const isAtt = alreadyIds.has(me.id);
+      const isAbsent = absentIds.has(me.id);
+      const firstName = me.name.split('/')[0];
+      const g = grade(me);
+      myCardHtml = `
+        <div id="my-card-${sessId}" style="background:var(--accent-l);border:1.5px solid var(--accent);border-radius:14px;padding:1rem 1.1rem;margin-bottom:.75rem;text-align:center">
+          <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:.75rem">${firstName}님, 참석하시나요? ${g.e}</div>
+          <div style="display:flex;gap:10px">
+            <button onclick="doSingleAttendance('${sessId}','${me.id}',${isAtt})"
+              style="flex:1;padding:.75rem;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;
+              background:${isAtt?'var(--accent)':'var(--surface)'};color:${isAtt?'#fff':'var(--text)'};border:2px solid ${isAtt?'var(--accent)':'var(--border)'}">
+              ${isAtt?'참석 완료 ✓':'참석'}
+            </button>
+            <button onclick="undoSingleAttendance('${sessId}','${me.id}',${isAbsent})"
+              style="flex:1;padding:.75rem;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;
+              background:${isAbsent?'#991b1b':'var(--surface)'};color:${isAbsent?'#fff':'#991b1b'};border:2px solid ${isAbsent?'#991b1b':'#fca5a5'}">
+              ${isAbsent?'불참 ✗':'이번엔 불참'}
+            </button>
+          </div>
+        </div>`;
+    }
+  }
+
+  // ── 전체 멤버 목록 (접기) ──
+  const allRows = sorted.map(m => {
     const isAtt = alreadyIds.has(m.id);
     const isAbsent = absentIds.has(m.id);
     const g = grade(m);
     const isMe = m.id === myMemberId;
-    return `<div class="ci-mi${isMe?' is-me':''}" id="row-${sessId}-${m.id}">
+    if (isMe) return ''; // 내 카드는 위에서 이미 표시
+    return `<div class="ci-mi" id="row-${sessId}-${m.id}">
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
-        <div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div>
+        <div class="mn">${m.name}</div>
         <div class="mm" style="color:${isAtt?'var(--accent)':isAbsent?'#991b1b':'var(--text3)'}">${isAtt?'✓ 참석':isAbsent?'✗ 불참':'미응답'}</div>
       </div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
+      ${isAdmin ? `<div style="display:flex;gap:6px;flex-shrink:0">
         <button onclick="doSingleAttendance('${sessId}','${m.id}',${isAtt})"
-          style="background:${isAtt?'var(--accent)':'var(--surface2)'};color:${isAtt?'#fff':'var(--text3)'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
-          참석
-        </button>
+          style="background:${isAtt?'var(--accent)':'var(--surface2)'};color:${isAtt?'#fff':'var(--text3)'};border:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">참석</button>
         <button onclick="undoSingleAttendance('${sessId}','${m.id}',${isAbsent})"
-          style="background:${isAbsent?'#991b1b':'#fee2e2'};color:${isAbsent?'#fff':'#991b1b'};border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">
-          불참
-        </button>
-      </div>
+          style="background:${isAbsent?'#991b1b':'#fee2e2'};color:${isAbsent?'#fff':'#991b1b'};border:none;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">불참</button>
+      </div>` : ''}
     </div>`;
   }).join('');
-  updateSessCount(sessId);
+
+  const toggleId = `members-toggle-${sessId}`;
+  const listId = `members-list-${sessId}`;
+  const otherMembersHtml = allRows.trim() ? `
+    <div style="margin-top:.25rem">
+      <button id="${toggleId}" onclick="toggleMembersList('${sessId}')"
+        style="width:100%;background:none;border:none;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit;padding:.4rem 0;text-align:center">
+        전체 멤버 보기 ▾
+      </button>
+      <div id="${listId}" style="display:none">${allRows}</div>
+    </div>` : '';
+
+  mlistEl.innerHTML = myCardHtml + otherMembersHtml;
 }
+
+window.toggleMembersList = function(sessId) {
+  const list = document.getElementById('members-list-' + sessId);
+  const btn = document.getElementById('members-toggle-' + sessId);
+  if (!list) return;
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  btn.textContent = isOpen ? '전체 멤버 보기 ▾' : '접기 ▴';
+};
 
 function updateSessCount(sessId) {
   const cnt = document.querySelectorAll(`#sc-mlist-${sessId} .ci-mi:not(.already) input:checked`).length;
@@ -1878,9 +1922,28 @@ window.selectMyMember = function(id, name) {
   localStorage.setItem(MY_NAME_KEY, name);
   document.getElementById('member-select-modal').classList.remove('open');
   toast(`${name.split('/')[0]}님, 환영해요! 🎉`);
-  // 현재 열려있는 페이지 새로고침 (하이라이트 반영)
-  const activePage = document.querySelector('.nb.active');
-  if (activePage) showPage(activePage.dataset.page, activePage);
+
+  // URL 해시에 일정ID 있으면 해당 일정 탭+카드 오픈
+  const hash = location.hash.replace('#', '');
+  if (hash.startsWith('sessions/')) {
+    const sessId = hash.replace('sessions/', '');
+    const btn = document.querySelector('.nb[data-page="sessions"]');
+    showPage('sessions', btn);
+    const tryOpen = setInterval(async () => {
+      const card = document.getElementById('sc-' + sessId);
+      if (card) {
+        clearInterval(tryOpen);
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          toggleSessCard(sessId, false);
+        }, 300);
+      }
+    }, 300);
+    setTimeout(() => clearInterval(tryOpen), 6000);
+  } else {
+    const activePage = document.querySelector('.nb.active');
+    if (activePage) showPage(activePage.dataset.page, activePage);
+  }
 };
 
 showMemberSelectIfNeeded();
