@@ -574,13 +574,21 @@ function catBadge(cat) {
   return '<span class="cat-badge '+cls+'">'+label+'</span>';
 }
 
-function grade(m) {
+function grade(m, pastCount) {
+  // pastCount가 있으면 그걸 쓰고, 없으면 m.count 폴백
+  const c = (pastCount !== undefined) ? pastCount : (m.count || 0);
   if (m.name && m.name.startsWith('헤라')) return {e:'🐺', n:'허스키'};
   if (m.role === 'mate') return {e:'🔥', n:'메이트'};
-  if (m.count >= 15) return {e:'🦢', n:'베테랑'};
-  if (m.count >= 5)  return {e:'🐥', n:'활동 멤버'};
-  if (m.count >= 1)  return {e:'🐣', n:'새내기'};
+  if (c >= 15) return {e:'🦢', n:'베테랑'};
+  if (c >= 5)  return {e:'🐥', n:'활동 멤버'};
+  if (c >= 1)  return {e:'🐣', n:'새내기'};
   return {e:'🥚', n:'미참석'};
+}
+
+// 지난 일정 참석 횟수 실시간 계산
+function calcPastCount(memberId, sessions) {
+  const today = new Date().toISOString().split('T')[0];
+  return sessions.filter(s => s.date < today && (s.attendees||[]).some(a => a.memberId === memberId)).length;
 }
 
 function sortMembers(members) {
@@ -656,7 +664,8 @@ async function renderMPage() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const sorted = sortMembers(members);
   document.getElementById('mlist').innerHTML = sorted.map(m => {
-    const g = grade(m);
+    const pastCount = calcPastCount(m.id, sessions);
+    const g = grade(m, pastCount);
     const isMate = m.role === 'mate';
     const joined = m.joined || JOIN_DATES[m.name] || '';
     const rightLabel = isMate
@@ -665,12 +674,12 @@ async function renderMPage() {
     const isMe = m.id === myMemberId;
     return `<div class="mi${isMe?' is-me':''}" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
       <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div><div class="mm">${isMate?'운영진':m.count+'회 참석'}</div></div>
-      <span class="gp ${isMate?'mate':m.count>=1?'green':''}">${rightLabel||g.n}</span>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div><div class="mm">${isMate?'운영진':pastCount+'회 참석'}</div></div>
+      <span class="gp ${isMate?'mate':pastCount>=1?'green':''}">${rightLabel||g.n}</span>
     </div>`;
   }).join('') || '<div class="empty">멤버가 없어요</div>';
   document.getElementById('m-total').textContent = members.length;
-  document.getElementById('m-act').textContent = members.filter(m=>m.count>=5).length;
+  document.getElementById('m-act').textContent = members.filter(m => calcPastCount(m.id, sessions) >= 5).length;
   document.getElementById('m-sess').textContent = sessions.length;
 
   // 등급 현황
@@ -684,17 +693,19 @@ async function renderMPage() {
   if (!el) return;
   el.innerHTML = gradeGroups.map(({count, e, n, next}, gi) => {
     const inGrade = nonMates.filter(m => {
-      if (gi === 0) return m.count >= 1 && m.count < 5;
-      if (gi === 1) return m.count >= 5 && m.count < 15;
-      return m.count >= 15;
-    }).sort((a,b) => b.count - a.count);
+      const pc = calcPastCount(m.id, sessions);
+      if (gi === 0) return pc >= 1 && pc < 5;
+      if (gi === 1) return pc >= 5 && pc < 15;
+      return pc >= 15;
+    }).sort((a,b) => calcPastCount(b.id, sessions) - calcPastCount(a.id, sessions));
     const groupId = `grade-group-${gi}`;
     const rows = inGrade.map(m => {
-      const remaining = next ? next.count - m.count : 0;
+      const pc = calcPastCount(m.id, sessions);
+      const remaining = next ? next.count - pc : 0;
       return `<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border)">
-        <span style="font-size:14px">${grade(m).e} ${m.name}</span>
+        <span style="font-size:14px">${grade(m, pc).e} ${m.name}</span>
         <span style="font-size:12px;color:${next&&remaining<=3?'var(--accent2)':'var(--text3)'};font-weight:${next&&remaining<=3?'700':'400'}">
-          ${next ? `${m.count}회 · ${next.e}까지 ${remaining}회` : `${m.count}회`}
+          ${next ? `${pc}회 · ${next.e}까지 ${remaining}회` : `${pc}회`}
         </span>
       </div>`;
     }).join('');
@@ -1153,7 +1164,7 @@ async function renderAttBoard() {
   document.getElementById('ci-att-list').innerHTML = sorted.map(m => {
     const cnt = countMap[m.id]||0;
     const pct = total > 0 ? Math.round(cnt/total*100) : 0;
-    const g = grade(m);
+    const g = grade(m, cnt);
     const isMe = m.id === myMemberId;
     return `<div class="mi${isMe?' is-me':''}" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
       <div class="av">${g.e}</div>
@@ -1217,12 +1228,12 @@ async function openMemberDetail(memberId) {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const m = members.find(m => m.id === memberId);
   if (!m) return;
-  const g = grade(m);
   const today = new Date().toISOString().split('T')[0];
-  // 해당 멤버가 참석한 모임 (지난 모임만)
   const attended = sessions
-    .filter(s => s.date <= today && (s.attendees||[]).some(a => a.memberId === memberId))
+    .filter(s => s.date < today && (s.attendees||[]).some(a => a.memberId === memberId))
     .sort((a,b) => b.date.localeCompare(a.date));
+  const pastCount = attended.length;
+  const g = grade(m, pastCount);
 
   document.getElementById('md-emoji').textContent = g.e;
   document.getElementById('md-name').textContent = m.name;
