@@ -1941,8 +1941,13 @@ window.selectMyMember = function(id, name) {
     }, 300);
     setTimeout(() => clearInterval(tryOpen), 6000);
   } else {
-    const activePage = document.querySelector('.nb.active');
-    if (activePage) showPage(activePage.dataset.page, activePage);
+    // 일반 접속 → 멤버탭 출석통계로
+    const btn = document.querySelector('.nb[data-page="members"]');
+    showPage('members', btn);
+    setTimeout(() => {
+      const statTab = document.querySelector('.mtab[data-mtab="stats"]');
+      if (statTab) statTab.click();
+    }, 100);
   }
 };
 
@@ -1951,7 +1956,7 @@ showMemberSelectIfNeeded();
 (function() {
   const hash = location.hash.replace('#','');
   const validPages = ['rules','members','sessions','checkin','admin','game'];
-  let startPage = 'rules';
+  let startPage = 'members'; // 기본 랜딩을 멤버탭으로
   let autoOpenSess = null;
 
   if (hash.startsWith('sessions/')) {
@@ -1963,6 +1968,19 @@ showMemberSelectIfNeeded();
 
   const startBtn = document.querySelector(`.nb[data-page="${startPage}"]`);
   showPage(startPage, startBtn);
+
+  // 멤버탭 기본 진입 시 출석통계 서브탭으로
+  if (startPage === 'members' && !validPages.slice(1).includes(hash)) {
+    const statTab = document.querySelector('.mtab[data-mtab="stats"]');
+    const listTab = document.querySelector('.mtab[data-mtab="list"]');
+    if (statTab && listTab) {
+      document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+      statTab.classList.add('active');
+      document.getElementById('mtab-list').style.display = 'none';
+      document.getElementById('mtab-stats').style.display = 'block';
+      renderAttBoard();
+    }
+  }
 
   if (autoOpenSess) {
     const tryOpen = setInterval(async () => {
