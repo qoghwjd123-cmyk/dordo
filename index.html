@@ -555,6 +555,13 @@ const JOIN_DATES = {
   '이정민/미사':'260422','대훈/덕풍':'260430','원재윤':'260422',
 };
 
+function getToday() {
+  // 한국 시간(KST, UTC+9) 기준 오늘 날짜
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().split('T')[0];
+}
+
 function fmtJoined(raw) {
   if (!raw) return '';
   const s = String(raw);
@@ -587,7 +594,7 @@ function grade(m, pastCount) {
 
 // 지난 일정 참석 횟수 실시간 계산
 function calcPastCount(memberId, sessions) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   return sessions.filter(s => s.date < today && (s.attendees||[]).some(a => a.memberId === memberId)).length;
 }
 
@@ -732,12 +739,12 @@ async function renderMPage() {
 let sessMonthFilter = null;
 
 async function renderSessionsTab() {
-  document.getElementById('pub-sess-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('pub-sess-date').value = getToday();
   const [sessions, members] = await Promise.all([getAllSessions(), getMembers()]);
   const el = document.getElementById('sess-list');
   const filterEl = document.getElementById('sess-month-filter');
   if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 일정이 없어요</div>'; filterEl.innerHTML=''; return; }
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   const thisMonth = today.slice(0,7);
 
   // 월 목록 추출
@@ -1142,7 +1149,7 @@ async function renderCheckinTab() { await renderAttBoard(); }
 
 async function renderAttBoard() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   let fs = sessions.filter(s => s.date <= today);
   if (ciFilter === 'year')   fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
   if (ciFilter === 'month')  fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
@@ -1228,7 +1235,7 @@ async function openMemberDetail(memberId) {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const m = members.find(m => m.id === memberId);
   if (!m) return;
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   const attended = sessions
     .filter(s => s.date < today && (s.attendees||[]).some(a => a.memberId === memberId))
     .sort((a,b) => b.date.localeCompare(a.date));
@@ -1317,7 +1324,7 @@ async function renderAdminSessList() {
   const sessions = await getAllSessions();
   const el = document.getElementById('admin-sess-list');
   if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 일정이 없어요</div>'; return; }
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   const thisMonth = today.slice(0,7);
   const months = [...new Set(sessions.map(s => s.date.slice(0,7)))].sort().reverse();
   if (!adminSessMonthFilter || !months.includes(adminSessMonthFilter)) adminSessMonthFilter = months[0];
@@ -1777,7 +1784,7 @@ if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
 // 출석왕
 async function renderChampion() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
-  const today = new Date().toISOString().split('T')[0];
+  const today = getToday();
   const thisMonth = today.slice(0,7);
   const now = new Date();
   const monthLabel = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
