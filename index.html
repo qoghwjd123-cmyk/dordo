@@ -153,6 +153,8 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <button onclick="closeModal('sess-edit-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1;padding:0">✕</button>
     </div>
     <div id="se-sess-info" style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:.5rem"></div>
+    <div class="sl2">일정 제목</div>
+    <input type="text" id="se-name" placeholder="일정 제목" style="margin-bottom:.75rem"/>
     <div class="sl2">카테고리</div>
     <select id="se-cat" style="margin-bottom:.75rem">
       <option value="🏃 러닝">🏃 러닝</option>
@@ -343,15 +345,24 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div class="sl2">일정 이름</div>
     <input type="text" id="pub-sess-name" placeholder="예: 5월 정기 러닝"/>
     <div class="sl2">날짜</div>
-    <input type="date" id="pub-sess-date"/>
+    <button type="button" id="pub-sess-date-btn" onclick="openDatePicker()" style="width:100%;padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text);text-align:left;cursor:pointer;margin-bottom:.75rem">
+      📅 날짜 선택
+    </button>
+    <input type="hidden" id="pub-sess-date"/>
     <div style="display:flex;gap:8px">
       <div style="flex:1">
         <div class="sl2">시작 시간 (선택)</div>
-        <input type="time" id="pub-sess-time" style="margin:0"/>
+        <button type="button" id="pub-sess-time-btn" onclick="openTimePicker('start')" style="width:100%;padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer;margin:0">
+          ⏰ 시작
+        </button>
+        <input type="hidden" id="pub-sess-time"/>
       </div>
       <div style="flex:1">
         <div class="sl2">종료 시간 (선택)</div>
-        <input type="time" id="pub-sess-endtime" style="margin:0"/>
+        <button type="button" id="pub-sess-endtime-btn" onclick="openTimePicker('end')" style="width:100%;padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer;margin:0">
+          ⏰ 종료
+        </button>
+        <input type="hidden" id="pub-sess-endtime"/>
       </div>
     </div>
     <div class="sl2" style="margin-top:.65rem">장소 (선택)</div>
@@ -360,6 +371,56 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
   <div id="sess-month-filter" style="margin-bottom:.75rem"></div>
   <div id="sess-list"><div class="loading"><div class="spinner"></div><br>불러오는 중...</div></div>
+</div>
+
+<!-- 날짜 피커 모달 -->
+<div class="mb-bg" id="date-picker-modal" style="align-items:center">
+  <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <button onclick="changeCalMonth(-1)" style="background:none;border:none;font-size:20px;cursor:pointer;padding:4px 10px">‹</button>
+      <div id="cal-title" style="font-size:15px;font-weight:700"></div>
+      <button onclick="changeCalMonth(1)" style="background:none;border:none;font-size:20px;cursor:pointer;padding:4px 10px">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:2px;margin-bottom:6px">
+      <div style="font-size:11px;color:#e74c3c;font-weight:700">일</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700">월</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700">화</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700">수</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700">목</div>
+      <div style="font-size:11px;color:var(--text3);font-weight:700">금</div>
+      <div style="font-size:11px;color:#3498db;font-weight:700">토</div>
+    </div>
+    <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center"></div>
+    <button onclick="closeModal('date-picker-modal')" style="margin-top:1rem;width:100%;padding:.65rem;background:none;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--text3);cursor:pointer;font-family:inherit">취소</button>
+  </div>
+</div>
+
+<!-- 시간 피커 모달 -->
+<div class="mb-bg" id="time-picker-modal" style="align-items:center">
+  <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
+    <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem" id="time-picker-title">시간 선택</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:1.25rem">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;color:var(--text3);text-align:center;font-weight:700">오전/오후</div>
+        <div id="tp-ampm" style="display:flex;flex-direction:column;gap:4px">
+          <button onclick="selectAmPm('오전')" id="tp-am" style="padding:.6rem 1.2rem;border-radius:8px;border:1.5px solid var(--border);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--surface2);color:var(--text)">오전</button>
+          <button onclick="selectAmPm('오후')" id="tp-pm" style="padding:.6rem 1.2rem;border-radius:8px;border:1.5px solid var(--border);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--surface2);color:var(--text)">오후</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;color:var(--text3);text-align:center;font-weight:700">시</div>
+        <div id="tp-hour" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:11px;color:var(--text3);text-align:center;font-weight:700">분</div>
+        <div id="tp-min" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onclick="clearTimePicker()" style="flex:1;padding:.7rem;background:#fee2e2;color:#991b1b;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">지우기</button>
+      <button onclick="confirmTimePicker()" style="flex:2;padding:.7rem;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">확인</button>
+    </div>
+  </div>
 </div>
 
 <!-- 멤버 상세 모달 -->
@@ -1384,7 +1445,8 @@ async function openSessEdit(sessId) {
   currentSessEditId = sessId;
   const [members, sessSnap] = await Promise.all([getMembers(), db.collection('sessions').doc(sessId).get()]);
   const sess = sessSnap.data();
-  document.getElementById('se-sess-info').textContent = `${sess.name} · ${sess.date}`;
+  document.getElementById('se-sess-info').textContent = `${sess.date}`;
+  document.getElementById('se-name').value = sess.name || '';
   document.getElementById('se-cat').value = sess.cat || '기타';
   document.getElementById('se-time').value = sess.time || '';
   document.getElementById('se-endtime').value = sess.endtime || '';
@@ -1443,7 +1505,7 @@ document.getElementById('se-save-btn').addEventListener('click', async function(
   const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
   let newAtt = (sess.attendees||[]).filter(a => !removed.includes(a.memberId));
   for (const mid of added) newAtt.push({ memberId: mid, time });
-  await sessRef.update({ attendees: newAtt, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() });
+  await sessRef.update({ name: document.getElementById('se-name').value.trim() || sess.name, attendees: newAtt, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() });
   for (const mid of added) {
     const mSnap = await db.collection('members').doc(mid).get();
     if (mSnap.exists) await db.collection('members').doc(mid).update({ count: (mSnap.data().count||0) + 1 });
@@ -1921,10 +1983,118 @@ async function initDefaultMembers() {
   for (const m of defaults) await db.collection('members').add(m);
 }
 
+// ── 날짜 피커 ─────────────────────────────────────
+let calYear, calMonth;
+function openDatePicker() {
+  const today = getToday();
+  const cur = document.getElementById('pub-sess-date').value || today;
+  const [y, m] = cur.split('-').map(Number);
+  calYear = y; calMonth = m;
+  renderCal();
+  document.getElementById('date-picker-modal').classList.add('open');
+}
+function changeCalMonth(d) { calMonth += d; if(calMonth>12){calMonth=1;calYear++;} if(calMonth<1){calMonth=12;calYear--;} renderCal(); }
+function renderCal() {
+  const selected = document.getElementById('pub-sess-date').value;
+  const today = getToday();
+  document.getElementById('cal-title').textContent = `${calYear}년 ${calMonth}월`;
+  const first = new Date(calYear, calMonth-1, 1).getDay();
+  const days = new Date(calYear, calMonth, 0).getDate();
+  let html = '';
+  for (let i=0; i<first; i++) html += '<div></div>';
+  for (let d=1; d<=days; d++) {
+    const dateStr = `${calYear}-${String(calMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isSelected = dateStr === selected;
+    const isToday = dateStr === today;
+    const dow = (first + d - 1) % 7;
+    const color = dow===0?'#e74c3c':dow===6?'#3498db':'var(--text)';
+    html += `<button onclick="selectDate('${dateStr}')"
+      style="padding:.5rem 0;border-radius:8px;border:${isToday?'1.5px solid var(--accent)':'none'};
+      background:${isSelected?'var(--accent)':'none'};color:${isSelected?'#fff':color};
+      font-size:13px;font-weight:${isSelected||isToday?'700':'400'};cursor:pointer;font-family:inherit">${d}</button>`;
+  }
+  document.getElementById('cal-grid').innerHTML = html;
+}
+window.selectDate = function(dateStr) {
+  document.getElementById('pub-sess-date').value = dateStr;
+  const [y,m,d] = dateStr.split('-');
+  document.getElementById('pub-sess-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+  document.getElementById('pub-sess-date-btn').style.color = 'var(--text)';
+  closeModal('date-picker-modal');
+};
+
+// ── 시간 피커 ─────────────────────────────────────
+let tpTarget = 'start', tpAmPm = '오후', tpHour = null, tpMin = null;
+function openTimePicker(target) {
+  tpTarget = target;
+  const fieldId = target==='start' ? 'pub-sess-time' : 'pub-sess-endtime';
+  const val = document.getElementById(fieldId).value;
+  if (val) {
+    const [h, min] = val.split(':').map(Number);
+    tpAmPm = h < 12 ? '오전' : '오후';
+    tpHour = h === 0 ? 12 : h > 12 ? h-12 : h;
+    tpMin = min;
+  } else { tpAmPm='오후'; tpHour=null; tpMin=null; }
+  document.getElementById('time-picker-title').textContent = target==='start' ? '시작 시간' : '종료 시간';
+  renderTimePicker();
+  document.getElementById('time-picker-modal').classList.add('open');
+}
+function renderTimePicker() {
+  // 오전/오후
+  ['am','pm'].forEach(id => {
+    const btn = document.getElementById('tp-'+id);
+    const label = id==='am'?'오전':'오후';
+    btn.style.background = tpAmPm===label?'var(--accent)':'var(--surface2)';
+    btn.style.color = tpAmPm===label?'#fff':'var(--text)';
+    btn.style.borderColor = tpAmPm===label?'var(--accent)':'var(--border)';
+  });
+  // 시 (1~12)
+  let hourHtml = '';
+  for (let h=1; h<=12; h++) {
+    const sel = tpHour===h;
+    hourHtml += `<button onclick="selectHour(${h})"
+      style="padding:.45rem .3rem;border-radius:8px;border:none;font-size:13px;font-weight:${sel?'700':'400'};
+      background:${sel?'var(--accent)':'var(--surface2)'};color:${sel?'#fff':'var(--text)'};cursor:pointer;font-family:inherit">${h}</button>`;
+  }
+  document.getElementById('tp-hour').innerHTML = hourHtml;
+  // 분 (0,10,20,30,40,50)
+  let minHtml = '';
+  for (let min=0; min<60; min+=10) {
+    const sel = tpMin===min;
+    minHtml += `<button onclick="selectMin(${min})"
+      style="padding:.45rem .8rem;border-radius:8px;border:none;font-size:13px;font-weight:${sel?'700':'400'};
+      background:${sel?'var(--accent)':'var(--surface2)'};color:${sel?'#fff':'var(--text)'};cursor:pointer;font-family:inherit">${String(min).padStart(2,'0')}</button>`;
+  }
+  document.getElementById('tp-min').innerHTML = minHtml;
+}
+window.selectAmPm = function(v) { tpAmPm=v; renderTimePicker(); };
+window.selectHour = function(h) { tpHour=h; renderTimePicker(); };
+window.selectMin = function(m) { tpMin=m; renderTimePicker(); };
+window.clearTimePicker = function() {
+  const fieldId = tpTarget==='start'?'pub-sess-time':'pub-sess-endtime';
+  const btnId = tpTarget==='start'?'pub-sess-time-btn':'pub-sess-endtime-btn';
+  document.getElementById(fieldId).value = '';
+  document.getElementById(btnId).textContent = tpTarget==='start'?'⏰ 시작':'⏰ 종료';
+  document.getElementById(btnId).style.color = 'var(--text3)';
+  closeModal('time-picker-modal');
+};
+window.confirmTimePicker = function() {
+  if (tpHour===null || tpMin===null) { toast('시간을 선택해주세요'); return; }
+  let h24 = tpHour;
+  if (tpAmPm==='오전' && tpHour===12) h24=0;
+  if (tpAmPm==='오후' && tpHour!==12) h24=tpHour+12;
+  const timeStr = `${String(h24).padStart(2,'0')}:${String(tpMin).padStart(2,'0')}`;
+  const label = `${tpAmPm} ${tpHour}:${String(tpMin).padStart(2,'0')}`;
+  const fieldId = tpTarget==='start'?'pub-sess-time':'pub-sess-endtime';
+  const btnId = tpTarget==='start'?'pub-sess-time-btn':'pub-sess-endtime-btn';
+  document.getElementById(fieldId).value = timeStr;
+  document.getElementById(btnId).textContent = `⏰ ${label}`;
+  document.getElementById(btnId).style.color = 'var(--text)';
+  closeModal('time-picker-modal');
+};
+
 // 초기화
 initDefaultMembers();
-
-// ── 내 멤버 선택 랜딩 ──────────────────────────────
 async function showMemberSelectIfNeeded() {
   if (myMemberId) {
     // 이미 선택된 경우 → 반가움 토스트
