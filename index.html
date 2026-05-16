@@ -871,8 +871,8 @@ function renderMonthSessions(sessions, members, today) {
     return `<div class="sess-card" id="sc-${s.id}" style="margin-bottom:.5rem">
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}">
         <div>
-          <div style="font-weight:500;font-size:15px">${s.name}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:6px">${s.date}${s.time?' · '+s.time+(s.endtime?' ~ '+s.endtime:''):''}${s.cat ? ' '+catBadge(s.cat) : ''}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px">${s.date}${s.time?' · '+s.time+(s.endtime?' ~ '+s.endtime:''):''}${s.cat ? ' '+catBadge(s.cat) : ''}</div>
+          <div style="font-size:14px;color:var(--text2);margin-top:2px;font-weight:400">${s.name}</div>
           ${s.place ? `<div style="font-size:12px;color:var(--text3);margin-top:1px">📍 ${s.place}</div>` : ''}
           <div style="font-size:12px;color:var(--text3);margin-top:1px">${att.length}명 참석</div>
         </div>
