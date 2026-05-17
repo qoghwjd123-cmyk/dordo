@@ -819,8 +819,15 @@ async function renderSessionsTab() {
 
   // 월 목록 추출
   const months = [...new Set(sessions.map(s => s.date.slice(0,7)))].sort().reverse();
-  // 기본: 이번달 선택
-  if (!sessMonthFilter || !months.includes(sessMonthFilter)) sessMonthFilter = months[0];
+  // 기본: 이번달 있으면 이번달, 없으면 가장 가까운 미래월, 그것도 없으면 최신월
+  if (!sessMonthFilter || !months.includes(sessMonthFilter)) {
+    if (months.includes(thisMonth)) {
+      sessMonthFilter = thisMonth;
+    } else {
+      const futureMonths = months.filter(m => m > thisMonth);
+      sessMonthFilter = futureMonths.length ? futureMonths[futureMonths.length-1] : months[0];
+    }
+  }
 
   // 월 드롭다운 렌더
   filterEl.innerHTML = months.map(m => {
