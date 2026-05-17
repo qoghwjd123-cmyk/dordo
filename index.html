@@ -243,7 +243,12 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div style="background:var(--surface2);border-radius:var(--rs);padding:.75rem;font-size:13px;color:var(--text3);margin-bottom:.65rem">
       출석 횟수는 모임탭 → 모임 수정에서 관리해주세요
     </div>
-    <div class="sl2">가입일 (YYMMDD)</div><input type="text" id="edit-joined" placeholder="예: 230410"/>
+    <div class="sl2">가입일</div>
+    <button type="button" id="edit-joined-btn" onclick="openDatePickerFor('edit-joined')"
+      style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer;margin-bottom:.65rem">
+      📅 가입날짜 선택
+    </button>
+    <input type="hidden" id="edit-joined"/>
     <div style="display:flex;gap:.5rem;margin-top:.5rem">
       <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="edit-save-btn">저장</button>
       <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="edit-cancel-btn">불참</button>
@@ -351,7 +356,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <input type="hidden" id="pub-sess-date"/>
     <div style="display:flex;gap:8px">
       <div style="flex:1">
-        <div class="sl2">시작 시간 (선택)</div>
+        <div class="sl2">시작 시간 <span style="color:var(--accent2);font-size:10px">필수</span></div>
         <button type="button" id="pub-sess-time-btn" onclick="openTimePicker('start')" style="width:100%;padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer;margin:0">
           ⏰ 시작
         </button>
@@ -547,7 +552,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
         <input type="text" id="nm-name" placeholder="이름/동네" style="margin:0;flex:1"/>
         <select id="nm-role" style="margin:0;width:auto;flex-shrink:0"><option value="member">멤버</option><option value="mate">🔥 메이트</option></select>
       </div>
-      <input type="text" id="nm-joined" placeholder="가입일 YYMMDD (선택)"/>
+      <button type="button" id="nm-joined-btn" onclick="openDatePickerFor('nm-joined')"
+        style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer;margin-bottom:.75rem">
+        📅 가입날짜 선택 (선택)
+      </button>
+      <input type="hidden" id="nm-joined"/>
       <button class="btn bp" id="add-member-btn">멤버 추가</button>
     </div>
     <div class="card">
@@ -868,18 +877,33 @@ function renderMonthSessions(sessions, members, today) {
       ${chips ? `<div style="margin-bottom:4px"><span style="font-size:11px;color:var(--text3);font-weight:700">참석</span><br>${chips}</div>` : ''}
       ${absentChips ? `<div><span style="font-size:11px;color:#991b1b;font-weight:700">불참</span><br>${absentChips}</div>` : ''}
     `;
-    return `<div class="sess-card" id="sc-${s.id}" style="margin-bottom:.5rem">
-      <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}">
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px">${s.date}${s.time?' · '+s.time+(s.endtime?' ~ '+s.endtime:''):''}${s.cat ? ' '+catBadge(s.cat) : ''}</div>
-          <div style="font-size:14px;color:var(--text2);margin-top:2px;font-weight:400">${s.name}</div>
-          ${s.place ? `<div style="font-size:12px;color:var(--text3);margin-top:1px">📍 ${s.place}</div>` : ''}
-          <div style="font-size:12px;color:var(--text3);margin-top:1px">${att.length}명 참석</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;white-space:nowrap;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
-          ${!isPast ? `<button class="kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
-            style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:14px;height:14px;vertical-align:middle"/></button>` : ''}
+    const [yyyy, mm, dd] = s.date.split('-');
+    const dayNames = ['일','월','화','수','목','금','토'];
+    const dayName = dayNames[new Date(s.date).getDay()];
+    const timeStr = s.time ? s.time+(s.endtime?' ~ '+s.endtime:'') : '';
+    return `<div class="sess-card" id="sc-${s.id}" style="margin-bottom:.4rem">
+      <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}" style="padding:.9rem 1rem">
+        <div style="display:flex;gap:12px;align-items:flex-start;width:100%">
+          <!-- 날짜 왼쪽 -->
+          <div style="text-align:center;min-width:40px;flex-shrink:0">
+            <div style="font-size:11px;color:${isPast?'var(--text3)':'var(--accent)'};font-weight:600">${dayName}요일</div>
+            <div style="font-size:26px;font-weight:900;line-height:1.1;color:${isPast?'var(--text3)':'var(--text)'}">${parseInt(dd)}</div>
+          </div>
+          <!-- 구분선 -->
+          <div style="width:2px;background:${isPast?'var(--border)':'var(--accent)'};border-radius:2px;align-self:stretch;flex-shrink:0;min-height:44px"></div>
+          <!-- 내용 오른쪽 -->
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:700;color:${isPast?'var(--text2)':'var(--text)'};line-height:1.3">${s.name}</div>
+            ${timeStr ? `<div style="font-size:12px;color:var(--text3);margin-top:2px">⏰ ${timeStr}</div>` : ''}
+            ${s.place ? `<div style="font-size:12px;color:var(--text3);margin-top:1px">📍 ${s.place}</div>` : ''}
+            <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
+              ${s.cat ? catBadge(s.cat) : ''}
+              <span style="font-size:11px;color:var(--text3)">${att.length}명 참석</span>
+              <span style="font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
+              ${!isPast ? `<button class="kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
+                style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:13px;height:13px;vertical-align:middle"/></button>` : ''}
+            </div>
+          </div>
         </div>
       </div>
       <div class="sess-card-bd" id="sb-${s.id}">
@@ -1167,7 +1191,9 @@ document.getElementById('create-sess-btn').addEventListener('click', async funct
   const place = document.getElementById('pub-sess-place').value.trim();
   if (!name) { toast('일정 이름을 입력해주세요'); return; }
   if (!date) { toast('날짜를 선택해주세요'); return; }
-  await db.collection('sessions').add({ name, date, cat, time, endtime, place, attendees: [], createdAt: Date.now() }).then(async ref => {
+  if (!time) { toast('시작 시간을 선택해주세요'); return; }
+  const createdBy = myMemberName || '알 수 없음';
+  await db.collection('sessions').add({ name, date, cat, time, endtime, place, attendees: [], createdBy, createdAt: Date.now() }).then(async ref => {
     clearCache();
     document.getElementById('pub-sess-name').value = '';
     document.getElementById('pub-sess-time').value = '';
@@ -1404,7 +1430,7 @@ async function renderAdminSessList() {
       <div id="adm-group-${m}" style="display:${isOpen?'block':'none'}">
         ${monthSessions.map(s => `
         <div class="mi" style="padding:.65rem 1rem">
-          <div style="flex:1;min-width:0"><div class="mn">${s.cat ? catBadge(s.cat)+' ' : ''}${s.name}</div><div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}</div></div>
+          <div style="flex:1;min-width:0"><div class="mn">${s.cat ? catBadge(s.cat)+' ' : ''}${s.name}</div><div class="mm">${s.date} · ${(s.attendees||[]).length}명 · ${s.date<today?'종료':'예정'}${s.createdBy ? ' · 등록: '+s.createdBy.split('/')[0] : ''}</div></div>
           <button class="ebtn admin-sess-edit" data-id="${s.id}" style="margin-right:4px">수정</button>
           <button class="dbtn admin-sess-del" data-id="${s.id}">삭제</button>
         </div>`).join('')}
@@ -1602,6 +1628,13 @@ async function openEdit(id) {
   document.getElementById('edit-name').value = m.name;
   document.getElementById('edit-role').value = m.role;
   document.getElementById('edit-joined').value = m.joined || JOIN_DATES[m.name] || '';
+  const ej = m.joined || JOIN_DATES[m.name] || '';
+  const ejBtn = document.getElementById('edit-joined-btn');
+  if (ejBtn && ej.length === 6) {
+    const yy=ej.slice(0,2), mm=ej.slice(2,4), dd=ej.slice(4,6);
+    ejBtn.textContent = `📅 20${yy}년 ${parseInt(mm)}월 ${parseInt(dd)}일`;
+    ejBtn.style.color = 'var(--text)';
+  } else if (ejBtn) { ejBtn.textContent = '📅 가입날짜 선택'; ejBtn.style.color = 'var(--text3)'; }
   document.getElementById('edit-modal').classList.add('open');
 }
 
@@ -1985,11 +2018,18 @@ async function initDefaultMembers() {
 
 // ── 날짜 피커 ─────────────────────────────────────
 let calYear, calMonth;
-function openDatePicker() {
+let datePickerTarget = 'session'; // 'session' | 'nm-joined' | 'edit-joined'
+function openDatePicker() { datePickerTarget = 'session'; _openCalModal(); }
+function openDatePickerFor(target) { datePickerTarget = target; _openCalModal(); }
+function _openCalModal() {
   const today = getToday();
-  const cur = document.getElementById('pub-sess-date').value || today;
-  const [y, m] = cur.split('-').map(Number);
-  calYear = y; calMonth = m;
+  calYear = parseInt(today.split('-')[0]);
+  calMonth = parseInt(today.split('-')[1]);
+  // 기존 값 있으면 해당 월로
+  if (datePickerTarget === 'session') {
+    const cur = document.getElementById('pub-sess-date').value;
+    if (cur) { calYear = parseInt(cur.split('-')[0]); calMonth = parseInt(cur.split('-')[1]); }
+  }
   renderCal();
   document.getElementById('date-picker-modal').classList.add('open');
 }
@@ -2016,10 +2056,20 @@ function renderCal() {
   document.getElementById('cal-grid').innerHTML = html;
 }
 window.selectDate = function(dateStr) {
-  document.getElementById('pub-sess-date').value = dateStr;
-  const [y,m,d] = dateStr.split('-');
-  document.getElementById('pub-sess-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
-  document.getElementById('pub-sess-date-btn').style.color = 'var(--text)';
+  if (datePickerTarget === 'session') {
+    document.getElementById('pub-sess-date').value = dateStr;
+    const [y,m,d] = dateStr.split('-');
+    document.getElementById('pub-sess-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+    document.getElementById('pub-sess-date-btn').style.color = 'var(--text)';
+  } else {
+    // joined: YYMMDD 포맷으로 변환
+    const [y,m,d] = dateStr.split('-');
+    const yymmdd = y.slice(2) + m + d;
+    document.getElementById(datePickerTarget).value = yymmdd;
+    const btnId = datePickerTarget + '-btn';
+    const btn = document.getElementById(btnId);
+    if (btn) { btn.textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`; btn.style.color = 'var(--text)'; }
+  }
   closeModal('date-picker-modal');
 };
 
