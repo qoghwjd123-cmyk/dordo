@@ -2154,7 +2154,8 @@ window.confirmTimePicker = function() {
 };
 
 // 초기화
-initDefaultMembers();
+// initDefaultMembers는 최초 1회만 필요 - Firebase에 데이터 있으므로 호출 불필요
+// initDefaultMembers();
 async function showMemberSelectIfNeeded() {
   if (myMemberId) {
     // 이미 선택된 경우 → 반가움 토스트
