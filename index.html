@@ -294,6 +294,9 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 
   <!-- 멤버 목록 -->
   <div id="mtab-list">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem">
+      <button onclick="resetMyMember()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit">👤 내 정보 변경</button>
+    </div>
     <div class="sr">
       <div class="sb2"><div class="sn" id="m-total">-</div><div class="sl">전체</div></div>
       <div class="sb2"><div class="sn" id="m-act">-</div><div class="sl">5회 이상</div></div>
@@ -2228,6 +2231,14 @@ window.selectMyMember = function(id, name) {
       if (statTab) statTab.click();
     }, 100);
   }
+};
+
+window.resetMyMember = function() {
+  myMemberId = null;
+  myMemberName = null;
+  localStorage.removeItem(MY_MEMBER_KEY);
+  localStorage.removeItem(MY_NAME_KEY);
+  showMemberSelectIfNeeded();
 };
 
 showMemberSelectIfNeeded();
