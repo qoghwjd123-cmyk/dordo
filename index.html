@@ -138,7 +138,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <div style="font-size:13px;color:var(--text3)">아래에서 본인 이름을 선택해주세요</div>
     </div>
     <div id="member-select-list" style="max-height:55vh;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
-    <button onclick="document.getElementById('member-select-modal').classList.remove('open')"
+    <button onclick="closeModal('member-select-modal')"
       style="margin-top:1rem;width:100%;padding:.6rem;background:none;border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--text3);cursor:pointer;font-family:inherit">
       나중에 하기
     </button>
@@ -599,7 +599,7 @@ function showPrompt(msg) {
     _promptResolve = resolve;
     document.getElementById('prompt-msg').textContent = msg;
     document.getElementById('prompt-input').value = '';
-    document.getElementById('prompt-modal').classList.add('open');
+    openModal('prompt-modal');
     setTimeout(() => document.getElementById('prompt-input').focus(), 100);
   });
 }
@@ -714,11 +714,12 @@ function showConfirm(msg) {
   return new Promise(resolve => {
     _confirmResolve = resolve;
     document.getElementById('confirm-msg').textContent = msg;
-    document.getElementById('confirm-modal').classList.add('open');
+    openModal('confirm-modal');
   });
 }
 
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
 
 // ── 페이지 전환 ─────────────────────────────────
 function showPage(n, btn) {
@@ -1354,7 +1355,7 @@ async function openMemberDetail(memberId) {
         </div>
       </div>`).join('')
     : '<div class="empty">참석한 일정이 없어요</div>';
-  document.getElementById('member-detail-modal').classList.add('open');
+  openModal('member-detail-modal');
 }
 
 document.getElementById('md-close-btn').addEventListener('click', () => closeModal('member-detail-modal'));
@@ -1509,7 +1510,7 @@ async function openSessEdit(sessId) {
     </div>`;
   }).join('');
   seUpdateCount();
-  document.getElementById('sess-edit-modal').classList.add('open');
+  openModal('sess-edit-modal');
 }
 
 function seUpdateCount() {
@@ -1648,7 +1649,7 @@ async function openEdit(id) {
     ejBtn.textContent = `📅 20${yy}년 ${parseInt(mm)}월 ${parseInt(dd)}일`;
     ejBtn.style.color = 'var(--text)';
   } else if (ejBtn) { ejBtn.textContent = '📅 가입날짜 선택'; ejBtn.style.color = 'var(--text3)'; }
-  document.getElementById('edit-modal').classList.add('open');
+  openModal('edit-modal');
 }
 
 document.getElementById('edit-save-btn').addEventListener('click', async function() {
@@ -1665,7 +1666,7 @@ document.getElementById('edit-cancel-btn').addEventListener('click', () => close
 
 // ── 플로팅 로그인 ─────────────────────────────────
 document.getElementById('fab-btn').addEventListener('click', function() {
-  document.getElementById('fab-modal').classList.add('open');
+  openModal('fab-modal');
   if (isAdmin) {
     document.getElementById('fab-lock-wrap').style.display = 'none';
     document.getElementById('fab-done-wrap').style.display = 'block';
@@ -2044,7 +2045,7 @@ function _openCalModal() {
     if (cur) { calYear = parseInt(cur.split('-')[0]); calMonth = parseInt(cur.split('-')[1]); }
   }
   renderCal();
-  document.getElementById('date-picker-modal').classList.add('open');
+  openModal('date-picker-modal');
 }
 function changeCalMonth(d) { calMonth += d; if(calMonth>12){calMonth=1;calYear++;} if(calMonth<1){calMonth=12;calYear--;} renderCal(); }
 function renderCal() {
@@ -2100,7 +2101,7 @@ function openTimePicker(target) {
   } else { tpAmPm='오후'; tpHour=null; tpMin=null; }
   document.getElementById('time-picker-title').textContent = target==='start' ? '시작 시간' : '종료 시간';
   renderTimePicker();
-  document.getElementById('time-picker-modal').classList.add('open');
+  openModal('time-picker-modal');
 }
 function renderTimePicker() {
   // 오전/오후
@@ -2194,7 +2195,7 @@ async function showMemberSelectIfNeeded() {
   };
 
   listEl.innerHTML = renderGroup(mates, '🔥 운영진') + renderGroup(mems, '👥 멤버');
-  modal.classList.add('open');
+  openModal('member-select-modal');
 }
 
 window.selectMyMember = function(id, name) {
@@ -2202,7 +2203,7 @@ window.selectMyMember = function(id, name) {
   myMemberName = name;
   localStorage.setItem(MY_MEMBER_KEY, id);
   localStorage.setItem(MY_NAME_KEY, name);
-  document.getElementById('member-select-modal').classList.remove('open');
+  closeModal('member-select-modal');
   toast(`${name.split('/')[0]}님, 환영해요! 🎉`);
 
   // URL 해시에 일정ID 있으면 해당 일정 탭+카드 오픈
