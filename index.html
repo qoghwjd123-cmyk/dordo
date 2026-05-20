@@ -12,6 +12,7 @@
 <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 :root{
@@ -40,7 +41,8 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .bs{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .mi{display:flex;align-items:center;gap:10px;padding:.65rem 0;border-bottom:1px solid var(--border)}
 .mi:last-child{border-bottom:none}
-.av{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.av{width:40px;height:40px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .mn{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mm{font-size:12px;color:var(--text3);margin-top:1px}
 .gp{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;background:var(--surface2);color:var(--text3);white-space:nowrap;flex-shrink:0}
@@ -449,7 +451,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
       <div style="display:flex;align-items:center;gap:10px">
-        <div id="md-emoji" style="font-size:32px"></div>
+        <div style="position:relative">
+          <div id="md-emoji" style="font-size:32px;width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--surface2);display:flex;align-items:center;justify-content:center"></div>
+          <input type="file" id="md-photo-input" accept="image/*" style="display:none"/>
+          <button id="md-photo-btn" style="display:none;position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:11px;color:#fff;line-height:1;padding:0" onclick="document.getElementById('md-photo-input').click()">📷</button>
+        </div>
         <div>
           <div id="md-name" style="font-size:16px;font-weight:700"></div>
           <div id="md-stats" style="font-size:13px;color:var(--text3)"></div>
@@ -599,6 +605,7 @@ firebase.initializeApp({
   appId: "1:616591115480:web:ade08d721401f9f6ec03ad"
 });
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 const ADMIN_PW = "dordo2023";
 const DELETE_PW = "0401";
@@ -672,6 +679,34 @@ function catBadge(cat) {
   };
   const [cls, label] = map[cat] || ['etc', cat];
   return '<span class="cat-badge '+cls+'">'+label+'</span>';
+}
+
+// 이미지 압축 (Canvas 리사이즈)
+function compressImage(file, maxSize) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > maxSize) { h = h*maxSize/w; w = maxSize; } }
+        else { if (h > maxSize) { w = w*maxSize/h; h = maxSize; } }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.8);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+const DEFAULT_AVATAR = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23e0e0e0'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23bdbdbd'/%3E%3Cellipse cx='20' cy='35' rx='12' ry='9' fill='%23bdbdbd'/%3E%3C/svg%3E`;
+
+function avatarHtml(m, size=40) {
+  const src = m.photoURL || DEFAULT_AVATAR;
+  return `<img src="${src}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;" onerror="this.src='${DEFAULT_AVATAR}'"/>`;
 }
 
 function grade(m, pastCount) {
@@ -774,8 +809,8 @@ async function renderMPage() {
       : fmtJoined(joined);
     const isMe = m.id === myMemberId;
     return `<div class="mi${isMe?' is-me':''}" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
-      <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div>
+      <div class="av">${avatarHtml(m)}</div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name} <span style="font-size:14px">${g.e}</span>${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div>
       ${m.statusMsg?`<div style="font-size:11px;color:var(--accent2);margin-top:2px">${m.statusMsg}</div>`:''}</div>
       <span class="gp ${isMate?'mate':pastCount>=1?'green':''}">${rightLabel||g.n}</span>
     </div>`;
@@ -1038,7 +1073,7 @@ async function loadSessMemberList(sessId) {
     const isMe = m.id === myMemberId;
     if (isMe) return ''; // 내 카드는 위에서 이미 표시
     return `<div class="ci-mi" id="row-${sessId}-${m.id}">
-      <div class="av">${g.e}</div>
+      <div class="av">${avatarHtml(m)}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}</div>
         <div class="mm" style="color:${isAtt?'var(--accent)':isAbsent?'#991b1b':'var(--text3)'}">${isAtt?'✓ 참석':isAbsent?'✗ 불참':'미응답'}</div>
@@ -1322,7 +1357,7 @@ async function renderAttBoard() {
     const isMe = m.id === myMemberId;
     const statusMsg = m.statusMsg || '';
     return `<div class="mi${isMe?' is-me':''}" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
-      <div class="av">${g.e}</div>
+      <div class="av">${avatarHtml(m)}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div>
         ${m.hideStats
@@ -1393,9 +1428,34 @@ async function openMemberDetail(memberId) {
   const pastCount = attended.length;
   const g = grade(m, pastCount);
 
-  document.getElementById('md-emoji').textContent = g.e;
+  const mdEmoji = document.getElementById('md-emoji');
+  mdEmoji.innerHTML = avatarHtml(m, 56);
   document.getElementById('md-name').textContent = m.name;
-  document.getElementById('md-stats').textContent = `총 ${attended.length}회 참석`;
+  document.getElementById('md-stats').textContent = `총 ${attended.length}회 참석 ${g.e}`;
+
+  // 본인이면 사진 업로드 버튼 표시
+  const photoBtn = document.getElementById('md-photo-btn');
+  const photoInput = document.getElementById('md-photo-input');
+  if (memberId === myMemberId) {
+    photoBtn.style.display = 'block';
+    photoInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      toast('업로드 중...');
+      // Canvas로 압축 (최대 300px)
+      const compressed = await compressImage(file, 300);
+      const ref = storage.ref(`profiles/${memberId}.jpg`);
+      await ref.put(compressed);
+      const url = await ref.getDownloadURL();
+      await db.collection('members').doc(memberId).update({ photoURL: url });
+      clearCache();
+      mdEmoji.innerHTML = avatarHtml({photoURL: url}, 56);
+      toast('프로필 사진이 변경됐어요! 📷');
+      renderMPage();
+    };
+  } else {
+    photoBtn.style.display = 'none';
+  }
   document.getElementById('md-sessions').innerHTML = attended.length
     ? attended.map(s => `
       <div class="hi">
@@ -1574,7 +1634,7 @@ async function openSessEdit(sessId) {
         <span style="color:#fff;font-size:14px;font-weight:700">${checked?'✓':''}</span>
       </div>
       <input type="checkbox" id="se-cb-${m.id}" ${checked?'checked':''} style="display:none"/>
-      <div class="av">${g.e}</div>
+      <div class="av">${avatarHtml(m)}</div>
       <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.count}회 참석</div></div>
     </div>`;
   }).join('');
@@ -1647,7 +1707,7 @@ async function renderAMList() {
     h += inactive.map(m => {
       const g = grade(m);
       return `<div class="mi" style="opacity:.5">
-        <div class="av">${g.e}</div>
+        <div class="av">${avatarHtml(m)}</div>
         <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">내보낸 멤버</div></div>
         <button class="ebtn admin-restore-btn" data-id="${m.id}" style="margin-right:4px">복귀</button>
         <button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button>
@@ -1660,7 +1720,7 @@ async function renderAMList() {
 function amRow(m) {
   const g = grade(m);
   const joined = m.joined || JOIN_DATES[m.name] || '';
-  return `<div class="mi"><div class="av">${g.e}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진 · '+m.count+'회':m.count+'회 · '+fmtJoined(joined)}</div></div><button class="ebtn admin-edit-btn" data-id="${m.id}" style="margin-right:4px">수정</button><button class="ebtn admin-kick-btn" data-id="${m.id}" data-name="${m.name}" style="margin-right:4px;background:#fff3e0;color:#e65100;border-color:#e65100">내보내기</button><button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button></div>`;
+  return `<div class="mi"><div class="av">${avatarHtml(m)}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진 · '+m.count+'회':m.count+'회 · '+fmtJoined(joined)}</div></div><button class="ebtn admin-edit-btn" data-id="${m.id}" style="margin-right:4px">수정</button><button class="ebtn admin-kick-btn" data-id="${m.id}" data-name="${m.name}" style="margin-right:4px;background:#fff3e0;color:#e65100;border-color:#e65100">내보내기</button><button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button></div>`;
 }
 
 document.getElementById('admin-mlist').addEventListener('click', async function(e) {
