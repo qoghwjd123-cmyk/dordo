@@ -90,11 +90,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 .sess-card-hd{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer}
 .sess-card-bd{padding:0 1.25rem 1rem;display:none}
 .sess-card-bd.open{display:block}
-/* 카드 열렸을 때 날짜 숫자 압축 */
-.sess-card-bd.open ~ .sess-card-hd .sess-date-num,
-.sess-card:has(.sess-card-bd.open) .sess-date-num{font-size:16px !important;font-weight:700 !important}
-.sess-card:has(.sess-card-bd.open) .sess-day-label{display:none !important}
-.sess-card:has(.sess-card-bd.open) .sess-vbar{min-height:20px !important}
 .att-chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--surface2);border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:var(--text2)}
 .att-chip.can-undo{cursor:pointer}
 .att-chip.can-undo:hover{background:#fee2e2;color:#991b1b}
@@ -924,7 +919,7 @@ function renderMonthSessions(sessions, members, today) {
             ${s.place ? `<div style="font-size:12px;color:var(--text3);margin-top:1px">📍 ${s.place}</div>` : ''}
             <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
               ${s.cat ? catBadge(s.cat) : ''}
-              <span style="font-size:11px;color:var(--text3)">${att.length}명 참석</span>
+              <span class="sess-att-count" style="font-size:11px;color:var(--text3)">${att.length}명 참석</span>
             </div>
           </div>
           <!-- 예정/카톡 오른쪽 -->
@@ -970,6 +965,20 @@ async function toggleSessCard(sessId, isPast) {
   const body = document.getElementById('sb-' + sessId);
   const isOpening = !body.classList.contains('open');
   body.classList.toggle('open');
+
+  const dateEl = document.querySelector(`#sc-${sessId} .sess-date-num`);
+  const dayEl = document.querySelector(`#sc-${sessId} .sess-day-label`);
+  const barEl = document.querySelector(`#sc-${sessId} .sess-vbar`);
+  if (isOpening) {
+    if (dateEl) { dateEl.style.fontSize = '16px'; dateEl.style.fontWeight = '700'; }
+    if (dayEl) dayEl.style.display = 'none';
+    if (barEl) barEl.style.minHeight = '20px';
+  } else {
+    if (dateEl) { dateEl.style.fontSize = '26px'; dateEl.style.fontWeight = '900'; }
+    if (dayEl) dayEl.style.display = '';
+    if (barEl) barEl.style.minHeight = '44px';
+  }
+
   if (isOpening && !isPast) await loadSessMemberList(sessId);
 }
 
@@ -1120,9 +1129,20 @@ async function refreshChipsAndList(sessId) {
   const att = sess.attendees || [];
   const absent = sess.absentees || [];
 
-  // 헤더 업데이트
-  const hd = document.querySelector(`#sc-${sessId} .sess-card-hd div div:last-child`);
-  if (hd) hd.innerHTML = `${sess.date} · ${att.length}명 참석${sess.cat ? ' '+catBadge(sess.cat) : ''}`;
+  // 참석수 업데이트
+  const attCountEl = document.querySelector(`#sc-${sessId} .sess-att-count`);
+  if (attCountEl) attCountEl.textContent = `${att.length}명 참석`;
+
+  // 카드 열린 상태면 날짜 압축 유지
+  const body = document.getElementById('sb-' + sessId);
+  const dateEl = document.querySelector(`#sc-${sessId} .sess-date-num`);
+  const dayEl = document.querySelector(`#sc-${sessId} .sess-day-label`);
+  const barEl = document.querySelector(`#sc-${sessId} .sess-vbar`);
+  if (body && body.classList.contains('open')) {
+    if (dateEl) { dateEl.style.fontSize = '16px'; dateEl.style.fontWeight = '700'; }
+    if (dayEl) dayEl.style.display = 'none';
+    if (barEl) barEl.style.minHeight = '20px';
+  }
 
   // chips 영역: 참석/불참 두 줄
   const attChips = att.map(a => {
