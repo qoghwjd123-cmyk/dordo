@@ -452,6 +452,13 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       </div>
       <button onclick="closeModal('member-detail-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1;padding:0">✕</button>
     </div>
+    <div id="md-status-area" style="display:none;margin-bottom:1rem">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.05em;margin-bottom:6px">💬 상태 메시지</div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="md-status-input" placeholder="상태 메시지 입력..." style="margin:0;flex:1;font-size:13px;padding:.65rem .875rem"/>
+        <button id="md-status-save" style="padding:.65rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">저장</button>
+      </div>
+    </div>
     <div class="ct">참석한 모임</div>
     <div id="md-sessions" style="max-height:50vh;overflow-y:auto"></div>
     <button class="btn bs" style="margin-top:.75rem" id="md-close-btn">닫기</button>
@@ -1367,6 +1374,25 @@ async function openMemberDetail(memberId) {
         </div>
       </div>`).join('')
     : '<div class="empty">참석한 일정이 없어요</div>';
+
+  // 본인이면 상태메시지 입력란 표시
+  const statusArea = document.getElementById('md-status-area');
+  const statusInput = document.getElementById('md-status-input');
+  const statusSave = document.getElementById('md-status-save');
+  if (memberId === myMemberId) {
+    statusArea.style.display = 'block';
+    statusInput.value = m.statusMsg || '';
+    statusSave.onclick = async () => {
+      await db.collection('members').doc(memberId).update({ statusMsg: statusInput.value.trim() });
+      clearCache();
+      toast('상태 메시지 저장됐어요!');
+      closeModal('member-detail-modal');
+      renderMPage();
+    };
+  } else {
+    statusArea.style.display = 'none';
+  }
+
   openModal('member-detail-modal');
 }
 
