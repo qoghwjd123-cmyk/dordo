@@ -251,7 +251,14 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <input type="hidden" id="edit-joined"/>
     <div class="sl2">상태 메시지 (선택)</div>
     <input type="text" id="edit-statusMsg" placeholder=""/>
-    <div style="font-size:11px;color:var(--text3);margin:-8px 0 10px">입력 시 출석부 게이지 대신 표시돼요</div>
+    <div style="font-size:11px;color:var(--text3);margin:-8px 0 10px">멤버 목록에 표시돼요</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--rs)">
+      <input type="checkbox" id="edit-hideStats" style="width:18px;height:18px;cursor:pointer;margin:0;flex-shrink:0"/>
+      <div>
+        <div style="font-size:13px;font-weight:600">출석통계 비공개</div>
+        <div style="font-size:11px;color:var(--text3)">체크 시 출석부에서 게이지/횟수 숨김</div>
+      </div>
+    </div>
     <div style="display:flex;gap:.5rem;margin-top:.5rem">
       <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="edit-save-btn">저장</button>
       <button class="btn bs" style="flex:1;margin:0;padding:.75rem" id="edit-cancel-btn">취소</button>
@@ -765,7 +772,9 @@ async function renderMPage() {
     const isMe = m.id === myMemberId;
     return `<div class="mi${isMe?' is-me':''}" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
       <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div><div class="mm">${isMate?'운영진':pastCount+'회 참석'}</div>${m.statusMsg?`<div style="font-size:11px;color:var(--accent2);margin-top:2px">${m.statusMsg}</div>`:''}</div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div>
+      <div class="mm">${m.statusMsg ? '' : (isMate?'운영진':pastCount+'회 참석')}</div>
+      ${m.statusMsg?`<div style="font-size:11px;color:var(--accent2);margin-top:2px">${m.statusMsg}</div>`:''}</div>
       <span class="gp ${isMate?'mate':pastCount>=1?'green':''}">${rightLabel||g.n}</span>
     </div>`;
   }).join('') || '<div class="empty">멤버가 없어요</div>';
@@ -1314,15 +1323,15 @@ async function renderAttBoard() {
       <div class="av">${g.e}</div>
       <div style="flex:1;min-width:0">
         <div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div>
-        ${statusMsg
-          ? `<div style="font-size:12px;color:var(--accent2);margin-top:4px;font-weight:600">${statusMsg}</div>`
+        ${m.hideStats
+          ? `<div style="font-size:12px;color:var(--accent2);margin-top:4px;font-weight:600">${m.statusMsg||'비공개'}</div>`
           : `<div style="display:flex;align-items:center;gap:6px;margin-top:4px">
               <div class="att-bar-bg" style="flex:1"><div class="att-bar-fill" style="width:${pct}%"></div></div>
               <span style="font-size:11px;color:var(--text3)">${cnt}/${total}</span>
             </div>`
         }
       </div>
-      ${statusMsg ? '' : `<span class="gp ${cnt>0?'green':''}" style="margin-left:4px">${pct}%</span>`}
+      ${m.hideStats ? '' : `<span class="gp ${cnt>0?'green':''}" style="margin-left:4px">${pct}%</span>`}
     </div>`;
   }).join('');
 }
@@ -1700,6 +1709,7 @@ async function openEdit(id) {
   document.getElementById('edit-name').value = m.name;
   document.getElementById('edit-role').value = m.role;
   document.getElementById('edit-statusMsg').value = m.statusMsg || '';
+  document.getElementById('edit-hideStats').checked = m.hideStats || false;
   document.getElementById('edit-joined').value = m.joined || JOIN_DATES[m.name] || '';
   const ej = m.joined || JOIN_DATES[m.name] || '';
   const ejBtn = document.getElementById('edit-joined-btn');
@@ -1718,6 +1728,7 @@ document.getElementById('edit-save-btn').addEventListener('click', async functio
     role: document.getElementById('edit-role').value,
     joined: document.getElementById('edit-joined').value.trim(),
     statusMsg: document.getElementById('edit-statusMsg').value.trim(),
+    hideStats: document.getElementById('edit-hideStats').checked,
   });
   closeModal('edit-modal'); clearCache(); renderAMList(); renderMPage(); toast('수정됐어요!');
 });
