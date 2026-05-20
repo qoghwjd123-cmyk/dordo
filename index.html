@@ -252,8 +252,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div class="sl2">상태 메시지 (선택)</div>
     <input type="text" id="edit-statusMsg" placeholder=""/>
     <div style="font-size:11px;color:var(--text3);margin:-8px 0 10px">멤버 목록에 표시돼요</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--rs)">
-      <input type="checkbox" id="edit-hideStats" style="width:18px;height:18px;cursor:pointer;margin:0;flex-shrink:0"/>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;padding:.75rem;background:var(--surface2);border-radius:var(--rs);cursor:pointer" onclick="document.getElementById('edit-hideStats').checked=!document.getElementById('edit-hideStats').checked;this.querySelector('.toggle-knob').style.transform=document.getElementById('edit-hideStats').checked?'translateX(20px)':'translateX(0)';this.querySelector('.toggle-track').style.background=document.getElementById('edit-hideStats').checked?'var(--accent)':'#ccc'">
+      <input type="checkbox" id="edit-hideStats" style="display:none"/>
+      <div class="toggle-track" style="width:44px;height:24px;border-radius:12px;background:#ccc;position:relative;flex-shrink:0;transition:background .2s">
+        <div class="toggle-knob" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+      </div>
       <div>
         <div style="font-size:13px;font-weight:600">출석통계 비공개</div>
         <div style="font-size:11px;color:var(--text3)">체크 시 출석부에서 게이지/횟수 숨김</div>
@@ -1708,7 +1711,12 @@ async function openEdit(id) {
   document.getElementById('edit-name').value = m.name;
   document.getElementById('edit-role').value = m.role;
   document.getElementById('edit-statusMsg').value = m.statusMsg || '';
-  document.getElementById('edit-hideStats').checked = m.hideStats || false;
+  const hideStats = m.hideStats || false;
+  document.getElementById('edit-hideStats').checked = hideStats;
+  const track = document.querySelector('#edit-modal .toggle-track');
+  const knob = document.querySelector('#edit-modal .toggle-knob');
+  if (track) track.style.background = hideStats ? 'var(--accent)' : '#ccc';
+  if (knob) knob.style.transform = hideStats ? 'translateX(20px)' : 'translateX(0)';
   document.getElementById('edit-joined').value = m.joined || JOIN_DATES[m.name] || '';
   const ej = m.joined || JOIN_DATES[m.name] || '';
   const ejBtn = document.getElementById('edit-joined-btn');
