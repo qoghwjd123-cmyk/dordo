@@ -763,7 +763,7 @@ async function renderMPage() {
     const isMe = m.id === myMemberId;
     return `<div class="mi${isMe?' is-me':''}" style="cursor:pointer" onclick="openMemberDetail('${m.id}')">
       <div class="av">${g.e}</div>
-      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div><div class="mm">${isMate?'운영진':pastCount+'회 참석'}</div></div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}${isMe?' <span style="font-size:11px;background:#dfff00;color:#1a1a18;border-radius:20px;padding:1px 7px;font-weight:700">나</span>':''}</div><div class="mm">${isMate?'운영진':pastCount+'회 참석'}</div>${m.statusMsg?`<div style="font-size:11px;color:var(--accent2);margin-top:2px">${m.statusMsg}</div>`:''}</div>
       <span class="gp ${isMate?'mate':pastCount>=1?'green':''}">${rightLabel||g.n}</span>
     </div>`;
   }).join('') || '<div class="empty">멤버가 없어요</div>';
