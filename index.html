@@ -1286,7 +1286,7 @@ async function renderCheckinTab() { await renderAttBoard(); }
 async function renderAttBoard() {
   const [members, sessions] = await Promise.all([getMembers(), getAllSessions()]);
   const today = getToday();
-  let fs = sessions.filter(s => s.date <= today);
+  let fs = sessions.filter(s => s.date < today);
   if (ciFilter === 'year')   fs = fs.filter(s => s.date.startsWith(today.slice(0,4)));
   if (ciFilter === 'month')  fs = fs.filter(s => s.date.startsWith(today.slice(0,7)));
   if (ciFilter === 'custom') {
@@ -1957,7 +1957,7 @@ async function renderChampion() {
   const thisMonth = today.slice(0,7);
   const now = new Date();
   const monthLabel = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
-  const fs = sessions.filter(s => s.date <= today && s.date.startsWith(thisMonth));
+  const fs = sessions.filter(s => s.date < today && s.date.startsWith(thisMonth));
   const countMap = {};
   for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0)+1;
   const ranked = members
