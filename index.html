@@ -1614,7 +1614,7 @@ async function openSessEdit(sessId) {
   currentSessEditId = sessId;
   const [members, sessSnap] = await Promise.all([getMembers(), db.collection('sessions').doc(sessId).get()]);
   const sess = sessSnap.data();
-  document.getElementById('se-sess-info').textContent = `${sess.date}`;
+  document.getElementById('se-sess-info').innerHTML = `${sess.date}${sess.createdBy ? ' · <span style="font-size:12px;color:var(--text3)">등록: '+sess.createdBy.split('/')[0]+'</span>' : ''}`;
   document.getElementById('se-name').value = sess.name || '';
   document.getElementById('se-cat').value = sess.cat || '기타';
   document.getElementById('se-time').value = sess.time || '';
