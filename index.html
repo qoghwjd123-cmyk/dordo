@@ -446,6 +446,23 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 </div>
 
+<!-- 불참 사유 모달 -->
+<div class="mb-bg" id="absent-reason-modal" style="align-items:center">
+  <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
+    <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem">이번엔 불참 😢</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem;text-align:center">사유 선택 (선택사항)</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:.75rem">
+      <button onclick="selectAbsentReason('업무')" class="reason-btn" style="padding:.6rem 1rem;border-radius:20px;border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--surface2);color:var(--text)">💼 업무</button>
+      <button onclick="selectAbsentReason('건강')" class="reason-btn" style="padding:.6rem 1rem;border-radius:20px;border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--surface2);color:var(--text)">🤒 건강</button>
+      <button onclick="selectAbsentReason('개인 일정')" class="reason-btn" style="padding:.6rem 1rem;border-radius:20px;border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--surface2);color:var(--text)">📅 개인 일정</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:.5rem">
+      <button onclick="confirmAbsent()" style="flex:2;padding:.7rem;background:#991b1b;color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">불참 확인</button>
+      <button onclick="closeModal('absent-reason-modal')" style="flex:1;padding:.7rem;background:var(--surface2);color:var(--text3);border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">취소</button>
+    </div>
+  </div>
+</div>
+
 <!-- 멤버 상세 모달 -->
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
@@ -1146,27 +1163,62 @@ window.doSingleAttendance = async function(sessId, memberId, isAlready) {
   await refreshChipsAndList(sessId);
 };
 
+let _absentSessId = null, _absentMemberId = null, _absentReason = '';
+
+window.selectAbsentReason = function(reason) {
+  _absentReason = _absentReason === reason ? '' : reason;
+  document.querySelectorAll('.reason-btn').forEach(btn => {
+    const isSelected = btn.textContent.includes(reason) && _absentReason === reason;
+    btn.style.background = isSelected ? '#fee2e2' : 'var(--surface2)';
+    btn.style.borderColor = isSelected ? '#991b1b' : 'var(--border)';
+    btn.style.color = isSelected ? '#991b1b' : 'var(--text)';
+  });
+};
+
+window.confirmAbsent = async function() {
+  const sessId = _absentSessId, memberId = _absentMemberId;
+  if (!sessId || !memberId) return;
+  closeModal('absent-reason-modal');
+  const sessRef = db.collection('sessions').doc(sessId);
+  const sessSnap = await sessRef.get();
+  const sess = sessSnap.data();
+  const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
+  const absentees = sess.absentees || [];
+  const existing = absentees.find(a => typeof a === 'object' ? a.memberId === memberId : a === memberId);
+  let newAbsent;
+  if (existing) {
+    newAbsent = absentees.map(a => (typeof a === 'object' ? a.memberId : a) === memberId
+      ? { memberId, reason: _absentReason } : a);
+  } else {
+    newAbsent = [...absentees.filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId), { memberId, reason: _absentReason }];
+  }
+  await sessRef.update({ attendees: newAtt, absentees: newAbsent });
+  clearCache(); toast('불참 처리됐어요');
+  await refreshChipsAndList(sessId);
+};
+
 window.undoSingleAttendance = async function(sessId, memberId, isAlready) {
   const sessRef = db.collection('sessions').doc(sessId);
   const sessSnap = await sessRef.get();
   const sess = sessSnap.data();
   if (isAlready) {
     // 이미 불참 → 미응답으로
-    const newAbsent = (sess.absentees||[]).filter(id => id !== memberId);
+    const newAbsent = (sess.absentees||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
     await sessRef.update({ absentees: newAbsent });
     clearCache(); toast('미응답으로 변경됐어요');
+    await refreshChipsAndList(sessId);
   } else {
-    // 참석 취소 + 불참 추가
-    const ok = await showConfirm('불참 처리할까요?');
-    if (!ok) return;
-    const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
-    const newAbsent = [...new Set([...(sess.absentees||[]), memberId])];
-    await sessRef.update({ attendees: newAtt, absentees: newAbsent });
-    const mSnap = await db.collection('members').doc(memberId).get();
-    if (mSnap.exists) { const c = mSnap.data().count||0; if(c>0) await db.collection('members').doc(memberId).update({count:c-1}); }
-    clearCache(); toast('불참 처리됐어요');
+    // 사유 모달 열기
+    _absentSessId = sessId;
+    _absentMemberId = memberId;
+    _absentReason = '';
+    document.querySelectorAll('.reason-btn').forEach(btn => {
+      btn.style.background = 'var(--surface2)';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text)';
+    });
+    openModal('absent-reason-modal');
   }
-  await refreshChipsAndList(sessId);
 };
 
 async function refreshChipsAndList(sessId) {
@@ -1199,10 +1251,15 @@ async function refreshChipsAndList(sessId) {
       ${grade(m).e} ${m.name}${isAdmin?' ✕':''}
     </span>`;
   }).join('');
-  const absentChips = absent.map(mid => {
+  const absentChips = absent.map(a => {
+    const mid = typeof a === 'object' ? a.memberId : a;
+    const reason = typeof a === 'object' ? a.reason : '';
     const m = members.find(m => m.id === mid);
     if (!m) return '';
-    return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;background:#fee2e2;border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:#991b1b">${grade(m).e} ${m.name}</span>`;
+    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;color:#991b1b">
+      <span>${grade(m).e} ${m.name}</span>
+      ${reason ? `<span style="font-size:11px;color:#991b1b;opacity:.7">· ${reason}</span>` : ''}
+    </div>`;
   }).join('');
 
   const ca = document.querySelector(`#sb-${sessId} .chips-area`);
