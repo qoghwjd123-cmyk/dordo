@@ -446,6 +446,45 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 </div>
 
+<!-- 본인 일정 수정 모달 -->
+<div class="mb-bg" id="my-sess-edit-modal" style="align-items:center">
+  <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
+    <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
+    <input type="hidden" id="mse-sess-id"/>
+    <input type="hidden" id="mse-orig-date"/>
+    <div class="sl2">날짜</div>
+    <button type="button" id="mse-date-btn" onclick="openDatePickerFor('mse-date')"
+      style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text);text-align:left;cursor:pointer;margin-bottom:.75rem">
+      📅 날짜 선택
+    </button>
+    <input type="hidden" id="mse-date"/>
+    <div style="display:flex;gap:8px;margin-bottom:.75rem">
+      <div style="flex:1">
+        <div class="sl2">시작 시간</div>
+        <button type="button" id="mse-time-btn" onclick="openTimePickerFor('mse-start')"
+          style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer">
+          ⏰ 시작
+        </button>
+        <input type="hidden" id="mse-time"/>
+      </div>
+      <div style="flex:1">
+        <div class="sl2">종료 시간</div>
+        <button type="button" id="mse-endtime-btn" onclick="openTimePickerFor('mse-end')"
+          style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer">
+          ⏰ 종료
+        </button>
+        <input type="hidden" id="mse-endtime"/>
+      </div>
+    </div>
+    <div class="sl2">장소 (선택)</div>
+    <input type="text" id="mse-place" placeholder="장소"/>
+    <div style="display:flex;gap:8px;margin-top:.5rem">
+      <button onclick="saveMySessionEdit()" style="flex:2;padding:.75rem;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">저장</button>
+      <button onclick="closeModal('my-sess-edit-modal')" style="flex:1;padding:.75rem;background:var(--surface2);color:var(--text3);border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">취소</button>
+    </div>
+  </div>
+</div>
+
 <!-- 불참 사유 모달 -->
 <div class="mb-bg" id="absent-reason-modal" style="align-items:center">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
@@ -991,6 +1030,7 @@ function renderMonthSessions(sessions, members, today) {
             <span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:${isPast?'var(--surface2)':'var(--accent-l)'};color:${isPast?'var(--text3)':'var(--accent)'}">${isPast?'종료':'예정'}</span>
             ${!isPast ? `<button class="kakao-share-sess-btn" data-sess="${s.id}" data-name="${s.name}" data-date="${s.date}" data-cat="${s.cat||''}"
               style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:13px;height:13px;vertical-align:middle"/></button>` : ''}
+            ${!isPast && myMemberName && s.createdBy === myMemberName ? `<button onclick="openMySessionEdit('${s.id}')" style="background:none;border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;font-family:inherit">✏️ 수정</button>` : ''}
           </div>
         </div>
       </div>
@@ -2351,6 +2391,103 @@ window.confirmTimePicker = function() {
   document.getElementById(btnId).textContent = `⏰ ${label}`;
   document.getElementById(btnId).style.color = 'var(--text)';
   closeModal('time-picker-modal');
+};
+
+// ── 본인 일정 수정 ─────────────────────────────────
+window.openMySessionEdit = async function(sessId) {
+  const snap = await db.collection('sessions').doc(sessId).get();
+  const s = snap.data();
+  document.getElementById('mse-sess-id').value = sessId;
+  document.getElementById('mse-orig-date').value = s.date || '';
+  document.getElementById('mse-date').value = s.date || '';
+  document.getElementById('mse-time').value = s.time || '';
+  document.getElementById('mse-endtime').value = s.endtime || '';
+  document.getElementById('mse-place').value = s.place || '';
+  if (s.date) {
+    const [y,m,d] = s.date.split('-');
+    document.getElementById('mse-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+    document.getElementById('mse-date-btn').style.color = 'var(--text)';
+  }
+  const fmtTimeBtn = (t, btnId, fallback) => {
+    const btn = document.getElementById(btnId);
+    if (!t) { btn.textContent = fallback; btn.style.color = 'var(--text3)'; return; }
+    const [h, min] = t.split(':').map(Number);
+    const ampm = h < 12 ? '오전' : '오후';
+    const hh = h === 0 ? 12 : h > 12 ? h-12 : h;
+    btn.textContent = `⏰ ${ampm} ${hh}:${String(min).padStart(2,'0')}`;
+    btn.style.color = 'var(--text)';
+  };
+  fmtTimeBtn(s.time, 'mse-time-btn', '⏰ 시작');
+  fmtTimeBtn(s.endtime, 'mse-endtime-btn', '⏰ 종료');
+  openModal('my-sess-edit-modal');
+};
+
+window.openTimePickerFor = function(target) {
+  const fieldMap = { 'mse-start': 'mse-time', 'mse-end': 'mse-endtime' };
+  const btnMap = { 'mse-start': 'mse-time-btn', 'mse-end': 'mse-endtime-btn' };
+  tpTarget = target;
+  const val = document.getElementById(fieldMap[target])?.value || '';
+  if (val) {
+    const [h, min] = val.split(':').map(Number);
+    tpAmPm = h < 12 ? '오전' : '오후';
+    tpHour = h === 0 ? 12 : h > 12 ? h-12 : h;
+    tpMin = min;
+  } else { tpAmPm='오후'; tpHour=null; tpMin=null; }
+  document.getElementById('time-picker-title').textContent = target === 'mse-start' ? '시작 시간' : '종료 시간';
+  window._tpCustomTarget = { field: fieldMap[target], btn: btnMap[target] };
+  renderTimePicker();
+  openModal('time-picker-modal');
+};
+
+const _origConfirmTimePicker = window.confirmTimePicker;
+window.confirmTimePicker = function() {
+  if (window._tpCustomTarget) {
+    if (tpHour===null || tpMin===null) { toast('시간을 선택해주세요'); return; }
+    let h24 = tpHour;
+    if (tpAmPm==='오전' && tpHour===12) h24=0;
+    if (tpAmPm==='오후' && tpHour!==12) h24=tpHour+12;
+    const timeStr = `${String(h24).padStart(2,'0')}:${String(tpMin).padStart(2,'0')}`;
+    const label = `⏰ ${tpAmPm} ${tpHour}:${String(tpMin).padStart(2,'0')}`;
+    document.getElementById(window._tpCustomTarget.field).value = timeStr;
+    const btn = document.getElementById(window._tpCustomTarget.btn);
+    if (btn) { btn.textContent = label; btn.style.color = 'var(--text)'; }
+    window._tpCustomTarget = null;
+    closeModal('time-picker-modal');
+  } else { _origConfirmTimePicker(); }
+};
+
+window.saveMySessionEdit = async function() {
+  const sessId = document.getElementById('mse-sess-id').value;
+  const origDate = document.getElementById('mse-orig-date').value;
+  const newDate = document.getElementById('mse-date').value;
+  const newTime = document.getElementById('mse-time').value;
+  const newEndtime = document.getElementById('mse-endtime').value;
+  const newPlace = document.getElementById('mse-place').value.trim();
+  if (!newDate) { toast('날짜를 선택해주세요'); return; }
+  if (!newTime) { toast('시작 시간을 선택해주세요'); return; }
+  const dateChanged = newDate !== origDate;
+  if (dateChanged) {
+    const ok = await showConfirm('날짜가 변경되면 참석자가 초기화됩니다.\n계속할까요?');
+    if (!ok) return;
+    await db.collection('sessions').doc(sessId).update({ date: newDate, time: newTime, endtime: newEndtime, place: newPlace, attendees: [], absentees: [] });
+  } else {
+    await db.collection('sessions').doc(sessId).update({ time: newTime, endtime: newEndtime, place: newPlace });
+  }
+  closeModal('my-sess-edit-modal');
+  clearCache();
+  toast(dateChanged ? '일정 수정됐어요 (참석자 초기화)' : '일정 수정됐어요!');
+  renderMonthSessions();
+};
+
+const _origSelectDate = window.selectDate;
+window.selectDate = function(dateStr) {
+  if (datePickerTarget === 'mse-date') {
+    document.getElementById('mse-date').value = dateStr;
+    const [y,m,d] = dateStr.split('-');
+    document.getElementById('mse-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+    document.getElementById('mse-date-btn').style.color = 'var(--text)';
+    closeModal('date-picker-modal');
+  } else { _origSelectDate(dateStr); }
 };
 
 // 초기화
