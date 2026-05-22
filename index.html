@@ -1322,9 +1322,9 @@ async function refreshChipsAndList(sessId) {
     const reason = typeof a === 'object' ? a.reason : '';
     const m = members.find(m => m.id === mid);
     if (!m) return '';
-    return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px;color:#991b1b">
+    return `<div style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;border-radius:20px;padding:4px 12px;margin:3px 3px 3px 0;font-size:13px;color:#991b1b">
       <span>${grade(m).e} ${m.name}</span>
-      ${reason ? `<span style="font-size:11px;color:#991b1b;opacity:.7">· ${reason}</span>` : ''}
+      ${reason ? `<span style="font-size:11px;opacity:.8">· ${reason}</span>` : ''}
     </div>`;
   }).join('');
 
