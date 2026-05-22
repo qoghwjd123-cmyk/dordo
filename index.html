@@ -2296,12 +2296,13 @@ function renderCal() {
     const dateStr = `${calYear}-${String(calMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isSelected = dateStr === selected;
     const isToday = dateStr === today;
+    const isPast = dateStr < today;
     const dow = (first + d - 1) % 7;
-    const color = dow===0?'#e74c3c':dow===6?'#3498db':'var(--text)';
-    html += `<button onclick="selectDate('${dateStr}')"
+    const color = isPast ? '#ccc' : dow===0?'#e74c3c':dow===6?'#3498db':'var(--text)';
+    html += `<button onclick="${isPast ? '' : `selectDate('${dateStr}')`}" ${isPast ? 'disabled' : ''}
       style="padding:.5rem 0;border-radius:8px;border:${isToday?'1.5px solid var(--accent)':'none'};
       background:${isSelected?'var(--accent)':'none'};color:${isSelected?'#fff':color};
-      font-size:13px;font-weight:${isSelected||isToday?'700':'400'};cursor:pointer;font-family:inherit">${d}</button>`;
+      font-size:13px;font-weight:${isSelected||isToday?'700':'400'};cursor:${isPast?'default':'pointer'};font-family:inherit;opacity:${isPast?'0.35':'1'}">${d}</button>`;
   }
   document.getElementById('cal-grid').innerHTML = html;
 }
