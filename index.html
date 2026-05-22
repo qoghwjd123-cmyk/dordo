@@ -966,7 +966,7 @@ function renderMonthSessions(sessions, members, today) {
     const dayName = dayNames[new Date(s.date).getDay()];
     const timeStr = s.time ? s.time+(s.endtime?' ~ '+s.endtime:'') : '';
     const isToday = s.date === today;
-    return `<div class="sess-card" id="sc-${s.id}" style="margin-bottom:.4rem;${isToday?'border:2px solid #e76f51;box-shadow:0 0 0 3px rgba(231,111,81,.12)':''}">`
+    return `<div class="sess-card" id="sc-${s.id}" style="margin-bottom:.4rem;${isToday?'border:2px solid #e76f51;box-shadow:0 0 0 3px rgba(231,111,81,.12)':''}">
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}" style="padding:.9rem 1rem">
         <div style="display:flex;align-items:flex-start;gap:12px;width:100%">
           <!-- 날짜 왼쪽 -->
