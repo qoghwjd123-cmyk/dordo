@@ -840,7 +840,32 @@ function showPage(n, btn) {
   if (btn) btn.classList.add('active');
   document.getElementById('fab-btn').classList.toggle('show', n === 'sessions');
   if (n === 'members') renderMPage();
-  if (n === 'sessions') renderSessionsTab();
+  if (n === 'sessions') renderSessionsTab().then(() => {
+    setTimeout(() => {
+      const today = getToday();
+      // 오늘 날짜 카드 먼저 찾기
+      let target = document.querySelector('.sess-card .sess-date-num');
+      const allCards = document.querySelectorAll('.sess-card');
+      let closest = null, closestDiff = Infinity;
+      allCards.forEach(card => {
+        const id = card.id.replace('sc-', '');
+        const dateEl = card.querySelector('.sess-day-label');
+        if (!dateEl) return;
+        // 카드 ID로 날짜 찾기 (data-past 활용)
+        const hd = card.querySelector('.sess-card-hd');
+        if (!hd) return;
+        const isPast = hd.dataset.past === 'true';
+        if (!isPast) {
+          const diff = Math.abs(new Date(card.dataset?.date || today) - new Date(today));
+          if (diff < closestDiff) { closestDiff = diff; closest = card; }
+        }
+      });
+      // 오늘 주황 테두리 카드 우선
+      const todayCard = document.querySelector('.sess-card[style*="e76f51"]');
+      const scrollTarget = todayCard || closest || allCards[0];
+      if (scrollTarget) scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 400);
+  });
   if (n === 'game') initGameTab();
   if (n === 'admin' && isAdmin) renderAdminContent();
 }
