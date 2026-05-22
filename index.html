@@ -1221,7 +1221,7 @@ window.doSingleAttendance = async function(sessId, memberId, isAlready) {
     clearCache(); toast('미응답으로 변경됐어요');
   } else {
     // 불참 목록에서 제거 후 참석 처리
-    const newAbsent = (sess.absentees||[]).filter(id => id !== memberId);
+    const newAbsent = (sess.absentees||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
     await sessRef.update({ absentees: newAbsent });
     await processCheckin(sessId, [memberId]);
     toast('참석 처리됐어요 ✓');
