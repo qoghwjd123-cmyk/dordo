@@ -1016,10 +1016,12 @@ function renderMonthSessions(sessions, members, today) {
       </span>`;
     }).join('');
     const absentees = s.absentees || [];
-    const absentChips = absentees.map(mid => {
+    const absentChips = absentees.map(a => {
+      const mid = typeof a === 'object' ? a.memberId : a;
+      const reason = typeof a === 'object' ? a.reason : '';
       const m = members.find(m => m.id === mid);
       if (!m) return '';
-      return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;background:#fee2e2;border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:#991b1b">${grade(m).e} ${m.name}</span>`;
+      return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;background:#fee2e2;border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:#991b1b">${grade(m).e} ${m.name}${reason?' · '+reason:''}</span>`;
     }).join('');
     const chipsHtml = `
       ${chips ? `<div style="margin-bottom:4px"><span style="font-size:11px;color:var(--text3);font-weight:700">참석</span><br>${chips}</div>` : ''}
@@ -1117,7 +1119,7 @@ async function loadSessMemberList(sessId) {
   const [members, sessSnap] = await Promise.all([getMembers(), db.collection('sessions').doc(sessId).get()]);
   const sess = sessSnap.data();
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
-  const absentIds = new Set(sess.absentees||[]);
+  const absentIds = new Set((sess.absentees||[]).map(a => typeof a === 'object' ? a.memberId : a));
   const sorted = sortMembers(members);
 
   // ── 내 카드 (크게) ──
