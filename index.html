@@ -397,7 +397,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 날짜 피커 모달 -->
-<div class="mb-bg" id="date-picker-modal" style="align-items:center">
+<div class="mb-bg" id="date-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
       <button onclick="changeCalMonth(-1)" style="background:none;border:none;font-size:20px;cursor:pointer;padding:4px 10px">‹</button>
@@ -419,7 +419,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 시간 피커 모달 -->
-<div class="mb-bg" id="time-picker-modal" style="align-items:center">
+<div class="mb-bg" id="time-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem" id="time-picker-title">시간 선택</div>
     <div style="display:flex;gap:8px;justify-content:center;margin-bottom:1.25rem">
@@ -447,7 +447,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 본인 일정 수정 모달 -->
-<div class="mb-bg" id="my-sess-edit-modal" style="align-items:center">
+<div class="mb-bg" id="my-sess-edit-modal" style="align-items:center;z-index:500">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
     <input type="hidden" id="mse-sess-id"/>
