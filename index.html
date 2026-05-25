@@ -1036,7 +1036,21 @@ function toggleMonthGroup(month) {
 
 function renderMonthSessions(sessions, members, today) {
   if (!sessions.length) return '<div class="empty">일정이 없어요</div>';
-  return sessions.map(s => {
+  const now = new Date();
+  // 오늘 일정은 시간 늦은 순(예정→지난) 위로, 나머지는 날짜 내림차순
+  const sorted = [...sessions].sort((a, b) => {
+    const aIsToday = a.date === today, bIsToday = b.date === today;
+    if (aIsToday && bIsToday) {
+      // 둘 다 오늘: 예정인 게 위, 같으면 시작시간 늦은 게 위
+      const aEnd = new Date(`${a.date}T${a.endtime||a.time||'23:59'}:00+09:00`);
+      const bEnd = new Date(`${b.date}T${b.endtime||b.time||'23:59'}:00+09:00`);
+      const aIsPast = now > aEnd, bIsPast = now > bEnd;
+      if (aIsPast !== bIsPast) return aIsPast ? 1 : -1;
+      return (b.time||'').localeCompare(a.time||'');
+    }
+    return b.date.localeCompare(a.date);
+  });
+  return sorted.map(s => {
     const now = new Date();
     const nowKST = new Date(now.getTime() + 9 * 60 * 60 * 1000);
     const nowStr = nowKST.toISOString();
@@ -1074,7 +1088,7 @@ function renderMonthSessions(sessions, members, today) {
     const dayNames = ['일','월','화','수','목','금','토'];
     const dayName = dayNames[new Date(s.date).getDay()];
     const timeStr = s.time ? s.time+(s.endtime?' ~ '+s.endtime:'') : '';
-    const isToday = s.date === today;
+    const isToday = s.date === today && !isPast;
     return `<div class="sess-card" id="sc-${s.id}" style="margin-bottom:.4rem;${isToday?'border:2px solid #e76f51;box-shadow:0 0 0 3px rgba(231,111,81,.12)':''}">
       <div class="sess-card-hd" data-sess="${s.id}" data-past="${isPast}" style="padding:.9rem 1rem">
         <div style="display:flex;align-items:flex-start;gap:12px;width:100%">
