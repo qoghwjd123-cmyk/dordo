@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -132,6 +133,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <!-- 멤버 선택 랜딩 모달 -->
+
 <div class="mb-bg" id="member-select-modal" style="z-index:600;align-items:center">
   <div class="modal" style="border-radius:var(--r);max-height:90vh;max-width:420px">
     <div style="text-align:center;margin-bottom:1.25rem">
@@ -148,6 +150,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 수정 모달 -->
+
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
@@ -190,6 +193,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 비번 입력 모달 -->
+
 <div class="mb-bg" id="prompt-modal" style="z-index:500">
   <div class="modal">
     <div id="prompt-msg" style="font-size:15px;font-weight:500;margin-bottom:1rem;text-align:center"></div>
@@ -202,6 +206,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 커스텀 확인 모달 -->
+
 <div class="mb-bg" id="confirm-modal" style="z-index:800">
   <div class="modal">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
@@ -213,6 +218,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 모달 -->
+
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
     <div id="fab-lock-wrap">
@@ -232,6 +238,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 수정 모달 -->
+
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -272,6 +279,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 두알두 -->
+
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
@@ -300,6 +308,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 -->
+
 <div id="page-members" class="page">
   <!-- 멤버/통계 서브탭 -->
   <div class="filter-tabs" style="margin-bottom:1rem">
@@ -308,6 +317,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 멤버 목록 -->
+
   <div id="mtab-list">
     <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem">
       <button onclick="resetMyMember()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit">👤 내 정보 변경</button>
@@ -326,6 +336,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 출석 통계 -->
+
   <div id="mtab-stats" style="display:none">
     <div class="filter-tabs" style="margin-bottom:.5rem;flex-wrap:wrap;gap:4px">
       <button class="ftab active" data-filter="all">전체</button>
@@ -355,6 +366,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 -->
+
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 일정 등록</div>
@@ -381,7 +393,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
         <input type="hidden" id="pub-sess-time"/>
       </div>
       <div style="flex:1">
-        <div class="sl2">종료 시간 (선택)</div>
+        <div class="sl2">종료 시간 <span style="color:var(--accent2);font-size:10px">필수</span></div>
         <button type="button" id="pub-sess-endtime-btn" onclick="openTimePicker('end')" style="width:100%;padding:.85rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text3);text-align:left;cursor:pointer;margin:0">
           ⏰ 종료
         </button>
@@ -397,6 +409,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 날짜 피커 모달 -->
+
 <div class="mb-bg" id="date-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -419,6 +432,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 시간 피커 모달 -->
+
 <div class="mb-bg" id="time-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem" id="time-picker-title">시간 선택</div>
@@ -447,6 +461,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 본인 일정 수정 모달 -->
+
 <div class="mb-bg" id="my-sess-edit-modal" style="align-items:center;z-index:500">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
@@ -486,6 +501,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 불참 사유 모달 -->
+
 <div class="mb-bg" id="absent-reason-modal" style="align-items:center">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem">이번엔 불참 😢</div>
@@ -503,6 +519,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 상세 모달 -->
+
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -533,9 +550,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 게임 -->
+
 <div id="page-game" class="page">
 
   <!-- 🏆 이번달 출석왕 -->
+
   <div class="card">
     <div class="ct">🏆 이번달 출석왕</div>
     <div id="champion-result" style="text-align:center;padding:1rem 0">
@@ -547,6 +566,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎯 운동 룰렛 -->
+
   <div class="card">
     <div class="ct">🎯 오늘의 운동 룰렛</div>
     <div id="roulette-result" style="text-align:center;padding:1.5rem 0;font-size:28px;font-weight:700;color:var(--accent);min-height:80px;display:flex;align-items:center;justify-content:center">
@@ -566,6 +586,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎲 팀 랜덤 배정 -->
+
   <div class="card">
     <div class="ct">🎲 팀 랜덤 배정</div>
     <div class="sl2">팀 수</div>
@@ -587,6 +608,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎰 멤버 추첨 -->
+
   <div class="card">
     <div class="ct">🎰 멤버 추첨</div>
     <div class="sl2">추첨 인원 수</div>
@@ -610,6 +632,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 운영진 -->
+
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -779,7 +802,16 @@ function grade(m, pastCount) {
 // 지난 일정 참석 횟수 실시간 계산
 function calcPastCount(memberId, sessions) {
   const today = getToday();
-  return sessions.filter(s => s.date < today && (s.attendees||[]).some(a => a.memberId === memberId)).length;
+  const now = new Date();
+  return sessions.filter(s => {
+    if (!(s.attendees||[]).some(a => a.memberId === memberId)) return false;
+    if (s.date < today) return true;
+    if (s.date === today) {
+      const endTime = s.endtime || s.time;
+      if (endTime) return now > new Date(`${s.date}T${endTime}:00+09:00`);
+    }
+    return false;
+  }).length;
 }
 
 function sortMembers(members) {
@@ -1005,7 +1037,18 @@ function toggleMonthGroup(month) {
 function renderMonthSessions(sessions, members, today) {
   if (!sessions.length) return '<div class="empty">일정이 없어요</div>';
   return sessions.map(s => {
-    const isPast = s.date < today;
+    const now = new Date();
+    const nowKST = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    const nowStr = nowKST.toISOString();
+    let isPast = s.date < today;
+    if (!isPast && s.date === today) {
+      // 오늘 날짜면 종료시간 or 시작시간 기준
+      const endTime = s.endtime || s.time;
+      if (endTime) {
+        const sessEnd = new Date(`${s.date}T${endTime}:00+09:00`);
+        isPast = now > sessEnd;
+      }
+    }
     const att = s.attendees || [];
     const chips = att.map(a => {
       const m = members.find(m => m.id === a.memberId);
@@ -1412,6 +1455,7 @@ document.getElementById('create-sess-btn').addEventListener('click', async funct
   if (!name) { toast('일정 이름을 입력해주세요'); return; }
   if (!date) { toast('날짜를 선택해주세요'); return; }
   if (!time) { toast('시작 시간을 선택해주세요'); return; }
+  if (!endtime) { toast('종료 시간을 선택해주세요'); return; }
   const createdBy = myMemberName || '알 수 없음';
   await db.collection('sessions').add({ name, date, cat, time, endtime, place, attendees: [], createdBy, createdAt: Date.now() }).then(async ref => {
     clearCache();
@@ -2160,7 +2204,15 @@ async function renderChampion() {
   const thisMonth = today.slice(0,7);
   const now = new Date();
   const monthLabel = `${now.getFullYear()}년 ${now.getMonth()+1}월`;
-  const fs = sessions.filter(s => s.date < today && s.date.startsWith(thisMonth));
+  const fs = sessions.filter(s => {
+    if (!s.date.startsWith(thisMonth)) return false;
+    if (s.date < today) return true;
+    if (s.date === today) {
+      const endTime = s.endtime || s.time;
+      if (endTime) return now > new Date(`${s.date}T${endTime}:00+09:00`);
+    }
+    return false;
+  });
   const countMap = {};
   for (const s of fs) for (const a of (s.attendees||[])) countMap[a.memberId] = (countMap[a.memberId]||0)+1;
   const ranked = members
@@ -2199,7 +2251,7 @@ async function renderChampion() {
   `;
   if (shareBtn) {
     shareBtn.style.display = 'block';
-    const rankText = ranked.slice(0,3).map((m,i) => `${['🥇','🥈','🥉'][i]} ${m.name} ${m.monthCount}회`).join('\n');
+    const rankText = ranked.slice(0,3).map((m,i) => `${['🥇','🥈','🥉'][i]} ${m.name.split('/')[0]} ${m.monthCount}회`).join('\n');
     shareBtn.onclick = function() {
       if (typeof Kakao === 'undefined') { toast('카카오 SDK 로딩 중이에요'); return; }
       if (!Kakao.isInitialized()) Kakao.init('3eeb670b9d86cdbf75f2345bfcc9a80d');
@@ -2493,6 +2545,7 @@ window.saveMySessionEdit = async function() {
   const newPlace = document.getElementById('mse-place').value.trim();
   if (!newDate) { toast('날짜를 선택해주세요'); return; }
   if (!newTime) { toast('시작 시간을 선택해주세요'); return; }
+  if (!newEndtime) { toast('종료 시간을 선택해주세요'); return; }
   const dateChanged = newDate !== origDate;
   if (dateChanged) {
     const ok = await showConfirm('날짜가 변경되면 참석자가 초기화됩니다.\n계속할까요?');
@@ -2653,5 +2706,6 @@ document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
 });
 </script>
+
 </body>
 </html>
