@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -132,6 +133,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <!-- 멤버 선택 랜딩 모달 -->
+
 <div class="mb-bg" id="member-select-modal" style="z-index:600;align-items:center">
   <div class="modal" style="border-radius:var(--r);max-height:90vh;max-width:420px">
     <div style="text-align:center;margin-bottom:1.25rem">
@@ -148,6 +150,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 수정 모달 -->
+
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
@@ -190,6 +193,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 비번 입력 모달 -->
+
 <div class="mb-bg" id="prompt-modal" style="z-index:500">
   <div class="modal">
     <div id="prompt-msg" style="font-size:15px;font-weight:500;margin-bottom:1rem;text-align:center"></div>
@@ -202,6 +206,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 커스텀 확인 모달 -->
+
 <div class="mb-bg" id="confirm-modal" style="z-index:800">
   <div class="modal">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
@@ -213,6 +218,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 모달 -->
+
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
     <div id="fab-lock-wrap">
@@ -232,6 +238,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 수정 모달 -->
+
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -272,6 +279,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 두알두 -->
+
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
@@ -315,6 +323,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 멤버 목록 -->
+
   <div id="mtab-list">
     <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem">
       <button onclick="resetMyMember()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit">👤 내 정보 변경</button>
@@ -333,6 +342,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 출석 통계 -->
+
   <div id="mtab-stats" style="display:none">
     <div class="filter-tabs" style="margin-bottom:.5rem;flex-wrap:wrap;gap:4px">
       <button class="ftab active" data-filter="all">전체</button>
@@ -362,6 +372,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 -->
+
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 일정 등록</div>
@@ -404,6 +415,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 날짜 피커 모달 -->
+
 <div class="mb-bg" id="date-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -426,6 +438,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 시간 피커 모달 -->
+
 <div class="mb-bg" id="time-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem" id="time-picker-title">시간 선택</div>
@@ -454,6 +467,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 본인 일정 수정 모달 -->
+
 <div class="mb-bg" id="my-sess-edit-modal" style="align-items:center;z-index:500">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
@@ -493,6 +507,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 불참 사유 모달 -->
+
 <div class="mb-bg" id="absent-reason-modal" style="align-items:center">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem">이번엔 불참 😢</div>
@@ -510,6 +525,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 상세 모달 -->
+
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -540,9 +556,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 게임 -->
+
 <div id="page-game" class="page">
 
   <!-- 🏆 이번달 출석왕 -->
+
   <div class="card">
     <div class="ct">🏆 이번달 출석왕</div>
     <div id="champion-result" style="text-align:center;padding:1rem 0">
@@ -554,6 +572,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎯 운동 룰렛 -->
+
   <div class="card">
     <div class="ct">🎯 오늘의 운동 룰렛</div>
     <div id="roulette-result" style="text-align:center;padding:1.5rem 0;font-size:28px;font-weight:700;color:var(--accent);min-height:80px;display:flex;align-items:center;justify-content:center">
@@ -573,6 +592,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎲 팀 랜덤 배정 -->
+
   <div class="card">
     <div class="ct">🎲 팀 랜덤 배정</div>
     <div class="sl2">팀 수</div>
@@ -594,6 +614,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎰 멤버 추첨 -->
+
   <div class="card">
     <div class="ct">🎰 멤버 추첨</div>
     <div class="sl2">추첨 인원 수</div>
@@ -617,6 +638,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 운영진 -->
+
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -2302,7 +2324,13 @@ async function renderChampion() {
   `;
   if (shareBtn) {
     shareBtn.style.display = 'block';
-    const rankText = ranked.slice(0,3).map((m,i) => `${['🥇','🥈','🥉'][i]} ${m.name.split('/')[0]} ${m.monthCount}회`).join('\n');
+    const firstName = n => { const name = n.split('/')[0]; return name.length > 2 ? name.slice(1) : name; };
+    const top3 = ranked.slice(0,3);
+    const rankText = top3.length === 1
+      ? `🥇 ${firstName(top3[0].name)} ${top3[0].monthCount}회`
+      : top3.length === 2
+      ? `🥇 ${firstName(top3[0].name)} ${top3[0].monthCount}회\n🥈 ${firstName(top3[1].name)} ${top3[1].monthCount}회`
+      : `🥇 ${firstName(top3[0].name)} ${top3[0].monthCount}회\n🥈 ${firstName(top3[1].name)} ${top3[1].monthCount}회 🥉 ${firstName(top3[2].name)} ${top3[2].monthCount}회`;
     shareBtn.onclick = function() {
       if (typeof Kakao === 'undefined') { toast('카카오 SDK 로딩 중이에요'); return; }
       if (!Kakao.isInitialized()) Kakao.init('3eeb670b9d86cdbf75f2345bfcc9a80d');
@@ -2761,5 +2789,6 @@ document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
 });
 </script>
+
 </body>
 </html>
