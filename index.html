@@ -1603,16 +1603,47 @@ async function openMemberDetail(memberId) {
   const m = members.find(m => m.id === memberId);
   if (!m) return;
   const today = getToday();
-  const attended = sessions
-    .filter(s => s.date < today && (s.attendees||[]).some(a => a.memberId === memberId))
-    .sort((a,b) => b.date.localeCompare(a.date));
-  const pastCount = attended.length;
+  const now = new Date();
+
+  // 현재 출석통계 필터 적용
+  const isFromAttBoard = document.getElementById('mtab-stats').style.display !== 'none';
+  let filtered = sessions.filter(s => {
+    // 지난 일정만
+    if (s.date > today) return false;
+    if (s.date === today) {
+      const et = s.endtime || s.time;
+      if (et && now < new Date(`${s.date}T${et}:00+09:00`)) return false;
+    }
+    // 참석 여부
+    if (!(s.attendees||[]).some(a => a.memberId === memberId)) return false;
+    return true;
+  });
+
+  if (isFromAttBoard) {
+    // 기간 필터
+    if (ciFilter === 'month') {
+      filtered = filtered.filter(s => s.date.startsWith(today.slice(0,7)));
+    } else if (ciFilter === 'year') {
+      filtered = filtered.filter(s => s.date.startsWith(today.slice(0,4)));
+    } else if (ciFilter === 'custom') {
+      const y = document.getElementById('filter-year')?.value;
+      const mo = document.getElementById('filter-month')?.value;
+      if (y && mo) filtered = filtered.filter(s => s.date.startsWith(y+'-'+mo));
+      else if (y) filtered = filtered.filter(s => s.date.startsWith(y));
+    }
+    // 카테고리 필터
+    if (catFilter !== 'all') filtered = filtered.filter(s => s.cat && s.cat.includes(catFilter));
+  }
+
+  const attended = filtered.sort((a,b) => b.date.localeCompare(a.date));
+  const pastCount = calcPastCount(memberId, sessions);
   const g = grade(m, pastCount);
+  const filterLabel = isFromAttBoard && (ciFilter !== 'all' || catFilter !== 'all') ? ` (필터 적용)` : '';
 
   const mdEmoji = document.getElementById('md-emoji');
   mdEmoji.innerHTML = avatarHtml(m, 56);
   document.getElementById('md-name').textContent = m.name;
-  document.getElementById('md-stats').textContent = `총 ${attended.length}회 참석 ${g.e}`;
+  document.getElementById('md-stats').textContent = `${attended.length}회 참석 ${g.e}${filterLabel}`;
 
   // 본인이면 사진 업로드 버튼 표시
   const photoBtn = document.getElementById('md-photo-btn');
