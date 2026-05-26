@@ -297,9 +297,16 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <div class="grade-box"><div class="grade-em">🪽</div><div class="grade-name">명예 퇴직</div><div class="grade-req">레전드</div></div>
     </div>
   </div>
+  <div id="rules-agree-section" style="display:none">
+    <div class="card" style="border:1.5px solid var(--accent);background:var(--accent-l)">
+      <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:.75rem">📋 두알두 회칙 확인</div>
+      <div style="font-size:13px;color:var(--text);margin-bottom:1rem;line-height:1.6">위 내용을 모두 읽고 숙지하였습니다.</div>
+      <button onclick="agreeRules()" style="width:100%;padding:.85rem;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+        ✅ 확인했습니다!
+      </button>
+    </div>
+  </div>
 </div>
-
-<!-- 멤버 -->
 <div id="page-members" class="page">
   <!-- 멤버/통계 서브탭 -->
   <div class="filter-tabs" style="margin-bottom:1rem">
@@ -667,6 +674,19 @@ const ADMIN_PW = "dordo2023";
 const DELETE_PW = "0401";
 const MY_MEMBER_KEY = 'dordo-my-member-id';
 const MY_NAME_KEY = 'dordo-my-name';
+const RULES_AGREED_KEY = 'dordo-rules-agreed';
+
+function checkRulesAgreed() {
+  const section = document.getElementById('rules-agree-section');
+  if (!section) return;
+  section.style.display = localStorage.getItem(RULES_AGREED_KEY) ? 'none' : 'block';
+}
+
+window.agreeRules = function() {
+  localStorage.setItem(RULES_AGREED_KEY, '1');
+  document.getElementById('rules-agree-section').style.display = 'none';
+  toast('두알두 회칙을 확인했어요 ✅');
+};
 let isAdmin = false;
 let myMemberId = localStorage.getItem(MY_MEMBER_KEY) || null;
 let myMemberName = localStorage.getItem(MY_NAME_KEY) || null;
@@ -849,6 +869,7 @@ function showPage(n, btn) {
   if (btn) btn.classList.add('active');
   document.getElementById('fab-btn').classList.toggle('show', n === 'sessions');
   if (n === 'members') renderMPage();
+  if (n === 'rules') checkRulesAgreed();
   if (n === 'sessions') renderSessionsTab().then(() => {
     setTimeout(() => {
       const today = getToday();
@@ -1664,6 +1685,7 @@ document.getElementById('admin-pw').addEventListener('keydown', e => { if(e.key=
 function checkAdminPw() {
   if (document.getElementById('admin-pw').value === ADMIN_PW) {
     isAdmin = true;
+    sessionStorage.setItem('dordo-admin', '1');
     document.getElementById('admin-lock').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
     renderAdminContent();
@@ -1671,6 +1693,13 @@ function checkAdminPw() {
     toast('비밀번호가 틀렸어요');
     document.getElementById('admin-pw').value = '';
   }
+}
+
+// 세션 유지 - 새로고침 전까지 운영진 로그인 상태 유지
+if (sessionStorage.getItem('dordo-admin') === '1') {
+  isAdmin = true;
+  document.getElementById('admin-lock').style.display = 'none';
+  document.getElementById('admin-content').style.display = 'block';
 }
 
 async function renderAdminContent() {
@@ -2648,6 +2677,10 @@ window.resetMyMember = function() {
 };
 
 showMemberSelectIfNeeded();
+// 기존 멤버는 회칙 자동 동의 처리
+if (myMemberId && !localStorage.getItem(RULES_AGREED_KEY)) {
+  localStorage.setItem(RULES_AGREED_KEY, '1');
+}
 // URL 해시로 탭 유지 + 모임 자동 오픈
 (function() {
   const hash = location.hash.replace('#','');
