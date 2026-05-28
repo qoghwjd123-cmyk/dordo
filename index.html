@@ -22,6 +22,13 @@
   --accent:#2d6a4f;--accent-l:#e8f5ee;--accent2:#e76f51;--accent2-l:#fdf0ec;
   --r:16px;--rs:10px;
 }
+body.dark{
+  --bg:#1a1a1b;--surface:#272729;--surface2:#333335;--border:rgba(255,255,255,.08);
+  --text:#e4e4e5;--text2:#aaa;--text3:#666;
+  --accent:#52b788;--accent-l:#1a3d2b;--accent2:#e76f51;--accent2-l:#3d2218;
+}
+body.dark header{background:#111110}
+body.dark .nav{background:#1e1e1f;border-color:rgba(255,255,255,.06)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;justify-content:center}
@@ -121,7 +128,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </style>
 </head>
 <body>
-<header><div class="logo-text">DO<span>R</span>DO</div></header>
+<header style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem">
+  <div style="width:32px"></div>
+  <div class="logo-text">DO<span>R</span>DO</div>
+  <button id="dark-toggle" onclick="toggleDarkMode()" style="background:none;border:none;font-size:18px;cursor:pointer;width:32px;line-height:1">🌙</button>
+</header>
 <nav class="nav">
   <button class="nb active" data-page="rules">📌 두알두</button>
   <button class="nb" data-page="members">👥 멤버</button>
@@ -694,11 +705,20 @@ const storage = firebase.storage();
 
 const ADMIN_PW = "dordo2023";
 const DELETE_PW = "0401";
-const MY_MEMBER_KEY = 'dordo-my-member-id';
-const MY_NAME_KEY = 'dordo-my-name';
 const RULES_AGREED_KEY = 'dordo-rules-agreed';
+const MY_MEMBER_KEY = 'dordo-my-member-id';
+// 다크모드
+function toggleDarkMode() {
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('dordo-dark', isDark ? '1' : '0');
+  document.getElementById('dark-toggle').textContent = isDark ? '☀️' : '🌙';
+}
+if (localStorage.getItem('dordo-dark') === '1') {
+  document.body.classList.add('dark');
+  document.getElementById('dark-toggle').textContent = '☀️';
+}
 
-function checkRulesAgreed() {
+const MY_NAME_KEY = 'dordo-my-name';
   const section = document.getElementById('rules-agree-section');
   if (!section) return;
   section.style.display = localStorage.getItem(RULES_AGREED_KEY) ? 'none' : 'block';
