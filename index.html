@@ -31,10 +31,10 @@ body.dark header{background:#111110}
 body.dark .nav{background:#1e1e1f;border-color:rgba(255,255,255,.06)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;justify-content:center}
+header{background:#1a1a18;padding:.55rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .logo-text{font-family:'Arial Black','Arial',sans-serif;font-size:20px;font-weight:900;letter-spacing:2px;color:#F5A623}
 .logo-text span{color:#E8162B}
-.nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 .5rem;position:sticky;top:0;z-index:100}
+.nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 .5rem;position:sticky;top:48px;z-index:100}
 .nb{flex:1;padding:.85rem .3rem;background:none;border:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
 .nb.active{color:var(--accent);border-bottom-color:var(--accent)}
 .page{display:none;padding:1.25rem 1rem 5rem;max-width:480px;margin:0 auto}
