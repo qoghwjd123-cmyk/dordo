@@ -199,7 +199,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <span style="font-size:13px;color:var(--text3)" id="se-count">0명 선택</span>
       <button id="se-select-all-btn" style="background:none;border:none;font-size:13px;color:var(--accent);cursor:pointer;font-family:inherit">전체선택</button>
     </div>
-    <div id="se-member-list" style="max-height:45vh;overflow-y:auto"></div>
+    <div id="se-member-list" style="max-height:25vh;overflow-y:auto"></div>
+    <div style="margin-top:.75rem">
+      <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:.5rem">돨두참 (점선)</div>
+      <div id="se-daeldu-list" style="max-height:20vh;overflow-y:auto"></div>
+    </div>
   </div>
 </div>
 
@@ -1934,6 +1938,7 @@ async function openSessEdit(sessId) {
   document.getElementById('se-endtime').value = sess.endtime || '';
   document.getElementById('se-place').value = sess.place || '';
   const alreadyIds = new Set((sess.attendees||[]).map(a => a.memberId));
+  const daelduIds = new Set((sess.daelduchams||[]).map(a => typeof a === 'object' ? a.memberId : a));
   const sorted = sortMembers(members);
   document.getElementById('se-member-list').innerHTML = sorted.map(m => {
     const g = grade(m);
@@ -1948,7 +1953,22 @@ async function openSessEdit(sessId) {
       </div>
       <input type="checkbox" id="se-cb-${m.id}" ${checked?'checked':''} style="display:none"/>
       <div class="av">${avatarHtml(m)}</div>
-      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.count}회 참석</div></div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('se-daeldu-list').innerHTML = sorted.map(m => {
+    const checked = daelduIds.has(m.id);
+    return `<div class="ci-mi" style="cursor:pointer" onclick="
+      var cb=document.getElementById('se-dcb-${m.id}');
+      cb.checked=!cb.checked;
+      this.style.background=cb.checked?'#f3e8ff':''">
+      <div style="width:24px;height:24px;border-radius:6px;border:2px dashed ${checked?'#7c3aed':'var(--border)'};background:${checked?'#e9d5ff':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="color:#7c3aed;font-size:14px;font-weight:700">${checked?'✓':''}</span>
+      </div>
+      <input type="checkbox" id="se-dcb-${m.id}" ${checked?'checked':''} style="display:none"/>
+      <div class="av">${avatarHtml(m)}</div>
+      <div style="flex:1;min-width:0"><div class="mn">${m.name}</div></div>
     </div>`;
   }).join('');
   seUpdateCount();
@@ -1987,7 +2007,9 @@ document.getElementById('se-save-btn').addEventListener('click', async function(
   const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
   let newAtt = (sess.attendees||[]).filter(a => !removed.includes(a.memberId));
   for (const mid of added) newAtt.push({ memberId: mid, time });
-  await sessRef.update({ name: document.getElementById('se-name').value.trim() || sess.name, attendees: newAtt, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() });
+  const newDaelduIds = [...document.querySelectorAll('#se-daeldu-list input[type=checkbox]:checked')].map(cb => cb.id.replace('se-dcb-',''));
+  const newDaeldu = newDaelduIds.map(mid => ({ memberId: mid }));
+  await sessRef.update({ name: document.getElementById('se-name').value.trim() || sess.name, attendees: newAtt, daelduchams: newDaeldu, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() });
   for (const mid of added) {
     const mSnap = await db.collection('members').doc(mid).get();
     if (mSnap.exists) await db.collection('members').doc(mid).update({ count: (mSnap.data().count||0) + 1 });
