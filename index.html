@@ -706,7 +706,6 @@ function checkRulesAgreed() {
   if (!section) return;
   section.style.display = localStorage.getItem(RULES_AGREED_KEY) ? 'none' : 'block';
 }
-}
 
 window.agreeRules = function() {
   localStorage.setItem(RULES_AGREED_KEY, '1');
