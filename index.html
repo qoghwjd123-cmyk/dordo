@@ -1738,15 +1738,39 @@ async function openMemberDetail(memberId) {
     if (catFilter !== 'all') filtered = filtered.filter(s => s.cat && s.cat.includes(catFilter));
   }
 
+  // 돨두참 목록도 가져오기
+  let daelduFiltered = sessions.filter(s => {
+    if (s.date > today) return false;
+    if (s.date === today) {
+      const et = s.endtime || s.time;
+      if (et && now < new Date(`${s.date}T${et}:00+09:00`)) return false;
+    }
+    return (s.daelduchams||[]).some(a => (typeof a === 'object' ? a.memberId : a) === memberId);
+  });
+
+  if (isFromAttBoard) {
+    if (ciFilter === 'month') daelduFiltered = daelduFiltered.filter(s => s.date.startsWith(today.slice(0,7)));
+    else if (ciFilter === 'year') daelduFiltered = daelduFiltered.filter(s => s.date.startsWith(today.slice(0,4)));
+    else if (ciFilter === 'custom') {
+      const y = document.getElementById('filter-year')?.value;
+      const mo = document.getElementById('filter-month')?.value;
+      if (y && mo) daelduFiltered = daelduFiltered.filter(s => s.date.startsWith(y+'-'+mo));
+      else if (y) daelduFiltered = daelduFiltered.filter(s => s.date.startsWith(y));
+    }
+    if (catFilter !== 'all') daelduFiltered = daelduFiltered.filter(s => s.cat && s.cat.includes(catFilter));
+  }
+  daelduFiltered = daelduFiltered.sort((a,b) => b.date.localeCompare(a.date));
+
   const attended = filtered.sort((a,b) => b.date.localeCompare(a.date));
   const pastCount = calcPastCount(memberId, sessions);
   const g = grade(m, pastCount);
   const filterLabel = isFromAttBoard && (ciFilter !== 'all' || catFilter !== 'all') ? ` (필터 적용)` : '';
+  const totalCount = attended.length + daelduFiltered.length;
 
   const mdEmoji = document.getElementById('md-emoji');
   mdEmoji.innerHTML = avatarHtml(m, 56);
   document.getElementById('md-name').textContent = m.name;
-  document.getElementById('md-stats').textContent = `${attended.length}회 참석 ${g.e}${filterLabel}`;
+  document.getElementById('md-stats').textContent = `총 ${totalCount}회 ${g.e}${filterLabel}`;
 
   // 본인이면 사진 업로드 버튼 표시
   const photoBtn = document.getElementById('md-photo-btn');
@@ -1757,7 +1781,6 @@ async function openMemberDetail(memberId) {
       const file = e.target.files[0];
       if (!file) return;
       toast('업로드 중...');
-      // Canvas로 압축 (최대 300px)
       const compressed = await compressImage(file, 300);
       const ref = storage.ref(`profiles/${memberId}.jpg`);
       await ref.put(compressed);
@@ -1771,15 +1794,25 @@ async function openMemberDetail(memberId) {
   } else {
     photoBtn.style.display = 'none';
   }
-  document.getElementById('md-sessions').innerHTML = attended.length
-    ? attended.map(s => `
-      <div class="hi">
-        <div>
-          <div style="font-weight:500;font-size:14px">${s.name}</div>
-          <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px">${s.date}${s.cat?' '+catBadge(s.cat):''}</div>
-        </div>
-      </div>`).join('')
-    : '<div class="empty">참석한 일정이 없어요</div>';
+
+  const sessRow = s => `
+    <div class="hi">
+      <div>
+        <div style="font-weight:500;font-size:14px">${s.name}</div>
+        <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px">${s.date}${s.cat?' '+catBadge(s.cat):''}</div>
+      </div>
+    </div>`;
+
+  document.getElementById('md-sessions').innerHTML = (attended.length || daelduFiltered.length) ? `
+    ${attended.length ? `<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:4px">참석 (${attended.length}회)</div>${attended.map(sessRow).join('')}` : ''}
+    ${daelduFiltered.length ? `<div style="font-size:11px;font-weight:700;color:var(--text3);margin:8px 0 4px">돨두참 (${daelduFiltered.length}회)</div>${daelduFiltered.map(s => `
+    <div class="hi" style="opacity:.6;border-left:2px dashed var(--border);padding-left:8px">
+      <div>
+        <div style="font-weight:500;font-size:14px">${s.name}</div>
+        <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px">${s.date}${s.cat?' '+catBadge(s.cat):''}</div>
+      </div>
+    </div>`).join('')}` : ''}
+  ` : '<div class="empty">참석한 일정이 없어요</div>';
 
   // 본인이면 상태메시지 입력란 표시
   const statusArea = document.getElementById('md-status-area');
@@ -2756,11 +2789,12 @@ window.saveMySessionEdit = async function() {
 
 const _origSelectDate = window.selectDate;
 window.selectDate = function(dateStr) {
-  if (datePickerTarget === 'mse-date') {
-    document.getElementById('mse-date').value = dateStr;
+  if (datePickerTarget === 'mse-date' || datePickerTarget === 'se-date') {
+    document.getElementById(datePickerTarget).value = dateStr;
     const [y,m,d] = dateStr.split('-');
-    document.getElementById('mse-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
-    document.getElementById('mse-date-btn').style.color = 'var(--text)';
+    const btnId = datePickerTarget + '-btn';
+    document.getElementById(btnId).textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+    document.getElementById(btnId).style.color = 'var(--text)';
     closeModal('date-picker-modal');
   } else { _origSelectDate(dateStr); }
 };
