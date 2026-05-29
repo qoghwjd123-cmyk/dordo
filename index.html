@@ -848,7 +848,9 @@ function calcPastCount(memberId, sessions) {
   const today = getToday();
   const now = new Date();
   return sessions.filter(s => {
-    if (!(s.attendees||[]).some(a => a.memberId === memberId)) return false;
+    const isAtt = (s.attendees||[]).some(a => a.memberId === memberId);
+    const isDaeldu = (s.daelduchams||[]).some(a => (typeof a === 'object' ? a.memberId : a) === memberId);
+    if (!isAtt && !isDaeldu) return false;
     if (s.date < today) return true;
     if (s.date === today) {
       const endTime = s.endtime || s.time;
