@@ -179,6 +179,13 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <option value="운동">운동</option>
       <option value="기타">기타</option>
     </select>
+    <div class="sl2">날짜</div>
+    <button type="button" id="se-date-btn" onclick="openDatePickerFor('se-date')"
+      style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text);text-align:left;cursor:pointer;margin-bottom:.75rem">
+      📅 날짜 선택
+    </button>
+    <input type="hidden" id="se-date"/>
+    <input type="hidden" id="se-orig-date"/>
     <div style="display:flex;gap:8px;margin-bottom:.65rem">
       <div style="flex:1">
         <div class="sl2">시작 시간</div>
@@ -189,7 +196,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
         <input type="time" id="se-endtime" style="margin:0"/>
       </div>
     </div>
-    <div class="sl2">장소</div>
     <input type="text" id="se-place" placeholder="예: 미사호수공원" style="margin-bottom:.75rem"/>
     <div style="display:flex;gap:8px;margin-bottom:.75rem">
       <button class="btn bp" style="flex:1;margin:0;padding:.75rem" id="se-save-btn">저장</button>
@@ -1934,6 +1940,13 @@ async function openSessEdit(sessId) {
   document.getElementById('se-sess-info').innerHTML = `${sess.date}${sess.createdBy ? ' · <span style="font-size:12px;color:var(--text3)">등록: '+sess.createdBy.split('/')[0]+'</span>' : ''}`;
   document.getElementById('se-name').value = sess.name || '';
   document.getElementById('se-cat').value = sess.cat || '기타';
+  document.getElementById('se-date').value = sess.date || '';
+  document.getElementById('se-orig-date').value = sess.date || '';
+  if (sess.date) {
+    const [y,m,d] = sess.date.split('-');
+    document.getElementById('se-date-btn').textContent = `📅 ${y}년 ${parseInt(m)}월 ${parseInt(d)}일`;
+    document.getElementById('se-date-btn').style.color = 'var(--text)';
+  }
   document.getElementById('se-time').value = sess.time || '';
   document.getElementById('se-endtime').value = sess.endtime || '';
   document.getElementById('se-place').value = sess.place || '';
@@ -1995,6 +2008,13 @@ document.getElementById('se-select-all-btn').addEventListener('click', function(
 });
 
 document.getElementById('se-save-btn').addEventListener('click', async function() {
+  const newDate = document.getElementById('se-date').value;
+  const origDate = document.getElementById('se-orig-date').value;
+  const dateChanged = newDate && newDate !== origDate;
+  if (dateChanged) {
+    const ok = await showConfirm('날짜가 변경되면 참석자가 초기화됩니다.\n계속할까요?');
+    if (!ok) return;
+  }
   const sessId = currentSessEditId;
   const sessRef = db.collection('sessions').doc(sessId);
   const sessSnap = await sessRef.get();
@@ -2009,7 +2029,9 @@ document.getElementById('se-save-btn').addEventListener('click', async function(
   for (const mid of added) newAtt.push({ memberId: mid, time });
   const newDaelduIds = [...document.querySelectorAll('#se-daeldu-list input[type=checkbox]:checked')].map(cb => cb.id.replace('se-dcb-',''));
   const newDaeldu = newDaelduIds.map(mid => ({ memberId: mid }));
-  await sessRef.update({ name: document.getElementById('se-name').value.trim() || sess.name, attendees: newAtt, daelduchams: newDaeldu, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() });
+  const updateData = { name: document.getElementById('se-name').value.trim() || sess.name, attendees: newAtt, daelduchams: newDaeldu, cat: document.getElementById('se-cat').value, time: document.getElementById('se-time').value, endtime: document.getElementById('se-endtime').value, place: document.getElementById('se-place').value.trim() };
+  if (dateChanged) { updateData.date = newDate; updateData.attendees = []; updateData.daelduchams = []; updateData.absentees = []; }
+  await sessRef.update(updateData);
   for (const mid of added) {
     const mSnap = await db.collection('members').doc(mid).get();
     if (mSnap.exists) await db.collection('members').doc(mid).update({ count: (mSnap.data().count||0) + 1 });
