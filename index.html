@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -143,6 +144,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <!-- 멤버 선택 랜딩 모달 -->
+
 <div class="mb-bg" id="member-select-modal" style="z-index:600;align-items:center">
   <div class="modal" style="border-radius:var(--r);max-height:90vh;max-width:420px">
     <div style="text-align:center;margin-bottom:1.25rem">
@@ -159,6 +161,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 수정 모달 -->
+
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
@@ -201,6 +204,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 비번 입력 모달 -->
+
 <div class="mb-bg" id="prompt-modal" style="z-index:500">
   <div class="modal">
     <div id="prompt-msg" style="font-size:15px;font-weight:500;margin-bottom:1rem;text-align:center"></div>
@@ -213,6 +217,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 커스텀 확인 모달 -->
+
 <div class="mb-bg" id="confirm-modal" style="z-index:800">
   <div class="modal">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
@@ -224,6 +229,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 모달 -->
+
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
     <div id="fab-lock-wrap">
@@ -243,6 +249,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 수정 모달 -->
+
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -283,6 +290,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 두알두 -->
+
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
@@ -326,6 +334,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 멤버 목록 -->
+
   <div id="mtab-list">
     <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem">
       <button onclick="resetMyMember()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit">👤 내 정보 변경</button>
@@ -344,6 +353,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 출석 통계 -->
+
   <div id="mtab-stats" style="display:none">
     <div class="filter-tabs" style="margin-bottom:.5rem;flex-wrap:wrap;gap:4px">
       <button class="ftab active" data-filter="all">전체</button>
@@ -373,6 +383,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 -->
+
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 일정 등록</div>
@@ -415,6 +426,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 날짜 피커 모달 -->
+
 <div class="mb-bg" id="date-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -437,6 +449,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 시간 피커 모달 -->
+
 <div class="mb-bg" id="time-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem" id="time-picker-title">시간 선택</div>
@@ -465,6 +478,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 본인 일정 수정 모달 -->
+
 <div class="mb-bg" id="my-sess-edit-modal" style="align-items:center;z-index:500">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
@@ -504,6 +518,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 불참 사유 모달 -->
+
 <div class="mb-bg" id="absent-reason-modal" style="align-items:center">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem">이번엔 불참 😢</div>
@@ -521,6 +536,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 상세 모달 -->
+
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -551,9 +567,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 게임 -->
+
 <div id="page-game" class="page">
 
   <!-- 🏆 이번달 출석왕 -->
+
   <div class="card">
     <div class="ct">🏆 이번달 출석왕</div>
     <div id="champion-result" style="text-align:center;padding:1rem 0">
@@ -565,6 +583,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎯 운동 룰렛 -->
+
   <div class="card">
     <div class="ct">🎯 오늘의 운동 룰렛</div>
     <div id="roulette-result" style="text-align:center;padding:1.5rem 0;font-size:28px;font-weight:700;color:var(--accent);min-height:80px;display:flex;align-items:center;justify-content:center">
@@ -584,6 +603,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎲 팀 랜덤 배정 -->
+
   <div class="card">
     <div class="ct">🎲 팀 랜덤 배정</div>
     <div class="sl2">팀 수</div>
@@ -605,6 +625,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎰 멤버 추첨 -->
+
   <div class="card">
     <div class="ct">🎰 멤버 추첨</div>
     <div class="sl2">추첨 인원 수</div>
@@ -628,6 +649,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 운영진 -->
+
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -1103,8 +1125,16 @@ function renderMonthSessions(sessions, members, today) {
       if (!m) return '';
       return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;background:#fee2e2;border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:#991b1b">${grade(m).e} ${m.name}${reason?' · '+reason:''}</span>`;
     }).join('');
+    const daelduChips = (s.daelduchams||[]).map(a => {
+      const mid = typeof a === 'object' ? a.memberId : a;
+      const m = members.find(m => m.id === mid);
+      if (!m) return '';
+      const isMe = m.id === myMemberId;
+      return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;background:none;border:1.5px dashed #a0a0a0;border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:var(--text3);${isMe?'border-color:#dfff00;background:#dfff0022;color:#1a1a18;font-weight:700':''}">${grade(m).e} ${m.name}</span>`;
+    }).join('');
     const chipsHtml = `
       ${chips ? `<div style="margin-bottom:4px"><span style="font-size:11px;color:var(--text3);font-weight:700">참석</span><br>${chips}</div>` : ''}
+      ${daelduChips ? `<div style="margin-bottom:4px"><span style="font-size:11px;color:var(--text3);font-weight:700">돨두참</span><br>${daelduChips}</div>` : ''}
       ${absentChips ? `<div><span style="font-size:11px;color:#991b1b;font-weight:700">불참</span><br>${absentChips}</div>` : ''}
     `;
     const [yyyy, mm, dd] = s.date.split('-');
@@ -1209,12 +1239,14 @@ async function loadSessMemberList(sessId) {
     if (me) {
       const isAtt = alreadyIds.has(me.id);
       const isAbsent = absentIds.has(me.id);
+      const daelduIds = new Set((sess.daelduchams||[]).map(a => typeof a === 'object' ? a.memberId : a));
+      const isDaeldu = daelduIds.has(me.id);
       const firstName = me.name.split('/')[0];
       const g = grade(me);
       myCardHtml = `
         <div id="my-card-${sessId}" style="background:var(--accent-l);border:1.5px solid var(--accent);border-radius:14px;padding:1rem 1.1rem;margin-bottom:.75rem;text-align:center">
           <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:.75rem">${firstName}님, 참석하시나요? ${g.e}</div>
-          <div style="display:flex;gap:10px">
+          <div style="display:flex;gap:10px;margin-bottom:8px">
             <button onclick="doSingleAttendance('${sessId}','${me.id}',${isAtt})"
               style="flex:1;padding:.75rem;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;
               background:${isAtt?'var(--accent)':'var(--surface)'};color:${isAtt?'#fff':'var(--text)'};border:2px solid ${isAtt?'var(--accent)':'var(--border)'}">
@@ -1226,6 +1258,11 @@ async function loadSessMemberList(sessId) {
               ${isAbsent?'불참 ✗':'이번엔 불참'}
             </button>
           </div>
+          <button onclick="doDaelduCham('${sessId}','${me.id}',${isDaeldu})"
+            style="width:100%;padding:.6rem;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;
+            background:${isDaeldu?'#e9d5ff':'var(--surface)'};color:${isDaeldu?'#7c3aed':'var(--text3)'};border:2px dashed ${isDaeldu?'#7c3aed':'var(--border)'}">
+            ${isDaeldu?'돨두참 ✓':'돨두참'}
+          </button>
         </div>`;
     }
   }
@@ -1292,22 +1329,42 @@ function selectAllSess(sessId) {
 
 window.doSingleAttendance = async function(sessId, memberId, isAlready) {
   const sessRef = db.collection('sessions').doc(sessId);
-  const sessSnap = await sessRef.get();
-  const sess = sessSnap.data();
+  const snap = await sessRef.get();
+  const sess = snap.data();
   if (isAlready) {
     // 이미 참석 → 미응답으로
     const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
     await sessRef.update({ attendees: newAtt });
-    const mSnap = await db.collection('members').doc(memberId).get();
-    if (mSnap.exists) { const c = mSnap.data().count||0; if(c>0) await db.collection('members').doc(memberId).update({count:c-1}); }
     clearCache(); toast('미응답으로 변경됐어요');
   } else {
-    // 불참 목록에서 제거 후 참석 처리
+    // 불참/돨두참 취소 후 참석 처리
     const newAbsent = (sess.absentees||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
-    await sessRef.update({ absentees: newAbsent });
+    const newDaeldu = (sess.daelduchams||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
+    await sessRef.update({ absentees: newAbsent, daelduchams: newDaeldu });
     await processCheckin(sessId, [memberId]);
     toast('참석 처리됐어요 ✓');
   }
+  await refreshChipsAndList(sessId);
+};
+
+window.doDaelduCham = async function(sessId, memberId, isAlready) {
+  const sessRef = db.collection('sessions').doc(sessId);
+  const snap = await sessRef.get();
+  const sess = snap.data();
+  // 참석/불참 취소
+  const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
+  const newAbsent = (sess.absentees||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
+  if (isAlready) {
+    // 이미 돨두참 → 취소
+    const newDaeldu = (sess.daelduchams||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
+    await sessRef.update({ attendees: newAtt, absentees: newAbsent, daelduchams: newDaeldu });
+    toast('돨두참 취소됐어요');
+  } else {
+    const newDaeldu = [...(sess.daelduchams||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId), { memberId }];
+    await sessRef.update({ attendees: newAtt, absentees: newAbsent, daelduchams: newDaeldu });
+    toast('돨두참! 영혼으로 함께해요 👻');
+  }
+  clearCache();
   await refreshChipsAndList(sessId);
 };
 
@@ -1410,9 +1467,18 @@ async function refreshChipsAndList(sessId) {
     </div>`;
   }).join('');
 
+  const daelduChips2 = (sess.daelduchams||[]).map(a => {
+    const mid = typeof a === 'object' ? a.memberId : a;
+    const m = members.find(m => m.id === mid);
+    if (!m) return '';
+    const isMe = m.id === myMemberId;
+    return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;background:none;border:1.5px dashed #a0a0a0;border-radius:20px;padding:3px 10px;margin:3px 3px 3px 0;color:var(--text3);${isMe?'border-color:#dfff00;background:#dfff0022;color:#1a1a18;font-weight:700':''}">${grade(m).e} ${m.name}</span>`;
+  }).join('');
+
   const ca = document.querySelector(`#sb-${sessId} .chips-area`);
   if (ca) ca.innerHTML = `
     ${attChips ? `<div style="margin-bottom:4px"><span style="font-size:11px;color:var(--text3);font-weight:700">참석</span><br>${attChips}</div>` : ''}
+    ${daelduChips2 ? `<div style="margin-bottom:4px"><span style="font-size:11px;color:var(--text3);font-weight:700">돨두참</span><br>${daelduChips2}</div>` : ''}
     ${absentChips ? `<div><span style="font-size:11px;color:#991b1b;font-weight:700">불참</span><br>${absentChips}</div>` : ''}
   `;
   await loadSessMemberList(sessId);
@@ -2792,5 +2858,6 @@ document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
 });
 </script>
+
 </body>
 </html>
