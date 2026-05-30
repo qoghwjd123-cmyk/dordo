@@ -1378,6 +1378,7 @@ window.doDaelduCham = async function(sessId, memberId, isAlready) {
   }
   clearCache();
   await refreshChipsAndList(sessId);
+  await loadSessMemberList(sessId);
 };
 
 let _absentSessId = null, _absentMemberId = null, _absentReason = '';
@@ -2005,12 +2006,23 @@ async function openSessEdit(sessId) {
 
   document.getElementById('se-daeldu-list').innerHTML = sorted.map(m => {
     const checked = daelduIds.has(m.id);
-    return `<div class="ci-mi" style="cursor:pointer" onclick="
+    return `<div class="ci-mi" id="se-daeldu-row-${m.id}" style="cursor:pointer;${checked?'background:#f3e8ff;border-radius:8px;':''}" onclick="
       var cb=document.getElementById('se-dcb-${m.id}');
       cb.checked=!cb.checked;
-      this.style.background=cb.checked?'#f3e8ff':''">
-      <div style="width:24px;height:24px;border-radius:6px;border:2px dashed ${checked?'#7c3aed':'var(--border)'};background:${checked?'#e9d5ff':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <span style="color:#7c3aed;font-size:14px;font-weight:700">${checked?'✓':''}</span>
+      var row=document.getElementById('se-daeldu-row-${m.id}');
+      var box=document.getElementById('se-dbox-${m.id}');
+      var span=document.getElementById('se-dspan-${m.id}');
+      if(cb.checked){
+        row.style.background='#f3e8ff';row.style.borderRadius='8px';
+        box.style.borderColor='#7c3aed';box.style.background='#e9d5ff';box.style.borderStyle='dashed';
+        span.textContent='✓';
+      } else {
+        row.style.background='';row.style.borderRadius='';
+        box.style.borderColor='var(--border)';box.style.background='#fff';box.style.borderStyle='dashed';
+        span.textContent='';
+      }">
+      <div id="se-dbox-${m.id}" style="width:24px;height:24px;border-radius:6px;border:2px dashed ${checked?'#7c3aed':'var(--border)'};background:${checked?'#e9d5ff':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span id="se-dspan-${m.id}" style="color:#7c3aed;font-size:14px;font-weight:700">${checked?'✓':''}</span>
       </div>
       <input type="checkbox" id="se-dcb-${m.id}" ${checked?'checked':''} style="display:none"/>
       <div class="av">${avatarHtml(m)}</div>
