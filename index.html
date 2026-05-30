@@ -1344,19 +1344,22 @@ window.doSingleAttendance = async function(sessId, memberId, isAlready) {
   const snap = await sessRef.get();
   const sess = snap.data();
   if (isAlready) {
-    // 이미 참석 → 미응답으로
     const newAtt = (sess.attendees||[]).filter(a => a.memberId !== memberId);
     await sessRef.update({ attendees: newAtt });
     clearCache(); toast('미응답으로 변경됐어요');
   } else {
-    // 불참/돨두참 취소 후 참석 처리
     const newAbsent = (sess.absentees||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
     const newDaeldu = (sess.daelduchams||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId);
-    await sessRef.update({ absentees: newAbsent, daelduchams: newDaeldu });
-    await processCheckin(sessId, [memberId]);
-    toast('참석 처리됐어요 ✓');
+    const existingIds = new Set((sess.attendees||[]).map(a => a.memberId));
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    const newAtt = [...(sess.attendees||[])];
+    if (!existingIds.has(memberId)) newAtt.push({ memberId, time });
+    await sessRef.update({ attendees: newAtt, absentees: newAbsent, daelduchams: newDaeldu });
+    clearCache(); toast('참석 처리됐어요 ✓');
   }
   await refreshChipsAndList(sessId);
+  await loadSessMemberList(sessId);
 };
 
 window.doDaelduCham = async function(sessId, memberId, isAlready) {
@@ -1410,9 +1413,10 @@ window.confirmAbsent = async function() {
   } else {
     newAbsent = [...absentees.filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId), { memberId, reason: _absentReason }];
   }
-  await sessRef.update({ attendees: newAtt, absentees: newAbsent });
+  await sessRef.update({ attendees: newAtt, absentees: newAbsent, daelduchams: (sess.daelduchams||[]).filter(a => (typeof a === 'object' ? a.memberId : a) !== memberId) });
   clearCache(); toast('불참 처리됐어요');
   await refreshChipsAndList(sessId);
+  await loadSessMemberList(sessId);
 };
 
 window.undoSingleAttendance = async function(sessId, memberId, isAlready) {
