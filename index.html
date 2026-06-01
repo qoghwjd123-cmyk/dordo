@@ -2535,26 +2535,19 @@ async function renderVoteList() {
     const isExpired = v.deadline && new Date(v.deadline) < now;
     const totalVoters = Object.keys(v.votes||{}).length;
     const myVotes = myMemberId ? (v.votes||{})[myMemberId] || [] : [];
+    const canVote = !isExpired && myMemberId;
     const optHtml = v.options.map((opt, i) => {
       const count = Object.values(v.votes||{}).filter(arr => arr.includes(i)).length;
       const pct = totalVoters ? Math.round(count/totalVoters*100) : 0;
       const myVoted = myVotes.includes(i);
-      return `<button onclick="${!isExpired&&myMemberId?`castVote('${doc.id}',${i},${v.multi})`:''}"
-        style="width:100%;margin-bottom:.5rem;padding:.75rem 1rem;border-radius:var(--rs);border:2px solid ${myVoted?'var(--accent)':'var(--border)'};
-        background:${myVoted?'var(--accent-l)':'var(--surface)'};cursor:${!isExpired&&myMemberId?'pointer':'default'};
-        font-family:inherit;text-align:left;position:relative;overflow:hidden;transition:all .15s">
-        <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${myVoted?'var(--accent)':'var(--border)'};opacity:0.15;transition:width .3s"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;position:relative">
-          <span style="font-size:14px;font-weight:${myVoted?'700':'400'};color:${myVoted?'var(--accent)':'var(--text)'}">${myVoted?'✓ ':''}${opt}</span>
-          <span style="font-size:12px;color:${myVoted?'var(--accent)':'var(--text3)'};font-weight:${myVoted?'700':'400'}">${count}명 (${pct}%)</span>
-        </div>
-      </button>`;
+      const onclickAttr = canVote ? 'onclick="castVote(\'' + doc.id + '\',' + i + ',' + v.multi + ')"' : '';
+      return '<button ' + onclickAttr + ' style="width:100%;margin-bottom:.5rem;padding:.75rem 1rem;border-radius:var(--rs);border:2px solid ' + (myVoted?'var(--accent)':'var(--border)') + ';background:' + (myVoted?'var(--accent-l)':'var(--surface)') + ';cursor:' + (canVote?'pointer':'default') + ';font-family:inherit;text-align:left;position:relative;overflow:hidden;transition:all .15s">'
+        + '<div style="position:absolute;left:0;top:0;height:100%;width:' + pct + '%;background:' + (myVoted?'var(--accent)':'var(--border)') + ';opacity:0.15;transition:width .3s"></div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;position:relative">'
+        + '<span style="font-size:14px;font-weight:' + (myVoted?'700':'400') + ';color:' + (myVoted?'var(--accent)':'var(--text)') + '">' + (myVoted?'✓ ':'') + opt + '</span>'
+        + '<span style="font-size:12px;color:' + (myVoted?'var(--accent)':'var(--text3)') + ';font-weight:' + (myVoted?'700':'400') + '">' + count + '명 (' + pct + '%)</span>'
+        + '</div></button>';
     }).join('');
-    }).join('');
-    const voterNames = Object.keys(v.votes||{}).map(mid => {
-      // memberId로 이름 찾기는 비동기라 일단 ID 저장해두고 렌더링 후 처리
-      return mid;
-    });
     return `<div style="background:var(--surface2);border-radius:var(--rs);padding:1rem;margin-bottom:.75rem">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem">
         <div>
