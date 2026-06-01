@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -149,7 +148,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <button class="fab" id="fab-btn" title="운영진 로그인">🔐</button>
 
 <!-- 멤버 선택 랜딩 모달 -->
-
 <div class="mb-bg" id="member-select-modal" style="z-index:600;align-items:center">
   <div class="modal" style="border-radius:var(--r);max-height:90vh;max-width:420px">
     <div style="text-align:center;margin-bottom:1.25rem">
@@ -166,7 +164,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 수정 모달 -->
-
 <div class="mb-bg" id="sess-edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
@@ -219,7 +216,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 비번 입력 모달 -->
-
 <div class="mb-bg" id="prompt-modal" style="z-index:500">
   <div class="modal">
     <div id="prompt-msg" style="font-size:15px;font-weight:500;margin-bottom:1rem;text-align:center"></div>
@@ -232,7 +228,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 커스텀 확인 모달 -->
-
 <div class="mb-bg" id="confirm-modal" style="z-index:800">
   <div class="modal">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:1.25rem;text-align:center"></div>
@@ -244,7 +239,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 플로팅 로그인 모달 -->
-
 <div class="mb-bg" id="fab-modal">
   <div class="modal">
     <div id="fab-lock-wrap">
@@ -264,7 +258,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 수정 모달 -->
-
 <div class="mb-bg" id="edit-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -305,7 +298,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 두알두 -->
-
 <div id="page-rules" class="page active">
   <div class="card">
     <div class="ct">운영</div>
@@ -349,7 +341,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 멤버 목록 -->
-
   <div id="mtab-list">
     <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem">
       <button onclick="resetMyMember()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--text3);cursor:pointer;font-family:inherit">👤 내 정보 변경</button>
@@ -368,7 +359,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 출석 통계 -->
-
   <div id="mtab-stats" style="display:none">
     <div class="filter-tabs" style="margin-bottom:.5rem;flex-wrap:wrap;gap:4px">
       <button class="ftab active" data-filter="all">전체</button>
@@ -398,7 +388,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 모임 -->
-
 <div id="page-sessions" class="page">
   <div class="card">
     <div class="ct">새 일정 등록</div>
@@ -441,7 +430,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 날짜 피커 모달 -->
-
 <div class="mb-bg" id="date-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -464,7 +452,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 시간 피커 모달 -->
-
 <div class="mb-bg" id="time-picker-modal" style="align-items:center;z-index:700">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem" id="time-picker-title">시간 선택</div>
@@ -493,7 +480,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 본인 일정 수정 모달 -->
-
 <div class="mb-bg" id="my-sess-edit-modal" style="align-items:center;z-index:500">
   <div class="modal" style="border-radius:var(--r);max-width:360px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
@@ -533,7 +519,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 불참 사유 모달 -->
-
 <div class="mb-bg" id="absent-reason-modal" style="align-items:center">
   <div class="modal" style="border-radius:var(--r);max-width:320px;padding:1.25rem">
     <div style="font-size:15px;font-weight:700;text-align:center;margin-bottom:1rem">이번엔 불참 😢</div>
@@ -551,7 +536,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 멤버 상세 모달 -->
-
 <div class="mb-bg" id="member-detail-modal">
   <div class="modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
@@ -582,11 +566,9 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 게임 -->
-
 <div id="page-game" class="page">
 
   <!-- 🏆 이번달 출석왕 -->
-
   <div class="game-card" id="gc-champion">
     <div class="game-card-hd" onclick="toggleGameCard('champion')">
       <span>🏆 이번달 출석왕</span><span class="gc-arrow">▼</span>
@@ -602,7 +584,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 📊 투표 -->
-
   <div class="game-card" id="gc-vote">
     <div class="game-card-hd" onclick="toggleGameCard('vote')">
       <span>📊 투표</span><span class="gc-arrow">▼</span>
@@ -636,7 +617,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎯 운동 룰렛 -->
-
   <div class="game-card" id="gc-roulette">
     <div class="game-card-hd" onclick="toggleGameCard('roulette')">
       <span>🎯 오늘의 운동 룰렛</span><span class="gc-arrow">▼</span>
@@ -658,7 +638,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎲 팀 랜덤 배정 -->
-
   <div class="game-card" id="gc-team">
     <div class="game-card-hd" onclick="toggleGameCard('team')">
       <span>🎲 팀 랜덤 배정</span><span class="gc-arrow">▼</span>
@@ -678,7 +657,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
   </div>
 
   <!-- 🎰 멤버 추첨 -->
-
   <div class="game-card" id="gc-draw">
     <div class="game-card-hd" onclick="toggleGameCard('draw')">
       <span>🎰 멤버 추첨</span><span class="gc-arrow">▼</span>
@@ -700,7 +678,6 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 </div>
 
 <!-- 운영진 -->
-
 <div id="page-admin" class="page">
   <div id="admin-lock">
     <div class="lock-icon">🔒</div>
@@ -2562,16 +2539,17 @@ async function renderVoteList() {
       const count = Object.values(v.votes||{}).filter(arr => arr.includes(i)).length;
       const pct = totalVoters ? Math.round(count/totalVoters*100) : 0;
       const myVoted = myVotes.includes(i);
-      return `<div style="margin-bottom:.5rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
-          <span style="font-size:13px;font-weight:${myVoted?'700':'400'};color:${myVoted?'var(--accent)':'var(--text)'}">${myVoted?'✓ ':''}${opt}</span>
-          <span style="font-size:12px;color:var(--text3)">${count}명 (${pct}%)</span>
+      return `<button onclick="${!isExpired&&myMemberId?`castVote('${doc.id}',${i},${v.multi})`:''}"
+        style="width:100%;margin-bottom:.5rem;padding:.75rem 1rem;border-radius:var(--rs);border:2px solid ${myVoted?'var(--accent)':'var(--border)'};
+        background:${myVoted?'var(--accent-l)':'var(--surface)'};cursor:${!isExpired&&myMemberId?'pointer':'default'};
+        font-family:inherit;text-align:left;position:relative;overflow:hidden;transition:all .15s">
+        <div style="position:absolute;left:0;top:0;height:100%;width:${pct}%;background:${myVoted?'var(--accent)':'var(--border)'};opacity:0.15;transition:width .3s"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;position:relative">
+          <span style="font-size:14px;font-weight:${myVoted?'700':'400'};color:${myVoted?'var(--accent)':'var(--text)'}">${myVoted?'✓ ':''}${opt}</span>
+          <span style="font-size:12px;color:${myVoted?'var(--accent)':'var(--text3)'};font-weight:${myVoted?'700':'400'}">${count}명 (${pct}%)</span>
         </div>
-        <div style="background:var(--surface2);border-radius:4px;height:6px;overflow:hidden">
-          <div style="width:${pct}%;height:100%;background:${myVoted?'var(--accent)':'var(--text3)'};border-radius:4px;transition:width .3s"></div>
-        </div>
-        ${!isExpired&&myMemberId ? `<button onclick="castVote('${doc.id}',${i},${v.multi})" style="margin-top:4px;font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid ${myVoted?'var(--accent)':'var(--border)'};background:${myVoted?'var(--accent-l)':'none'};color:${myVoted?'var(--accent)':'var(--text3)'};cursor:pointer;font-family:inherit">${myVoted?'선택 취소':'선택'}</button>` : ''}
-      </div>`;
+      </button>`;
+    }).join('');
     }).join('');
     const voterNames = Object.keys(v.votes||{}).map(mid => {
       // memberId로 이름 찾기는 비동기라 일단 ID 저장해두고 렌더링 후 처리
@@ -3167,6 +3145,5 @@ document.querySelectorAll('.nb[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { location.hash = btn.dataset.page; });
 });
 </script>
-
 </body>
 </html>
