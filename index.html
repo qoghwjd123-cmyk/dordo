@@ -529,7 +529,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div id="ve-options-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:.5rem"></div>
     <button onclick="addVoteEditOption()" style="width:100%;padding:.6rem;background:none;border:1.5px dashed var(--border);border-radius:var(--rs);font-size:13px;color:var(--text3);cursor:pointer;font-family:inherit;margin-bottom:.75rem">+ 항목 추가</button>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem">
-      <input type="checkbox" id="ve-multi" style="width:18px;height:18px"/>
+      <input type="checkbox" id="ve-multi" style="width:20px;height:20px;cursor:pointer;accent-color:var(--accent)"/>
       <label for="ve-multi" style="font-size:13px;cursor:pointer">복수 선택 허용</label>
     </div>
     <div style="display:flex;gap:8px">
@@ -618,7 +618,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
         <div id="vote-options-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:.5rem"></div>
         <button onclick="addVoteOption()" style="width:100%;padding:.6rem;background:none;border:1.5px dashed var(--border);border-radius:var(--rs);font-size:13px;color:var(--text3);cursor:pointer;font-family:inherit">+ 항목 추가 (최대 8개)</button>
         <div style="display:flex;align-items:center;gap:8px;margin:.75rem 0">
-          <input type="checkbox" id="vote-multi" style="width:18px;height:18px"/>
+          <input type="checkbox" id="vote-multi" style="width:20px;height:20px;cursor:pointer;accent-color:var(--accent)"/>
           <label for="vote-multi" style="font-size:13px;cursor:pointer">복수 선택 허용</label>
         </div>
         <div style="display:flex;gap:8px;margin-bottom:.5rem">
@@ -2038,6 +2038,8 @@ window.saveVoteEdit = async function() {
 
 async function renderAdminSessList() {
   const el = document.getElementById('admin-sess-list');
+  el.innerHTML = '<div class="loading"><div class="spinner"></div><br>불러오는 중...</div>';
+  const sessions = await getAllSessions();
   if (!sessions.length) { el.innerHTML = '<div class="empty">등록된 일정이 없어요</div>'; return; }
   const today = getToday();
   const thisMonth = today.slice(0,7);
