@@ -486,6 +486,8 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
     <div style="font-size:15px;font-weight:700;margin-bottom:1rem">일정 수정</div>
     <input type="hidden" id="mse-sess-id"/>
     <input type="hidden" id="mse-orig-date"/>
+    <div class="sl2">제목</div>
+    <input type="text" id="mse-name" placeholder="일정 제목"/>
     <div class="sl2">날짜</div>
     <button type="button" id="mse-date-btn" onclick="openDatePickerFor('mse-date')"
       style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--rs);font-family:inherit;font-size:14px;background:var(--surface2);color:var(--text);text-align:left;cursor:pointer;margin-bottom:.75rem">
@@ -516,6 +518,7 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
       <button onclick="saveMySessionEdit()" style="flex:2;padding:.75rem;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">저장</button>
       <button onclick="closeModal('my-sess-edit-modal')" style="flex:1;padding:.75rem;background:var(--surface2);color:var(--text3);border:none;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">취소</button>
     </div>
+    <button onclick="deleteMySession()" style="width:100%;margin-top:.5rem;padding:.65rem;background:none;border:1px solid #fca5a5;border-radius:var(--rs);font-size:13px;font-weight:700;color:#991b1b;cursor:pointer;font-family:inherit">🗑️ 일정 삭제</button>
   </div>
 </div>
 
@@ -3052,6 +3055,7 @@ window.openMySessionEdit = async function(sessId) {
   const s = snap.data();
   document.getElementById('mse-sess-id').value = sessId;
   document.getElementById('mse-orig-date').value = s.date || '';
+  document.getElementById('mse-name').value = s.name || '';
   document.getElementById('mse-date').value = s.date || '';
   document.getElementById('mse-time').value = s.time || '';
   document.getElementById('mse-endtime').value = s.endtime || '';
@@ -3109,6 +3113,16 @@ window.confirmTimePicker = function() {
   } else { _origConfirmTimePicker(); }
 };
 
+window.deleteMySession = async function() {
+  const sessId = document.getElementById('mse-sess-id').value;
+  const ok = await showConfirm('일정을 삭제할까요?');
+  if (!ok) return;
+  await db.collection('sessions').doc(sessId).delete();
+  closeModal('my-sess-edit-modal');
+  clearCache(); toast('일정이 삭제됐어요');
+  renderMonthSessions();
+};
+
 window.saveMySessionEdit = async function() {
   const sessId = document.getElementById('mse-sess-id').value;
   const origDate = document.getElementById('mse-orig-date').value;
@@ -3120,12 +3134,13 @@ window.saveMySessionEdit = async function() {
   if (!newTime) { toast('시작 시간을 선택해주세요'); return; }
   if (!newEndtime) { toast('종료 시간을 선택해주세요'); return; }
   const dateChanged = newDate !== origDate;
+  const newName = document.getElementById('mse-name').value.trim();
   if (dateChanged) {
     const ok = await showConfirm('날짜가 변경되면 참석자가 초기화됩니다.\n계속할까요?');
     if (!ok) return;
-    await db.collection('sessions').doc(sessId).update({ date: newDate, time: newTime, endtime: newEndtime, place: newPlace, attendees: [], absentees: [] });
+    await db.collection('sessions').doc(sessId).update({ name: newName||undefined, date: newDate, time: newTime, endtime: newEndtime, place: newPlace, attendees: [], absentees: [], daelduchams: [] });
   } else {
-    await db.collection('sessions').doc(sessId).update({ time: newTime, endtime: newEndtime, place: newPlace });
+    await db.collection('sessions').doc(sessId).update({ name: newName||undefined, time: newTime, endtime: newEndtime, place: newPlace });
   }
   closeModal('my-sess-edit-modal');
   clearCache();
