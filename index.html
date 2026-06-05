@@ -2723,15 +2723,16 @@ window.castVote = async function(voteId, optIdx, multi) {
 
 window.shareVoteKakao = function(voteId, title) {
   if (!window.Kakao || !Kakao.isInitialized()) return;
+  const url = location.origin + location.pathname + '#vote/' + voteId;
   Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
       title: `📊 두알두 투표`,
       description: title,
       imageUrl: 'https://qoghwjd123-cmyk.github.io/logo.png',
-      link: { mobileWebUrl: location.origin + location.pathname + '#game', webUrl: location.origin + location.pathname + '#game' }
+      link: { mobileWebUrl: url, webUrl: url }
     },
-    buttons: [{ title: '지금 투표하러 가기', link: { mobileWebUrl: location.origin + location.pathname + '#game', webUrl: location.origin + location.pathname + '#game' } }]
+    buttons: [{ title: '지금 투표하러 가기', link: { mobileWebUrl: url, webUrl: url } }]
   });
 };
 
@@ -3302,10 +3303,14 @@ if (myMemberId && !localStorage.getItem(RULES_AGREED_KEY)) {
   const validPages = ['rules','members','sessions','checkin','admin','game'];
   let startPage = 'members'; // 기본 랜딩을 멤버탭으로
   let autoOpenSess = null;
+  let autoOpenVote = null;
 
   if (hash.startsWith('sessions/')) {
     startPage = 'sessions';
     autoOpenSess = hash.replace('sessions/','');
+  } else if (hash.startsWith('vote/')) {
+    startPage = 'game';
+    autoOpenVote = hash.replace('vote/','');
   } else if (validPages.includes(hash)) {
     startPage = hash;
   }
@@ -3338,6 +3343,19 @@ if (myMemberId && !localStorage.getItem(RULES_AGREED_KEY)) {
       }
     }, 300);
     setTimeout(() => clearInterval(tryOpen), 6000);
+  }
+
+  if (autoOpenVote) {
+    // 투표 카드 오픈 후 해당 투표로 스크롤
+    setTimeout(async () => {
+      const gc = document.getElementById('gc-vote');
+      if (gc && !gc.classList.contains('open')) toggleGameCard('vote');
+      setTimeout(async () => {
+        await renderVoteList();
+        const voteEl = document.getElementById('voter-list-' + autoOpenVote)?.closest('[style*="surface2"]');
+        if (voteEl) voteEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 500);
+    }, 400);
   }
 })();
 // 탭 클릭시 해시 업데이트
