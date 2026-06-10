@@ -2274,9 +2274,23 @@ async function renderAMList() {
 }
 
 function amRow(m) {
-  const g = grade(m);
   const joined = m.joined || JOIN_DATES[m.name] || '';
-  return `<div class="mi"><div class="av">${avatarHtml(m)}</div><div style="flex:1;min-width:0"><div class="mn">${m.name}</div><div class="mm">${m.role==='mate'?'운영진 · '+m.count+'회':m.count+'회 · '+fmtJoined(joined)}${m.phone?' · 📞 '+m.phone:''}</div></div><button class="ebtn admin-edit-btn" data-id="${m.id}" style="margin-right:4px">수정</button><button class="ebtn admin-kick-btn" data-id="${m.id}" data-name="${m.name}" style="margin-right:4px;background:#fff3e0;color:#e65100;border-color:#e65100">내보내기</button><button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button></div>`;
+  const info = m.role==='mate' ? `운영진 · ${m.count}회` : `${m.count}회 · ${fmtJoined(joined)}`;
+  const phone = m.phone ? `<a href="tel:${m.phone}" style="font-size:11px;color:var(--accent);margin-left:6px;text-decoration:none">📞 ${m.phone}</a>` : '';
+  return `<div class="mi" style="align-items:center">
+    <div class="av">${avatarHtml(m)}</div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px">
+        <span class="mn">${m.name}</span>${phone}
+      </div>
+      <div class="mm">${info}</div>
+    </div>
+    <div style="display:flex;gap:4px;flex-shrink:0">
+      <button class="ebtn admin-edit-btn" data-id="${m.id}">수정</button>
+      <button class="ebtn admin-kick-btn" data-id="${m.id}" data-name="${m.name}" style="background:#fff3e0;color:#e65100;border-color:#e65100">내보내기</button>
+      <button class="dbtn admin-del-btn" data-id="${m.id}">삭제</button>
+    </div>
+  </div>`;
 }
 
 document.getElementById('admin-mlist').addEventListener('click', async function(e) {
