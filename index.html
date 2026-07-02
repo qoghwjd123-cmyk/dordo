@@ -611,11 +611,11 @@ input:focus,select:focus{border-color:var(--accent);background:#fff}
 <div id="page-game" class="page">
 
   <!-- 🏆 이번달 출석왕 -->
-  <div class="game-card" id="gc-champion">
+  <div class="game-card open" id="gc-champion">
     <div class="game-card-hd" onclick="toggleGameCard('champion')">
-      <span>🏆 이번달 출석왕</span><span class="gc-arrow">▼</span>
+      <span>🏆 이번달 출석왕</span><span class="gc-arrow">▲</span>
     </div>
-    <div class="game-card-bd" id="gb-champion" style="display:none;padding:1rem 1.25rem">
+    <div class="game-card-bd" id="gb-champion" style="padding:1rem 1.25rem">
       <div id="champion-result" style="text-align:center;padding:1rem 0">
         <div class="loading"><div class="spinner"></div><br>불러오는 중...</div>
       </div>
@@ -995,18 +995,13 @@ function showPage(n, btn) {
   document.getElementById('fab-btn').classList.toggle('show', n === 'sessions');
   if (n === 'members') renderMPage();
   if (n === 'rules') checkRulesAgreed();
+  if (n === 'game') { renderChampion(); }
   if (n === 'sessions') renderSessionsTab().then(() => {
     setTimeout(() => {
       const today = getToday();
-      // 오늘 날짜 카드 먼저 찾기
-      let target = document.querySelector('.sess-card .sess-date-num');
       const allCards = document.querySelectorAll('.sess-card');
       let closest = null, closestDiff = Infinity;
       allCards.forEach(card => {
-        const id = card.id.replace('sc-', '');
-        const dateEl = card.querySelector('.sess-day-label');
-        if (!dateEl) return;
-        // 카드 ID로 날짜 찾기 (data-past 활용)
         const hd = card.querySelector('.sess-card-hd');
         if (!hd) return;
         const isPast = hd.dataset.past === 'true';
@@ -1015,7 +1010,6 @@ function showPage(n, btn) {
           if (diff < closestDiff) { closestDiff = diff; closest = card; }
         }
       });
-      // 오늘 주황 테두리 카드 우선
       const todayCard = document.querySelector('.sess-card[style*="e76f51"]');
       const scrollTarget = todayCard || closest || allCards[0];
       if (scrollTarget) scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2774,6 +2768,23 @@ window.deleteVote = async function(voteId) {
   renderVoteList();
 };
 
+window.sharePastChampion = function(mo, shareEncoded) {
+  if (!window.Kakao || !Kakao.isInitialized()) return;
+  const [y, m] = mo.split('-');
+  const label = `${y}년 ${parseInt(m)}월`;
+  const rankText = decodeURIComponent(shareEncoded);
+  Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: `🏆 두알두 ${label} 출석왕!`,
+      description: rankText,
+      imageUrl: 'https://qoghwjd123-cmyk.github.io/dordo/logo.png',
+      link: { mobileWebUrl: location.origin + location.pathname + '#game', webUrl: location.origin + location.pathname + '#game' }
+    },
+    buttons: [{ title: '출석 확인하기', link: { mobileWebUrl: location.origin + location.pathname + '#game', webUrl: location.origin + location.pathname + '#game' } }]
+  });
+};
+
 window.togglePastChampions = async function() {
   const el = document.getElementById('past-champions');
   const btn = el.previousElementSibling;
@@ -2810,10 +2821,22 @@ window.togglePastChampions = async function() {
     if (!ranked.length) return '';
     const medals = ['🥇','🥈','🥉'];
     const [y,m] = mo.split('-');
-    const top3 = ranked.slice(0,3).map((m,i) => `<span style="font-size:13px">${medals[i]} ${m.name.split('/')[0]} ${m.cnt}회</span>`).join('  ');
+    const label = `${y}년 ${parseInt(m)}월`;
+    const firstName = n => { const name = n.split('/')[0]; return name.length > 2 ? name.slice(1) : name; };
+    const top3 = ranked.slice(0,3);
+    const top3html = top3.map((m,i) => `<span style="font-size:13px">${medals[i]} ${m.name.split('/')[0]} ${m.cnt}회</span>`).join('  ');
+    const shareText = top3.length === 1
+      ? `🥇 ${firstName(top3[0].name)} ${top3[0].cnt}회`
+      : top3.length === 2
+      ? `🥇 ${firstName(top3[0].name)} ${top3[0].cnt}회\n🥈 ${firstName(top3[1].name)} ${top3[1].cnt}회`
+      : `🥇 ${firstName(top3[0].name)} ${top3[0].cnt}회\n🥈 ${firstName(top3[1].name)} ${top3[1].cnt}회 🥉 ${firstName(top3[2].name)} ${top3[2].cnt}회`;
+    const shareEncoded = encodeURIComponent(shareText);
     return `<div style="padding:.75rem 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px">${y}년 ${parseInt(m)}월</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">${top3}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-size:12px;font-weight:700;color:var(--text3)">${label}</div>
+        <button onclick="sharePastChampion('${mo}','${shareEncoded}')" style="background:#FEE500;color:#191919;border:none;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit"><img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width:11px;height:11px;vertical-align:middle"/> 공유</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${top3html}</div>
     </div>`;
   }).filter(Boolean).join('') || '<div class="empty">이전 기록이 없어요</div>';
 };
