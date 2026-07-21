@@ -3024,7 +3024,8 @@ function renderCal() {
     const dateStr = `${calYear}-${String(calMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isSelected = dateStr === selected;
     const isToday = dateStr === today;
-    const isPast = dateStr < today;
+    const allowPast = ['nm-joined','edit-joined'].includes(datePickerTarget);
+    const isPast = !allowPast && dateStr < today;
     const dow = (first + d - 1) % 7;
     const color = isPast ? '#ccc' : dow===0?'#e74c3c':dow===6?'#3498db':'var(--text)';
     html += `<button onclick="${isPast ? '' : `selectDate('${dateStr}')`}" ${isPast ? 'disabled' : ''}
